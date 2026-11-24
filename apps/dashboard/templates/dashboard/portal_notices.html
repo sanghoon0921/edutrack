@@ -1,0 +1,4 @@
+<section class="portal-card portal-notices" aria-labelledby="portal-notices-title">
+ <div class="portal-card-head"><h2 id="portal-notices-title"><svg class="et-icon portal-symbol" aria-hidden="true"><use href="#i-megaphone"/></svg>공지사항</h2><a href="{% url 'communications:notice-list' %}">전체 보기</a></div>
+ <div class="portal-card-list">{% for n in data.notices %}<a class="portal-notice-row" href="{{ n.url }}"><div><small>{{ n.source }}{% if n.pinned %} · 중요{% endif %}</small><strong>{{ n.title }}</strong></div><time>{{ n.at|date:'m.d' }}</time></a>{% empty %}<p class="portal-empty">새 공지사항이 없습니다.</p>{% endfor %}</div>
+</section>

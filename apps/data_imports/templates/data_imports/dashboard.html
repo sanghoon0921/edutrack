@@ -1,0 +1,121 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="import-hero" data-reveal>
+  <div>
+    <h1>데이터 이전 센터</h1>
+    <p>
+      운영 중인 계정과 기존 LMS 과제 이력을 CSV로 검증한 뒤
+      안전하게 EduTrack으로 이전합니다.
+    </p>
+
+    <div class="operations-hero-actions">
+      <a class="operations-primary-link" href="{% url 'data_imports:user-import' %}">
+        사용자 일괄등록 <span>→</span>
+      </a>
+      <a class="operations-secondary-link" href="{% url 'data_imports:assignment-import' %}">
+        기존 과제 이전
+      </a>
+    </div>
+  </div>
+
+  <aside class="import-hero-status">
+    <strong>{{ total_batch_count }}</strong>
+    <small>누적 이전 작업</small>
+  </aside>
+</section>
+
+<section class="import-summary-grid" data-reveal>
+  <article>
+    <small>정상 완료</small>
+    <strong>{{ completed_count }}</strong>
+    <span>오류 없이 완료된 작업</span>
+  </article>
+  <article class="{% if error_batch_count %}has-warning{% endif %}">
+    <small>점검 필요</small>
+    <strong>{{ error_batch_count }}</strong>
+    <span>실패·일부 오류 작업</span>
+  </article>
+  <article>
+    <small>계정 이전</small>
+    <strong>{{ user_batch_count }}</strong>
+    <span>사용자·학생 연결</span>
+  </article>
+  <article>
+    <small>과제 이전</small>
+    <strong>{{ assignment_batch_count }}</strong>
+    <span>과제·제출·피드백</span>
+  </article>
+</section>
+
+<section class="import-action-grid" data-reveal>
+  <a href="{% url 'data_imports:user-import' %}">
+    <div>
+      <strong>사용자 일괄등록</strong>
+      <small>학생·학부모·강사·관리자 계정 생성</small>
+    </div>
+    <b>↗</b>
+  </a>
+  <a href="{% url 'data_imports:assignment-import' %}">
+    <div>
+      <strong>기존 과제 데이터</strong>
+      <small>과제·대상 학생·제출·피드백 이전</small>
+    </div>
+    <b>↗</b>
+  </a>
+  <a href="{% url 'data_imports:user-template' %}">
+    <div>
+      <strong>계정 CSV 양식</strong>
+      <small>Excel에서 바로 열 수 있는 UTF-8 양식</small>
+    </div>
+    <b>↓</b>
+  </a>
+  <a href="{% url 'data_imports:assignment-template' %}">
+    <div>
+      <strong>과제 CSV 양식</strong>
+      <small>기존 LMS 이력 정리용 표준 컬럼</small>
+    </div>
+    <b>↓</b>
+  </a>
+</section>
+
+<section class="import-safety-panel" data-reveal>
+  <div>
+    <h2>실제 반영 전에 반드시 미리보기</h2>
+  </div>
+  <ol>
+    <li><span>1</span><div><strong>CSV 업로드</strong><small>UTF-8·CP949 자동 인식</small></div></li>
+    <li><span>2</span><div><strong>서버 검증</strong><small>계정·학생번호·강사·날짜 확인</small></div></li>
+    <li><span>3</span><div><strong>관리자 확인</strong><small>예상 생성·갱신·건너뜀 확인</small></div></li>
+    <li><span>4</span><div><strong>실제 반영</strong><small>행별 결과와 감사 이력 저장</small></div></li>
+  </ol>
+</section>
+
+<section class="import-history-panel" data-reveal>
+  <header>
+    <div>
+      <h2>최근 이전 작업</h2>
+    </div>
+  </header>
+
+  {% if batches %}
+    <div class="import-history-list">
+      {% for batch in batches %}
+        <a href="{% url 'data_imports:batch-detail' batch.pk %}">
+          <span class="import-kind-badge is-{{ batch.kind|lower }}">{{ batch.get_kind_display }}</span>
+          <div>
+            <strong>{{ batch.source_filename }}</strong>
+            <small>
+              {{ batch.get_mode_display }} · {{ batch.actor.effective_name|default:"시스템" }}
+            </small>
+          </div>
+          <span class="import-status is-{{ batch.status|lower }}">{{ batch.get_status_display }}</span>
+          <time>{{ batch.created_at|date:"m.d H:i" }}</time>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="operations-empty">아직 데이터 이전 작업이 없습니다.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+{% include "learning/_tabs.html" with active_learning_tab="discussions" %}
+<section class="workflow-hero is-compact"><div><h1>토론 관리</h1><p>대상 학생에게 토론 주제를 제공하고 댓글 참여를 확인합니다.</p></div><div class="workflow-actions">{% if request.user.role != "TA" %}<a class="workflow-button is-secondary" href="{% url 'learning:group-manage' %}">+ 그룹</a>{% endif %}<a class="workflow-button is-primary" href="{% url 'learning:discussion-create' %}">+ 토론</a></div></section>
+<section class="workflow-panel"><div class="compact-list">
+{% for row in discussion_rows %}<article class="compact-row is-learning"><div class="compact-icon">토론</div><div class="compact-main"><div class="compact-badges"><span>{{ row.discussion.group.title|default:"미분류" }}</span><span class="status-{{ row.discussion.is_published|yesno:'open,draft' }}">{{ row.discussion.is_published|yesno:"공개,비공개" }}</span></div><a class="compact-title" href="{% url 'learning:discussion-detail' row.discussion.pk %}">{{ row.discussion.title }}</a><small>공개 {{ row.discussion.available_from|date:"Y.m.d H:i"|default:"즉시" }} · 댓글 마감 {{ row.discussion.due_at|date:"Y.m.d H:i" }}</small></div><div class="compact-metrics"><span><strong>{{ row.recipient_count }}</strong><small>대상</small></span><span><strong>{{ row.comment_count }}</strong><small>댓글</small></span></div><a class="workflow-button is-small is-secondary" href="{% url 'learning:discussion-update' row.discussion.pk %}">수정</a></article>{% empty %}<div class="workflow-empty">등록된 토론이 없습니다.</div>{% endfor %}
+</div></section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% if request.user.is_authenticated %}
+<nav class="page-back-bar" aria-label="현재 페이지 이동">
+  <a
+    class="page-back-button"
+    href="{% url 'dashboard' %}"
+    data-smart-back
+    data-fallback-url="{% url 'dashboard' %}"
+  >
+    <span aria-hidden="true">←</span>
+    <strong>뒤로가기</strong>
+  </a>
+  <span class="page-back-current" aria-current="page">{{ page_title|default:"현재 페이지" }}</span>
+</nav>
+{% endif %}

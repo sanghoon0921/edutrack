@@ -1,0 +1,287 @@
+/* =========================================================
+   Stage 13 — usability, larger type, and rendering stability
+   기존 디자인은 유지하면서 스크롤 중 재계산·블러·반복 애니메이션을 줄입니다.
+   ========================================================= */
+
+html {
+  font-size: 18px;
+  scroll-behavior: auto;
+}
+
+body.app-body {
+  font-size: 1rem;
+  line-height: 1.62;
+  background: #e9eff7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-body button,
+.app-body input,
+.app-body select,
+.app-body textarea {
+  font: inherit;
+  font-size: 0.94rem;
+}
+
+.app-body input:not([type="checkbox"]):not([type="radio"]),
+.app-body select,
+.app-body textarea,
+.app-body button,
+.app-body .btn,
+.app-body [class*="-button"] {
+  min-height: 42px;
+}
+
+.app-body small {
+  font-size:.875rem;
+  line-height: 1.5;
+}
+
+.app-body table {
+  font-size: 0.9rem;
+}
+
+.app-body th {
+  font-size:.875rem!important;
+  line-height: 1.42;
+}
+
+.app-body td {
+  font-size: 0.9rem !important;
+  line-height: 1.52;
+}
+
+.app-body .eyebrow,
+.app-body .status-badge,
+.app-body .role-chip,
+.app-body [class*="-badge"],
+.app-body [class*="-pill"],
+.app-body [class*="-chip"] {
+  font-size:.875rem!important;
+  line-height: 1.35;
+}
+
+.app-body .premium-tab-link,
+.app-body .workflow-button,
+.app-body .catalog-button,
+.app-body .catalog-page-link,
+.app-body .learner-course-action,
+.app-body .operations-pagination a,
+.app-body .operations-pagination span {
+  font-size: 0.9rem !important;
+}
+
+.app-body .premium-brand-copy strong,
+.app-body .premium-user-copy strong,
+.app-body .compact-title,
+.app-body .learner-course-row-main h3 {
+  font-size: 0.96rem !important;
+}
+
+.app-body .premium-brand-copy small,
+.app-body .premium-user-copy small,
+.app-body .compact-main > span,
+.app-body .compact-main small,
+.app-body .workflow-field small,
+.app-body .student-transfer-help,
+.app-body .learner-course-row-main p,
+.app-body .learner-course-meta dd,
+.app-body .learner-history-notice p,
+.app-body .learner-score-note p {
+  font-size:.875rem!important;
+}
+
+.app-body .compact-badges span,
+.app-body .workflow-status,
+.app-body .learner-course-tags > span,
+.app-body .learner-course-meta dt,
+.app-body .learner-section-heading > span,
+.app-body .learner-identity-chip,
+.app-body .student-transfer-item-copy small,
+.app-body .student-transfer-item-state,
+.app-body .student-transfer-item-remove {
+  font-size:.875rem!important;
+}
+
+/* 점수·시험·학습 분석 화면의 과도하게 작은 보조 문구를 읽을 수 있게 통일합니다. */
+.app-body [class^="score-"] small,
+.app-body [class*=" score-"] small,
+.app-body [class^="exam-"] small,
+.app-body [class*=" exam-"] small,
+.app-body [class^="learning-"] small,
+.app-body [class*=" learning-"] small,
+.app-body [class^="assignment-"] small,
+.app-body [class*=" assignment-"] small,
+.app-body [class^="communications-"] small,
+.app-body [class*=" communications-"] small,
+.app-body [class^="operations-"] small,
+.app-body [class*=" operations-"] small,
+.app-body [class^="import-"] small,
+.app-body [class*=" import-"] small {
+  font-size:.875rem!important;
+  line-height: 1.45;
+}
+
+/* 클래스 상세 페이지는 본문 안의 인라인 스타일보다 큰 글꼴 기준을 우선합니다. */
+.app-body .et-class-detail-page p,
+.app-body .et-class-detail-page dd,
+.app-body .et-class-detail-page a,
+.app-body .et-class-detail-page button {
+  font-size: 0.88rem !important;
+}
+
+.app-body .et-class-detail-page dt,
+.app-body .et-class-detail-breadcrumb,
+.app-body .et-class-detail-page small,
+.app-body .et-class-detail-page [class*="label"] {
+  font-size:.875rem!important;
+}
+
+/* data-reveal은 즉시 노출합니다. 스크롤 관찰자와 순차 등장 지연은 사용하지 않습니다. */
+.app-body [data-reveal],
+.app-body [data-reveal].is-revealed {
+  opacity: 1 !important;
+  transform: none !important;
+  transition-delay: 0s !important;
+}
+
+/* 장시간 반복되거나 목록을 다시 그리게 만드는 애니메이션을 제거합니다. */
+.app-body .premium-profile-hero::before,
+.app-body .premium-attendance-hero::before,
+.app-body .premium-dashboard-hero,
+.app-body .premium-dashboard-hero::before,
+.app-body .premium-dashboard-live-badge i,
+.app-body .premium-dashboard-footer-dot,
+.app-body .premium-dashboard-kpi,
+.app-body .premium-dashboard-link-card,
+.app-body .premium-billing-hero::before,
+.app-body .premium-notification-button.has-unread::after,
+.app-body .communications-hero::before,
+.app-body .operations-hero::before,
+.app-body .operations-page-hero::before,
+.app-body .operations-detail-hero::before,
+.app-body .import-hero::before,
+.app-body .import-page-hero::before,
+.app-body .workflow-hero,
+.app-body .workflow-panel,
+.app-body .learning-group-panel,
+.app-body .compact-row {
+  animation: none !important;
+}
+
+/* 큰 고정 영역의 실시간 블러는 스크롤 중 재페인트를 유발하므로 정적 배경으로 변경합니다. */
+.app-body .premium-site-header {
+  padding-top: 10px !important;
+  transition: none !important;
+  filter: none !important;
+}
+
+.app-body .premium-site-header::before {
+  inset: 0 0 -8px !important;
+  background: rgba(233,239,247,0.985) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.app-body .premium-site-header.is-scrolled {
+  padding-top: 10px !important;
+  filter: none !important;
+}
+
+.app-body .premium-header-shell {
+  box-shadow: 0 7px 18px rgba(23,42,70,0.1) !important;
+}
+
+.app-body .premium-dashboard-brief,
+.app-body .exam-detail-total,
+.app-body .learning-insight-score,
+.app-body .premium-billing-hero-brief,
+.app-body .operations-hero-status,
+.app-body .import-hero-status {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 마우스 위치를 계속 추적하던 스포트라이트를 고정해 메인 스레드 작업을 없앱니다. */
+.app-body [data-dashboard-spotlight] {
+  --spot-x: 78%;
+  --spot-y: 22%;
+}
+
+/* 스크롤 중 포인터 아래로 지나가는 행이 움직이지 않게 합니다. */
+.app-body .compact-row,
+.app-body .learner-course-row,
+.app-body .catalog-table tbody tr,
+.app-body .student-table tbody tr,
+.app-body .operations-table tbody tr,
+.app-body .communications-notification-item,
+.app-body .assignment-card,
+.app-body .my-assignment-card,
+.app-body .premium-dashboard-kpi,
+.app-body .premium-dashboard-link-card,
+.app-body .workflow-button,
+.app-body .btn,
+.app-body [class*="-button"] {
+  transition-duration: 0.12s !important;
+  transition-delay: 0s !important;
+}
+
+.app-body .compact-row:hover,
+.app-body .learner-course-row:hover,
+.app-body .catalog-table tbody tr:hover,
+.app-body .student-table tbody tr:hover,
+.app-body .operations-table tbody tr:hover,
+.app-body .communications-notification-item:hover,
+.app-body .assignment-card:hover,
+.app-body .my-assignment-card:hover,
+.app-body .premium-dashboard-kpi:hover,
+.app-body .premium-dashboard-link-card:hover,
+.app-body .workflow-button:hover,
+.app-body .btn:hover,
+.app-body [class*="-button"]:hover {
+  transform: none !important;
+}
+
+/* details 열림 상태는 JavaScript 없이 브라우저 기본 상태로 표현합니다. */
+.app-body .premium-history-details[open] summary span {
+  transform: rotate(45deg);
+}
+
+@media (max-width: 760px) {
+  html {
+    font-size: 17px;
+  }
+
+  .app-body table {
+    font-size: 0.88rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-body *,
+  .app-body *::before,
+  .app-body *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 클래스 검색 요약 카드와 구형 헤더에도 실시간 배경 블러를 사용하지 않습니다. */
+.app-body .catalog-hero-count,
+.app-body .site-header {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 긴 업무 목록은 화면 근처 항목부터 렌더링해 초기 페인트와 스크롤 부담을 줄입니다. */
+@supports (content-visibility: auto) {
+  .app-body .compact-row,
+  .app-body .learner-course-row,
+  .app-body .communications-notification-item,
+  .app-body .my-assignment-card,
+  .app-body .assignment-card {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 84px;
+  }
+}

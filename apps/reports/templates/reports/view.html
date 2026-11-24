@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">{% endblock %}
+{% block extra_js %}<script src="{% static 'reports/js/report-card.js' %}?v=rc1120d" defer></script>{% endblock %}
+{% block content %}
+<header class="rc-toolbar rc-toolbar-view">
+ <div class="rc-toolbar-title">
+  <a href="{% url 'reports:list' %}">리포트카드</a>
+  <a href="{% url 'reports:batch' batch.pk %}">학생 목록</a>
+  <strong>{{ batch.group.title }}</strong>
+  <span>{{ form_label }} · {{ batch.title }}</span>
+  {% if batch.published_at %}<span class="rc-state is-public">공개 중</span>{% else %}<span class="rc-state">작성 중</span>{% endif %}
+ </div>
+ <nav class="rc-switch" aria-label="학생 이동">
+  {% if prev %}<a class="ux-btn" href="{% url 'reports:card-view' batch.pk prev.pk %}" aria-label="이전 학생 {{ prev.student_name }}"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-left"></use></svg></a>{% else %}<span class="ux-btn" aria-disabled="true"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-left"></use></svg></span>{% endif %}
+  <select data-rc-jump aria-label="학생 고르기">{% for c in cards %}<option value="{% url 'reports:card-view' batch.pk c.pk %}"{% if c.pk == card.pk %} selected{% endif %}>{{ c.student_name }} · {{ c.student_no }}</option>{% endfor %}</select>
+  {% if next %}<a class="ux-btn" href="{% url 'reports:card-view' batch.pk next.pk %}" aria-label="다음 학생 {{ next.student_name }}"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></a>{% else %}<span class="ux-btn" aria-disabled="true"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>{% endif %}
+  <span class="rc-position">{{ position }} / {{ cards|length }}</span>
+ </nav>
+ <div class="rc-actions">
+  <a class="ux-btn" href="{% url 'reports:card-print' batch.pk card.pk %}?print=1" target="_blank" rel="noopener">이 학생 인쇄</a>
+  <a class="ux-btn primary" href="{% url 'reports:card' batch.pk card.pk %}">수정</a>
+ </div>
+</header>
+<p class="rc-legend rc-view-note">학생·학부모{% if batch.published_at %}에게 지금 보이는{% else %}가 공개 뒤에 보게 될{% endif %} 모양입니다. 글 속 주소는 눌러서 열 수 있습니다.</p>
+<div class="rc-stage">{% include "reports/_card.html" %}</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="acct-page">
+  <header class="acct-head">
+    <div class="acct-head-text">
+      
+      <h1>인트라넷 반영 목록</h1>
+      <p>학생이 첫 로그인 때 적은 이메일·DSG ID입니다. EduTrack은 인트라넷 DB를 고치지 않으므로, 인트라넷에 옮겨 넣은 뒤 '반영 완료'를 누르세요.</p>
+    </div>
+    <div class="acct-head-actions">
+      <a class="acct-btn" href="{% url 'operations:dashboard' %}">계정관리로</a>
+      {% if rows %}<a class="acct-btn is-primary" href="?format=csv">엑셀(CSV) 받기</a>{% endif %}
+    </div>
+  </header>
+  {% if rows %}
+  <form method="post" class="acct-sync">
+    {% csrf_token %}
+    <table class="acct-sync-table">
+      <thead><tr><th><span class="sr-only">고르기</span></th><th>학생번호</th><th>이름</th><th>아이디</th><th>이메일</th><th>DSG ID</th><th>입력한 때</th></tr></thead>
+      <tbody>
+        {% for row in rows %}{% with u=row.user %}
+        <tr>
+          <td><input type="checkbox" name="user" value="{{ u.pk }}" aria-label="{{ u.effective_name }} 반영 완료"></td>
+          <td>{{ row.student_no|default:"—" }}</td>
+          <td>{{ u.effective_name }}</td>
+          <td>{{ u.username }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.dsg_login_id|default:"없음" }}</td>
+          <td>{{ u.first_setup_at|date:"n/j H:i" }}</td>
+        </tr>
+        {% endwith %}{% endfor %}
+      </tbody>
+    </table>
+    <div class="acct-sync-foot"><button type="submit" class="acct-btn is-primary">고른 학생 반영 완료</button></div>
+  </form>
+  {% else %}
+  <p class="acct-sync-empty">인트라넷에 옮길 학생 정보가 없습니다.</p>
+  {% endif %}
+</div>
+{% endblock %}

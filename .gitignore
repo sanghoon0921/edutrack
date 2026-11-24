@@ -1,0 +1,26 @@
+# 파이썬
+.venv/
+__pycache__/
+*.py[cod]
+*.log
+
+# 이 PC에만 있는 데이터(DB·업로드 파일) - 절대 git에 올리지 않음
+/data/
+/staticfiles/
+/media/
+*.sqlite3
+*.sqlite3-*
+
+# 비밀 설정
+.env
+.env.*
+!.env.example
+
+# 편집기·OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Claude 작업 임시 파일
+.superpowers/

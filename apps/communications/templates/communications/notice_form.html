@@ -1,0 +1,19 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_js %}<script src="{% static 'content_editor/js/rich-paste-editor.js' %}" defer></script>{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="ux-editor workflow-form" data-compact-form>{% csrf_token %}
+<header class="ux-editor-toolbar"><h1>{% if form_mode == 'create' %}공지 등록{% else %}공지 수정{% endif %}</h1><div class="ux-actions"><a class="ux-btn" href="{% url 'communications:notice-manage' %}">취소</a><button type="submit" class="ux-btn primary">{% if form_mode == 'create' %}공지 등록{% else %}변경사항 저장{% endif %}</button></div></header>
+{{ form.non_field_errors }}
+<div class="ux-editor-columns ux-notice-columns"><section class="ux-editor-main">
+{% include 'components/compact_field.html' with field=form.title %}
+{% include 'components/compact_field.html' with field=form.content %}
+{% include 'components/publication_note.html' %}
+</section><aside class="ux-editor-students">
+{% include 'components/compact_field.html' with field=form.category %}{% include 'components/compact_field.html' with field=form.group %}{% include 'components/compact_field.html' with field=form.audiences %}
+{% include 'components/compact_field.html' with field=form.is_pinned %}
+<details class="ux-options" {% if form.errors %}open{% endif %}><summary>첨부파일·본문 이미지</summary>
+{% include 'components/compact_field.html' with field=form.attachments %}{% include 'components/compact_field.html' with field=form.inline_images %}
+{% if notice and notice.attachments.all %}<section class="upload-existing"><h3>기존 첨부파일</h3>{% for item in notice.attachments.all %}<label><input type="checkbox" name="remove_attachment_ids" value="{{ item.pk }}"><span>{{ item.original_name }} <small>삭제하려면 선택</small></span></label>{% endfor %}</section>{% endif %}
+{% if notice and notice.inline_images.all %}<section class="upload-existing"><h3>기존 본문 이미지</h3>{% for item in notice.inline_images.all %}<label><input type="checkbox" name="remove_inline_image_ids" value="{{ item.pk }}"><span>[[image:{{ forloop.counter }}]] · {{ item.original_name }} <small>삭제하려면 선택</small></span></label>{% endfor %}</section>{% endif %}
+</details><details class="ux-options"><summary>본문 이미지 넣는 방법</summary><p>캡처·복사한 사진은 본문에서 Ctrl+V로 붙여넣으세요. 파일로 올린 본문 이미지는 <code>[[image:1]]</code> 토큰으로 삽입할 수 있습니다.</p></details>
+</aside></div></form>{% endblock %}

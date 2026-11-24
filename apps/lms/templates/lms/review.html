@@ -1,0 +1,72 @@
+{% extends "lms/base.html" %}{% load static %}
+{% block extra_js %}<script src="{% static 'lms/js/grader.js' %}?v=grader1" defer></script>{% if document_data %}<script src="{% static 'lms/js/annotation.js' %}?v=1117" defer></script>{% endif %}{% endblock %}
+{% block lms_content %}
+<div class="grader">
+ <header class="grader-head">
+  <div class="grader-title"><h1>{{ recipient.student_name }} · 제출물 검토</h1><p>{{ assignment.title }} · 배점 {{ assignment.points }}점 · 제출 {{ submission.submitted_at|date:'Y.m.d H:i' }}</p></div>
+  {% if switcher %}
+  <nav class="grader-switcher" aria-label="학생 이동">
+   {% if switcher.prev %}<a class="ann-icon-btn" href="{{ switcher.prev }}" aria-label="이전 학생" title="이전 학생"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></a>{% else %}<span class="ann-icon-btn is-disabled" aria-hidden="true"><svg class="et-icon"><use href="#i-chevron-left"/></svg></span>{% endif %}
+   <select aria-label="제출한 학생으로 이동" data-grader-jump>{% for option in switcher.options %}<option value="{{ option.url }}"{% if option.selected %} selected{% endif %}>{{ option.label }}</option>{% endfor %}</select>
+   {% if switcher.next %}<a class="ann-icon-btn" href="{{ switcher.next }}" aria-label="다음 학생" title="다음 학생"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-right"/></svg></a>{% else %}<span class="ann-icon-btn is-disabled" aria-hidden="true"><svg class="et-icon"><use href="#i-chevron-right"/></svg></span>{% endif %}
+   <span class="grader-progress">채점 <b>{{ switcher.graded }}</b>/{{ switcher.total }}명 · {{ switcher.position }}번째</span>
+  </nav>
+  <a class="lms-btn" href="{% url 'lms:gradebook' %}?item=a:{{ assignment.pk }}">이 과제 성적표</a>
+  {% endif %}
+ </header>
+
+ {% if files|length > 1 %}
+ <nav class="grader-files" aria-label="제출 파일">{% for file in files %}<a href="?file={{ file.source|urlencode }}"{% if file.selected %} aria-current="page"{% endif %}><svg class="et-icon" aria-hidden="true"><use href="#i-file"/></svg>{{ file.label }}{% if file.document %}<small>첨삭 {{ file.document.annotations|length }}</small>{% endif %}</a>{% endfor %}</nav>
+ {% endif %}
+
+ <div class="grader-body">
+  <section class="grader-main" aria-label="제출 파일">
+   {% if document_data %}
+    {% include 'lms/_annotator.html' %}
+   {% elif selected_file %}
+    <div class="grader-open">
+     <p class="grader-open-name"><svg class="et-icon" aria-hidden="true"><use href="#i-file"/></svg>{{ selected_file.label }}</p>
+     {% if staff %}
+      <form method="post" action="{% url 'lms:prepare-submission' submission.pk %}"{% if selected_file.instant %} data-grader-open{% endif %}>{% csrf_token %}<input type="hidden" name="source" value="{{ selected_file.source }}"><input type="hidden" name="return" value="review"><button class="lms-btn primary">이 파일 열어 첨삭하기</button></form>
+      <p class="lms-muted" data-grader-open-note>{% if selected_file.instant %}문서를 첨삭 화면으로 여는 중입니다…{% else %}Word·PPT·Excel 파일은 서버 PC에 LibreOffice가 있어야 바로 열립니다. 지금은 위 버튼을 누르면 PDF로 저장한 미리보기를 올릴 수 있습니다.{% endif %}</p>
+     {% elif selected_file.source == 'text' %}
+      <div class="lms-copy">{{ submission.text_answer|linebreaksbr }}</div>
+     {% else %}
+      <p class="lms-muted">아직 이 파일에 첨삭이 없습니다.</p>
+     {% endif %}
+     {% if selected_file.download %}<a class="lms-btn" href="{{ selected_file.download }}">원본 내려받기</a>{% endif %}
+    </div>
+   {% else %}
+    <div class="grader-open"><p class="lms-muted">제출한 파일이나 답안이 없습니다.</p></div>
+   {% endif %}
+  </section>
+
+  <aside class="grader-side">
+   {% if staff %}
+   <form method="post" class="grader-form" id="grader-form" data-grader-form>{% csrf_token %}{{ form.version }}
+    {{ form.non_field_errors }}
+    <div class="grader-score"><label for="{{ form.score.id_for_label }}">점수</label>{{ form.score }}<span>/ {{ assignment.points }}</span></div>
+    {{ form.score.errors }}
+    <label for="{{ form.feedback.id_for_label }}">총평</label>{{ form.feedback }}{{ form.feedback.errors }}
+    {% if document_data and document_data.editable %}<input type="hidden" name="document" value="{{ document_data.documentId }}"><input type="hidden" name="document_revision" value="{{ document_data.revision }}"><input type="hidden" name="annotations" value="">{% endif %}
+    <button class="lms-btn primary grader-submit">의견 제출</button>
+    <p class="lms-muted">첨삭·점수·총평을 함께 저장하고 학생·연결 학부모에게 공개합니다.{% if submission.feedback_at %} 마지막 제출 {{ submission.feedback_at|date:'n.j H:i' }}{% endif %}</p>
+   </form>
+   {% else %}
+   <section class="grader-result">
+    <h2>점수·강사 피드백</h2>
+    <p class="lms-score">{% if submission.score is not None %}{{ submission.score }} / {{ assignment.points }}점{% else %}점수 미입력{% endif %}</p>
+    <div class="lms-copy">{{ submission.feedback|default:'아직 등록된 피드백이 없습니다.'|linebreaksbr }}</div>
+    {% if submission.feedback_at %}<small>{{ submission.feedback_at|date:'Y.m.d H:i' }}</small>{% endif %}
+   </section>
+   {% endif %}
+   {% if document_data %}
+   <section class="ann-notes" aria-labelledby="ann-notes-title"><h2 id="ann-notes-title">이 쪽 첨삭 <span id="ann-count"></span></h2>{% if document_data.editable %}<p class="lms-muted ann-hint">도구를 고르고 문서를 누르거나 드래그하면 여기에 설명 칸이 생깁니다.</p>{% endif %}<div id="ann-list"></div></section>
+   {% endif %}
+   {% if history %}
+   <details class="grader-history"><summary>이전 제출 첨삭 {{ history|length }}개</summary>{% for doc in history %}<a href="{% url 'lms:document' doc.pk %}">{{ doc.original_name }} · 첨삭 {{ doc.annotations|length }}개</a>{% endfor %}</details>
+   {% endif %}
+  </aside>
+ </div>
+</div>
+{% endblock %}

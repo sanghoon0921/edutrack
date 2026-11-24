@@ -1,0 +1,35 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">{% endblock %}
+{% block extra_js %}<script src="{% static 'reports/js/report-card.js' %}?v=rc1120d" defer></script>{% endblock %}
+{% block content %}
+<form method="post" class="rc-editor" data-rc-editor>
+ {% csrf_token %}
+ <header class="rc-toolbar">
+  <div class="rc-toolbar-title">
+   <a href="{% url 'reports:list' %}">리포트카드</a>
+   <a href="{% url 'reports:batch' batch.pk %}">학생 목록</a>
+   <a href="{% url 'reports:card-view' batch.pk card.pk %}">보기</a>
+   <strong>{{ batch.group.title }}</strong>
+   <span>{{ form_label }} · {{ batch.title }}</span>
+  </div>
+  <nav class="rc-switch" aria-label="학생 이동">
+   {% if prev %}<a class="ux-btn" href="{% url 'reports:card' batch.pk prev.pk %}" aria-label="이전 학생 {{ prev.student_name }}"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-left"></use></svg></a>{% else %}<span class="ux-btn" aria-disabled="true"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-left"></use></svg></span>{% endif %}
+   <select data-rc-jump aria-label="학생 고르기">{% for c in cards %}<option value="{% url 'reports:card' batch.pk c.pk %}"{% if c.pk == card.pk %} selected{% endif %}>{{ c.student_name }} · {{ c.student_no }}</option>{% endfor %}</select>
+   {% if next %}<a class="ux-btn" href="{% url 'reports:card' batch.pk next.pk %}" aria-label="다음 학생 {{ next.student_name }}"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></a>{% else %}<span class="ux-btn" aria-disabled="true"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg></span>{% endif %}
+   <span class="rc-position">{{ position }} / {{ cards|length }}</span>
+  </nav>
+  <div class="rc-actions">
+   {% if True %}<button class="ux-btn" type="submit" formaction="{% url 'reports:refresh' batch.pk %}" name="card" value="{{ card.pk }}" title="저장한 뒤 학생 정보·과제·점수를 다시 불러옵니다. 직접 고친 칸과 코멘트는 그대로 둡니다.">데이터 다시 불러오기</button>{% endif %}
+   {% if spec.mock == 'sat' %}<a class="ux-btn" href="{% url 'reports:mocks' batch.pk %}?card={{ card.pk }}" title="이번 칸·지난 칸에 넣을 DSG 모의고사를 고릅니다.">모의고사 고르기</a>{% endif %}
+   <a class="ux-btn" href="{% url 'reports:card-print' batch.pk card.pk %}?print=1" target="_blank" rel="noopener">이 학생 인쇄</a>
+   <a class="ux-btn" href="{% url 'reports:print' batch.pk %}?print=1" target="_blank" rel="noopener">반 전체 인쇄</a>
+   <button class="ux-btn" type="submit" name="save" value="1">저장</button>
+   <button class="ux-btn primary" type="submit" name="next" value="1">{% if next %}저장 후 다음 학생{% else %}저장{% endif %}</button>
+  </div>
+ </header>
+ {% if scope_note %}<p class="rc-legend rc-scope-note">이 카드에서 <strong>{{ scope_note }}</strong> 쓸 수 있습니다. 나머지 칸은 관리자가 씁니다.</p>{% endif %}
+ {% if auto_locked %}<p class="rc-legend rc-auto-legend"><span class="rc-text" data-v="PASS">PASS</span> <span class="rc-text" data-v="FAIL">FAIL</span> <span class="rc-text" data-v="녹화">녹화</span> <span class="rc-text" data-v="이월">이월</span> 처럼 색이 있는 글자는 인트라넷 출결·DSG·EduTrack 과제에서 <strong>자동으로 채운 칸</strong>입니다. 여기서 고치지 않고, 원본이 바뀌면 <strong>데이터 다시 불러오기</strong>로 맞춥니다. 수업 태도와 코멘트, 비어 있는 칸만 입력하세요.</p>{% endif %}
+ <p class="rc-legend"><span class="rc-swatch" aria-hidden="true"></span>노란 칸은 <strong>반 공통</strong>입니다. 한 번 쓰면 이 반 모든 학생 카드에 들어갑니다. 글 속 <code>{이름}</code> <code>{반}</code> <code>{강사}</code>는 인쇄할 때 실제 값으로 바뀝니다.</p>
+ <div class="rc-stage">{% include "reports/_card.html" %}</div>
+</form>
+{% endblock %}

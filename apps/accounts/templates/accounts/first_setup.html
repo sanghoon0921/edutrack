@@ -1,0 +1,47 @@
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EduTrack 첫 로그인 설정</title>
+  <link rel="stylesheet" href="{% static 'css/layers/00-base.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/50-intranet-theme.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/80-readability.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'accounts/css/first-setup.css' %}?v=1117">
+</head>
+<body class="fs-body">
+  <main class="fs-shell">
+    <p class="fs-brand">VETERANS EDU <span>EduTrack</span></p>
+    <section class="fs-card" aria-labelledby="fs-title">
+      {% if staff_mode %}
+      <h1 id="fs-title">처음 오셨네요, {{ request.user.effective_name }}님</h1>
+      <p class="fs-lead">받은 비밀번호를 내 비밀번호로 바꿔 주세요. 학생 개인정보를 다루는 계정이라 8자 이상, 영문과 숫자를 모두 넣어야 합니다.</p>
+      {% else %}
+      <h1 id="fs-title">처음 오셨네요, {{ request.user.effective_name }} 학생</h1>
+      <p class="fs-lead">관리자가 정해 준 비밀번호를 내 비밀번호로 바꾸고, 이메일과 DSG ID를 적어 주세요. 한 번만 하면 됩니다.</p>
+      {% endif %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="fs-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <fieldset>
+          <legend>비밀번호 바꾸기</legend>
+          <label for="{{ form.new_password1.id_for_label }}">{{ form.new_password1.label }}</label>{{ form.new_password1 }}{{ form.new_password1.errors }}
+          <small>8자 이상{% if staff_mode %}, 영문과 숫자를 모두 넣은{% else %}, 다른 사람이 짐작하기 어려운{% endif %} 비밀번호</small>
+          <label for="{{ form.new_password2.id_for_label }}">{{ form.new_password2.label }}</label>{{ form.new_password2 }}{{ form.new_password2.errors }}
+        </fieldset>
+        {% if not staff_mode %}<fieldset>
+          <legend>연락처와 DSG</legend>
+          <label for="{{ form.email.id_for_label }}">{{ form.email.label }} <b>필수</b></label>{{ form.email }}{{ form.email.errors }}
+          <small>{{ form.email.help_text }}</small>
+          <label for="{{ form.dsg_login_id.id_for_label }}">{{ form.dsg_login_id.label }}</label>{{ form.dsg_login_id }}{{ form.dsg_login_id.errors }}
+          <small>{{ form.dsg_login_id.help_text }}</small>
+          <label class="fs-check">{{ form.no_dsg }} {{ form.no_dsg.label }}</label>
+        </fieldset>{% endif %}
+        <button type="submit" class="fs-submit">{% if staff_mode %}비밀번호 바꾸고 시작하기{% else %}저장하고 시작하기{% endif %}</button>
+      </form>
+      <form method="post" action="{% url 'logout' %}" class="fs-logout">{% csrf_token %}<button type="submit">로그아웃</button></form>
+    </section>
+  </main>
+</body>
+</html>

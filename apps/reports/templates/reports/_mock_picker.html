@@ -1,0 +1,25 @@
+{# SAT 모의고사(DSG) 고르는 표(11/20): 시험마다 종류·응시일(반 학생들이 본 날)·응시 학생 수, 이번 칸·지난 칸 체크 #}
+<div class="rc-mock-pick">
+ {% with rows=form.mock_rows %}
+ {% if rows %}
+ <input type="search" class="rc-mock-filter" placeholder="시험 이름으로 찾기 (예: TEST06, 26FW)" aria-label="시험 이름으로 찾기" data-rc-mock-filter>
+ <div class="rc-mock-scroll">
+  <table class="rc-mock-table">
+   <thead><tr><th scope="col">시험</th><th scope="col">종류</th><th scope="col">응시일</th><th scope="col"><span class="rc-mock-wide">응시 학생</span><span class="rc-mock-narrow" aria-hidden="true">인원</span></th><th scope="col">이번<span class="rc-mock-wide"> 칸</span></th><th scope="col">지난<span class="rc-mock-wide"> 칸</span></th></tr></thead>
+   <tbody>
+    {% for row in rows %}<tr data-rc-mock-row="{{ row.name|lower }}">
+     <th scope="row">{{ row.name }}</th>
+     <td>{{ row.kind|default:"-" }}</td>
+     <td>{{ row.dates|default:"-" }}</td>
+     <td>{% if row.count %}{{ row.count }}명{% else %}-{% endif %}</td>
+     <td><label class="rc-mock-check"><input type="checkbox" name="mock_exams" value="{{ row.id }}"{% if row.this %} checked{% endif %}><span class="sr-only">{{ row.name }} 이번 칸</span></label></td>
+     <td><label class="rc-mock-check"><input type="checkbox" name="mock_prev" value="{{ row.id }}"{% if row.prev %} checked{% endif %}><span class="sr-only">{{ row.name }} 지난 칸</span></label></td>
+    </tr>{% endfor %}
+   </tbody>
+  </table>
+ </div>
+ {% else %}<small class="ux-hint">이 반 학생들이 본 DSG 모의고사가 없습니다.</small>{% endif %}
+ {% endwith %}
+ <small class="ux-hint">{{ form.mock_exams.help_text }}</small>
+ {{ form.mock_exams.errors }}{{ form.mock_prev.errors }}
+</div>

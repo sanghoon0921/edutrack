@@ -1,0 +1,25 @@
+{% extends "lms/base.html" %}{% load pager_tags %}{% load static %}{% block extra_js %}<script src="{% static 'lms/js/message-summary.js' %}?v=1119b" defer></script>{% endblock %}
+{% block lms_content %}<div class="ux-chat-shell ux-chat-inbox" data-chat-page>
+<aside class="ux-chat-sidebar" data-message-summary data-list-url="{% url 'lms:inbox' %}" data-url="{{ feed_url }}" data-filter="{{ filter_query }}">
+ <header class="ux-section-head"><h1>메시지</h1><a class="ux-btn primary" href="{% url 'lms:new-conversation' %}">＋ 새 대화</a></header>
+ {% include "lms/_chat_filter.html" %}
+ <div class="ux-chat-room-list" data-message-summary-list>{% for row in rows %}<a class="home-message-row" href="{% url 'lms:conversation' row.conv.pk %}{{ filter_keep }}" data-conversation-id="{{ row.conv.pk }}"><div class="home-message-main"><strong>{{ row.label }}</strong><p>{{ row.preview|default:'대화를 시작해 보세요.'|truncatechars:100 }}</p><time>{{ row.conv.updated_at|date:'m.d H:i' }}</time></div>{% if row.unread %}<span class="home-pill is-unread">새 글</span>{% endif %}</a>{% empty %}<p class="ux-hint">{% if q or selected_group %}조건에 맞는 대화가 없습니다.{% else %}새 대화에서 상대를 선택하세요.{% endif %}</p>{% endfor %}</div>
+ <p class="ux-hint" data-message-summary-status role="status"></p><div data-live-pagination></div>
+ {% pager page label="대화 쪽 이동" %}
+</aside>
+{% if class_rows %}
+<section class="ux-chat-main chat-class-board" aria-labelledby="chat-class-title">
+ <header class="chat-board-head"><div><h2 id="chat-class-title">반별 대화</h2><p>반 단체방을 열거나, 반 학생 중 몇 명을 골라 새 그룹 대화를 시작합니다.</p></div></header>
+ <div class="chat-class-scroll"><table class="chat-class-table">
+  <thead><tr><th scope="col">반</th><th scope="col" class="num">학생</th><th scope="col"><span class="sr-only">대화 시작</span></th></tr></thead>
+  <tbody>{% for g in class_rows %}<tr{% if selected_group and g.pk == selected_group.pk %} class="is-selected"{% endif %}>
+   <th scope="row"><a href="?group={{ g.pk }}" title="이 반 대화만 보기">{{ g.title }}</a>{% if g.term %}<small>{{ g.term }}</small>{% endif %}</th>
+   <td class="num">{{ g.n_students }}명</td>
+   <td class="chat-class-btns">{% if g.pk in room_group_ids %}<a class="ux-btn" href="{% url 'lms:class-chat' g.pk %}">단체방</a>{% endif %}<a class="ux-btn primary" href="{% url 'lms:new-conversation' %}?group={{ g.pk }}">학생 골라 대화</a></td>
+  </tr>{% endfor %}</tbody>
+ </table></div>
+</section>
+{% else %}
+<section class="ux-chat-empty"><strong>대화를 선택하세요</strong><p>왼쪽 목록에서 대화를 고르거나 새 대화를 시작하세요.</p><a class="ux-btn primary" href="{% url 'lms:new-conversation' %}">대화 시작</a></section>
+{% endif %}
+</div>{% endblock %}

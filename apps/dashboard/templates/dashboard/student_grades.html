@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load assessment_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/components/learning-overview.css' %}?v=20261008-r2">
+{% endblock %}
+
+{% block content %}
+<section class="learner-page-hero">
+  <div>
+    <h1>{% if is_parent %}자녀 성적{% else %}내 성적{% endif %}</h1>
+    <p>
+      {% if student %}{{ student.name }} · 학생번호 {{ student.student_id }}{% else %}연결된 학생의 DSG 시험 결과와 점수 변화를 확인합니다.{% endif %}
+    </p>
+  </div>
+  {% if student %}<span class="learner-identity-chip">{{ student.school|default:"학교 미입력" }}</span>{% endif %}
+</section>
+
+{% if unlinked_account %}
+  <section class="learner-empty-state">
+    <strong>연결된 학생 정보가 없습니다.</strong>
+    <p>{% if request.user.role == "ADMIN" %}학생 상세 화면에서 테스트할 학생을 먼저 선택해 주세요.{% else %}관리자에게 학생 계정 연결을 요청해 주세요.{% endif %}</p>
+  </section>
+{% elif linked_student_missing %}
+  <section class="learner-empty-state">
+    <strong>연결된 학생 정보를 찾을 수 없습니다.</strong>
+    <p>학생번호 {{ student_id }}의 인트라넷 등록 상태를 확인해 주세요.</p>
+  </section>
+{% else %}
+  <section class="learner-score-note">
+    <strong>DSG 시험 성적</strong>
+    <p>수업 이력과 관계없이 이 학생에게 연결된 완료 DSG 시험 결과만 표시합니다.</p>
+  </section>
+  {% student_score_overview student_id %}
+{% endif %}
+{% endblock %}

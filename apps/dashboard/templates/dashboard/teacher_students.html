@@ -1,0 +1,35 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/compact-pages.css' %}?v=1110nv3">{% endblock %}
+{% block content %}
+<div class="et-v5-shell et-v5-teacher-page">
+  <section class="et-v5-page-heading">
+    <div>
+      <h1>담당 학생</h1>
+      <p>현재 등록된 담당 학생을 확인하고 학생 상세로 이동합니다.</p>
+    </div>
+    {% if teacher_scope %}<a class="et-v5-manage-link" href="{% url 'operations:teacher-student-assignment' %}">학생 추가·제외</a>{% endif %}
+  </section>
+
+  <section class="et-v5-teacher-panel">
+    <div class="et-v5-teacher-panel-header">
+      <div><h2>등록 학생 {{ assigned_count }}명</h2><p>학생 이름을 누르면 기본정보·수업·출결을 확인할 수 있습니다.</p></div>
+      {% if teacher_scope %}<a class="et-v5-manage-link" href="{% url 'students:list' %}">검색 목록 열기</a>{% endif %}
+    </div>
+    {% if assigned_students %}
+      <div class="et-v5-assigned-summary">
+        {% for student in assigned_students %}
+          <a class="et-v5-assigned-summary-row" href="{% url 'students:detail' student.student_no %}">
+            <div><strong>{{ student.student_name }}</strong><small>학생번호 {{ student.student_no }}</small></div>
+            <span>선택 →</span>
+          </a>
+        {% endfor %}
+      </div>
+    {% elif teacher_scope %}
+      <div class="et-v5-empty-row">아직 담당 학생이 없습니다. 학생 추가·제외 화면에서 직접 등록하세요.</div>
+    {% else %}
+      <div class="et-v5-empty-row">강사 계정에서 담당 학생 목록을 확인할 수 있습니다.</div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

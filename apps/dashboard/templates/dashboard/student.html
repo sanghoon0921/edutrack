@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_js %}<script src="{% static 'dashboard/js/home-insights.js' %}?v=1124a" defer></script>{% if not is_parent %}<script src="{% static 'dashboard/js/student-home.js' %}?v=portal2" defer></script>{% endif %}{% endblock %}
+{% block content %}
+<div class="portal-home learner-home{% if is_parent %} is-parent{% endif %}" data-student-home>
+ <header class="lh-hero">
+  <div class="lh-hero-copy">
+   <h1>{% if is_parent %}{{ display_name }}님, 자녀의 수업과 학습 현황입니다.{% else %}{{ display_name }}님, 오늘도 반가워요.{% endif %}</h1>
+   <p>{{ student_home.today|date:'n월 j일 l' }} · 오늘 마감 {{ student_home.due_count }}개{% if student_home.room_count %} · 듣는 반 {{ student_home.room_count }}개{% endif %}</p>
+  </div>
+  <nav class="lh-actions" aria-label="바로 가기">
+   {% if is_parent %}
+    <a class="lh-action" href="{% url 'students:my-detail' %}">자녀 정보</a>
+    <a class="lh-action" href="{% url 'student_attendance' %}">출결</a>
+    <a class="lh-action" href="{% url 'billing:my-history' %}">수납내역</a>
+   {% else %}
+    <a class="lh-action" href="{% url 'lms:rooms' %}">내 반</a>
+    <a class="lh-action" href="{% url 'assignments:my' %}">내 학습</a>
+   {% endif %}
+   <a class="lh-action is-primary" href="{% url 'reports:my' %}">리포트카드</a>
+  </nav>
+ </header>
+ {% if not student_home.linked %}<p class="home-warning">학생 연결이 필요합니다. 담당자에게 계정 연결을 요청하세요.</p>{% endif %}
+
+ <section class="home-insights" data-home-insights data-url="{% url 'home-insights' %}" aria-busy="true" aria-live="polite" aria-label="학습 한눈에 보기">
+  <div class="hi-grid" aria-hidden="true">
+   <div class="hi-tile hi-exam is-skeleton"><span></span><span></span><span></span></div>
+   <div class="hi-tile is-skeleton"><span class="hi-skel-ring"></span></div>
+   <div class="hi-tile is-skeleton"><span class="hi-skel-ring"></span></div>
+   <div class="hi-tile is-skeleton"><span class="hi-skel-ring"></span></div>
+  </div>
+  <p class="sr-only">시험·출석·과제 현황을 불러오는 중입니다.</p>
+ </section>
+
+ <div class="portal-priority-grid{% if is_parent %} is-two{% endif %}">
+  {% include 'dashboard/portal_notices.html' with data=student_home %}
+  {% if not is_parent %}
+   {% include 'dashboard/portal_zoom.html' with data=student_home %}
+   {% include 'dashboard/portal_messages.html' with data=student_home %}
+  {% else %}
+   <section class="portal-card lh-menu" aria-labelledby="lh-menu-title">
+    <div class="portal-card-head"><h2 id="lh-menu-title">자녀 학습 메뉴</h2></div>
+    <nav class="lh-menu-list">
+     <a href="{% url 'student_classes' %}"><strong>현재 수업</strong><small>수강 과정과 시간표</small></a>
+     <a href="{% url 'student_grades' %}"><strong>성적</strong><small>시험 점수와 변화</small></a>
+     <a href="{% url 'assignments:my' %}"><strong>학습</strong><small>과제 확인과 제출 현황</small></a>
+     <a href="{% url 'lms:gradebook' %}"><strong>성적·제출현황</strong><small>과제·퀴즈 점수와 피드백</small></a>
+     <a href="{% url 'billing:my-history' %}"><strong>수납내역</strong><small>수업별 등록·환불·이월</small></a>
+     <a href="{% url 'communications:notice-list' %}"><strong>공지사항</strong><small>학원 공지와 반 공지</small></a>
+    </nav>
+   </section>
+  {% endif %}
+ </div>
+
+ <div class="portal-today-grid{% if is_parent %} is-one{% endif %}">
+  {% if not is_parent %}
+  <section class="portal-card" id="home-today"><div class="portal-card-head"><h2>오늘 일정 <span class="portal-unread-chip" id="home-class-count">—</span></h2><a href="{% url 'student_classes' %}">내 수업 전체</a></div>
+   <div class="portal-card-list portal-schedule-list" data-home-schedule data-url="{{ student_home.schedule_url }}" aria-busy="true"><p class="portal-empty">오늘 수업을 확인하고 있습니다…</p></div>
+   <div class="home-panel-foot"><small data-schedule-note>등록된 수업 계획을 확인합니다.</small><button type="button" class="home-text-button" data-schedule-retry>다시 확인</button></div>
+  </section>
+  {% endif %}
+  <section class="portal-card" id="home-deadlines"><div class="portal-card-head"><h2>오늘 마감 <span class="portal-unread-chip">{{ student_home.due_count }}</span></h2><a href="{% url 'assignments:my' %}">{% if is_parent %}학습{% else %}내 학습{% endif %}</a></div>
+   <div class="portal-card-list">{% for item in student_home.deadlines %}<a class="home-deadline" href="{{ item.url }}"><time>{{ item.due_at|date:'H:i' }}</time><div><small>{{ item.kind }}</small><strong>{{ item.title }}</strong></div><span class="home-pill">{{ item.label }}</span></a>{% empty %}<p class="portal-empty">오늘 마감하는 과제·퀴즈가 없습니다.</p>{% endfor %}</div>
+   {% if student_home.deadlines_truncated %}<small class="portal-hint">일부 항목만 표시됩니다. {% if is_parent %}학습{% else %}내 학습{% endif %}에서 확인하세요.</small>{% endif %}
+  </section>
+ </div>
+</div>
+{% endblock %}

@@ -1,0 +1,355 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/components/learning-overview.css' %}?v=20261008-r2">
+{% endblock %}
+
+{% block content %}
+<section
+  class="premium-attendance-hero"
+  data-reveal
+>
+  <div class="premium-attendance-copy">
+    <a
+      class="premium-back-link"
+      href="{% if request.user.role == 'STUDENT' or request.user.role == 'PARENT' %}{% url 'student_attendance' %}{% else %}{% url 'students:detail' student.student_id %}{% endif %}"
+    >
+      ← {% if request.user.role == 'STUDENT' or request.user.role == 'PARENT' %}출결 수업 목록{% else %}학생 상세{% endif %}
+    </a>
+
+    <h1>{{ course.class_name }}</h1>
+    <p>
+      {{ student.name }}
+      · {{ course.teacher_names|default:"강사 미지정" }}
+    </p>
+  </div>
+
+  <div class="premium-rate-orbit">
+    <div
+      class="premium-rate-ring"
+      data-ring-value="{% if metrics.attendance_rate is not None %}{{ metrics.attendance_rate|floatformat:0 }}{% else %}0{% endif %}"
+    >
+      <div>
+        <span>현재 출석률</span>
+        <strong>
+          {% if metrics.attendance_rate is not None %}
+            {{ metrics.attendance_rate|floatformat:1 }}%
+          {% else %}
+            —
+          {% endif %}
+        </strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if course_mode == "history" %}
+<section class="learner-history-notice">
+  <span>지난 수업</span>
+  <div>
+    <strong>완료된 수업의 출결 기록입니다.</strong>
+    <p>{{ course.term_name|default:"과거 수업" }} · {{ course.display_status|default:"종료" }}</p>
+  </div>
+</section>
+{% endif %}
+
+{% if has_attendance_records %}
+<section
+  class="premium-attendance-dashboard"
+  data-reveal
+  data-reveal-delay="1"
+>
+  <article class="premium-achievement-panel">
+    <div>
+      <span>전체 출석 달성률</span>
+      <strong>
+        {% if metrics.overall_achievement_rate is not None %}
+          {{ metrics.overall_achievement_rate|floatformat:1 }}%
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <p>
+        앞으로 들을 예정 회차까지 전체 계획에 포함한 값입니다.
+      </p>
+    </div>
+
+    <div class="premium-progress-track is-large">
+      <span
+        data-progress-value="{% if metrics.overall_achievement_rate is not None %}{{ metrics.overall_achievement_rate|floatformat:0 }}{% else %}0{% endif %}"
+      ></span>
+    </div>
+
+    <div class="premium-achievement-meta">
+      <span>
+        인정 {{ summary.recognized_count }}회
+      </span>
+      <span>
+        전체 {{ summary.scheduled_count }}회
+      </span>
+      <span>
+        예정 {{ summary.upcoming_count }}회
+      </span>
+    </div>
+  </article>
+
+  <div class="premium-status-grid">
+    <article class="is-present">
+      <span>출석</span>
+      <strong>{{ summary.present_count }}</strong>
+    </article>
+
+    <article class="is-absent">
+      <span>결석</span>
+      <strong>{{ summary.absent_count }}</strong>
+    </article>
+
+    <article class="is-late">
+      <span>지각</span>
+      <strong>{{ summary.late_count }}</strong>
+    </article>
+
+    <details class="is-recorded premium-recorded-card" data-recorded-sends>
+      <summary>
+        <span>녹화</span>
+        <strong>{{ summary.recorded_count }}</strong>
+        {% if recorded_records %}<small>눌러서 녹화본 발송 일시 보기</small>{% endif %}
+      </summary>
+      <ul class="premium-recorded-list">
+        {% for record in recorded_records %}
+          <li><span>{{ record.lesson_date|date:"Y.m.d" }} 수업</span><strong>{% if record.recording_sent_at %}{{ record.recording_sent_at|date:"Y.m.d H:i" }} 발송{% else %}발송 전{% endif %}</strong></li>
+        {% empty %}
+          <li><span>녹화 회차가 없습니다.</span></li>
+        {% endfor %}
+      </ul>
+    </details>
+  </div>
+</section>
+
+{% if upcoming_groups %}
+  <section
+    class="premium-session-section"
+    data-reveal
+    data-reveal-delay="2"
+  >
+    <div class="premium-section-heading">
+      <div>
+        <h2>다가오는 수업</h2>
+        <p>
+          예정 회차는 과거 기록과 분리해 표시합니다.
+        </p>
+      </div>
+
+      <span class="premium-count-pill">
+        {{ summary.upcoming_count }}회 예정
+      </span>
+    </div>
+
+    <div class="premium-upcoming-strip">
+      {% for group in upcoming_groups %}
+        <article class="premium-day-card is-upcoming">
+          <div class="premium-day-header">
+            <div>
+              <span>
+                {% if group.lesson_date %}
+                  {{ group.lesson_date|date:"Y" }}
+                {% else %}
+                  —
+                {% endif %}
+              </span>
+              <strong>
+                {% if group.lesson_date %}
+                  {{ group.lesson_date|date:"m.d" }}
+                {% else %}
+                  미정
+                {% endif %}
+              </strong>
+            </div>
+
+            <span>{{ group.session_count }}회</span>
+          </div>
+
+          <div class="premium-day-sessions">
+            {% for record in group.records %}
+              <div class="premium-session-row">
+                <div>
+                  <strong>
+                    {{ record.lesson_type|default:"수업" }}
+                  </strong>
+                  <small>
+                    {{ record.time_summary|default:"시간 미정" }}
+                    · {{ record.lesson_way|default:"방식 미정" }}
+                  </small>
+                </div>
+
+                <span class="premium-session-status is-upcoming">
+                  예정
+                </span>
+              </div>
+            {% endfor %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}
+
+<section
+  class="premium-session-section"
+  data-reveal
+  data-reveal-delay="3"
+>
+  <div class="premium-section-heading">
+    <div>
+      <h2>출결 기록</h2>
+      <p>
+        같은 날짜의 여러 수업은 날짜 카드 하나에 묶었습니다.
+      </p>
+    </div>
+
+    <div class="premium-legend">
+      <span class="is-present">출석</span>
+      <span class="is-absent">결석</span>
+      <span class="is-late">지각</span>
+      <span class="is-recorded">녹화</span>
+    </div>
+  </div>
+
+  {% if visible_history_groups %}
+    <div class="premium-history-grid">
+      {% for group in visible_history_groups %}
+        <article class="premium-day-card is-{{ group.status_kind }}">
+          <div class="premium-day-header">
+            <div>
+              <span>
+                {% if group.lesson_date %}
+                  {{ group.lesson_date|date:"Y" }}
+                {% else %}
+                  —
+                {% endif %}
+              </span>
+              <strong>
+                {% if group.lesson_date %}
+                  {{ group.lesson_date|date:"m.d" }}
+                {% else %}
+                  미정
+                {% endif %}
+              </strong>
+            </div>
+
+            <span>{{ group.session_count }}회</span>
+          </div>
+
+          <div class="premium-day-sessions">
+            {% for record in group.records %}
+              <div class="premium-session-row">
+                <div>
+                  <strong>
+                    {{ record.lesson_type|default:"수업" }}
+                  </strong>
+                  <small>
+                    {{ record.time_summary|default:"시간 미정" }}
+                    · {{ record.lesson_way|default:"방식 미정" }}
+                  </small>
+                </div>
+
+                <span class="premium-session-status is-{{ record.status_kind }}">
+                  {{ record.attendance_label }}
+                </span>
+                {% if record.status_kind == "recorded" %}<small class="premium-recording-sent">{% if record.recording_sent_at %}녹화본 발송 {{ record.recording_sent_at|date:"m.d H:i" }}{% else %}녹화본 발송 전{% endif %}</small>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <section class="premium-empty-state">
+      <strong>아직 처리된 출결 기록이 없습니다.</strong>
+      <p>
+        예정 수업은 위의 다가오는 수업에서 확인할 수 있습니다.
+      </p>
+    </section>
+  {% endif %}
+</section>
+
+{% if older_history_groups %}
+  <details
+    class="premium-history-details"
+    data-reveal
+    data-reveal-delay="4"
+  >
+    <summary>
+      이전 출결 날짜 {{ older_history_count }}개 보기
+      <span>＋</span>
+    </summary>
+
+    <div class="premium-history-grid is-older">
+      {% for group in older_history_groups %}
+        <article class="premium-day-card is-{{ group.status_kind }}">
+          <div class="premium-day-header">
+            <div>
+              <span>
+                {% if group.lesson_date %}
+                  {{ group.lesson_date|date:"Y" }}
+                {% else %}
+                  —
+                {% endif %}
+              </span>
+              <strong>
+                {% if group.lesson_date %}
+                  {{ group.lesson_date|date:"m.d" }}
+                {% else %}
+                  미정
+                {% endif %}
+              </strong>
+            </div>
+
+            <span>{{ group.session_count }}회</span>
+          </div>
+
+          <div class="premium-day-sessions">
+            {% for record in group.records %}
+              <div class="premium-session-row">
+                <div>
+                  <strong>
+                    {{ record.lesson_type|default:"수업" }}
+                  </strong>
+                  <small>
+                    {{ record.time_summary|default:"시간 미정" }}
+                    · {{ record.lesson_way|default:"방식 미정" }}
+                  </small>
+                </div>
+
+                <span class="premium-session-status is-{{ record.status_kind }}">
+                  {{ record.attendance_label }}
+                </span>
+                {% if record.status_kind == "recorded" %}<small class="premium-recording-sent">{% if record.recording_sent_at %}녹화본 발송 {{ record.recording_sent_at|date:"m.d H:i" }}{% else %}녹화본 발송 전{% endif %}</small>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </details>
+{% endif %}
+
+<section
+  class="premium-footnote"
+  data-reveal
+>
+  <span>
+    현재 출석률은 처리 완료 회차만 계산합니다.
+  </span>
+  <span>
+    전체 출석 달성률은 예정 회차를 포함합니다.
+  </span>
+</section>
+{% else %}
+<section class="learner-empty-state is-prominent">
+  <strong>해당 수업의 출결 기록이 없습니다.</strong>
+  <p>수업 정보는 확인되지만 아직 표시할 출결 회차가 등록되지 않았습니다.</p>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "layouts/base.html" %}{% load pager_tags %}
+
+{% block content %}
+<section class="operations-page-hero" data-reveal>
+  <div>
+    <a class="operations-back-link" href="{% url 'operations:dashboard' %}">← 운영 관리</a>
+    <h1>계정 운영 기록</h1>
+    <p>계정 생성·수정·비밀번호·학생 연결 작업을 시간순으로 확인합니다.</p>
+  </div>
+</section>
+
+<section class="operations-filter-panel" data-reveal>
+  <form method="get" class="operations-audit-filter">
+    <input class="operations-input" type="search" name="q" value="{{ q }}" placeholder="처리자, 대상 계정 또는 작업 내용">
+    <select class="operations-select" name="action">
+      <option value="">전체 작업</option>
+      {% for value, label in actions %}
+        <option value="{{ value }}" {% if selected_action == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">검색</button>
+    <a href="{% url 'operations:audit-list' %}">초기화</a>
+  </form>
+</section>
+
+<section class="operations-audit-panel" data-reveal>
+  {% if page_obj.object_list %}
+    <div class="operations-audit-timeline">
+      {% for log in page_obj.object_list %}
+        <article>
+          <span class="operations-log-dot"></span>
+          <div class="operations-audit-main">
+            <div>
+              <strong>{{ log.get_action_display }}</strong>
+              <time>{{ log.created_at|date:"Y.m.d H:i:s" }}</time>
+            </div>
+            <p>{{ log.summary }}</p>
+            <small>
+              처리자: {{ log.actor.effective_name|default:"시스템" }}
+              {% if log.target_user %} · 대상: <a href="{% url 'operations:user-detail' log.target_user.pk %}">{{ log.target_user.effective_name }}</a>{% endif %}
+              {% if log.ip_address %} · IP: {{ log.ip_address }}{% endif %}
+            </small>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="operations-empty-state">
+      <strong>조건에 맞는 운영 기록이 없습니다.</strong>
+    </div>
+  {% endif %}
+
+  {% pager page_obj label="기록 쪽 이동" %}
+</section>
+{% endblock %}

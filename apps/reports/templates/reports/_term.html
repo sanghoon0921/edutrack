@@ -1,0 +1,39 @@
+{% load report_tags %}<div class="rc-term-band" aria-hidden="true"></div>
+<div class="rc-term-body">
+ <header class="rc-term-head">
+  <h2><span>{% include "reports/_title.html" %}</span>{{ spec.heading }}</h2>
+  {% include "reports/_brand.html" %}
+ </header>
+ <table class="rc-info">
+  <tr><th>이름</th><td>{% cell "d" "info" "name" %}</td></tr>
+  <tr><th>국가 / 학교</th><td>{% cell "d" "info" "region" %}</td></tr>
+  <tr><th>학년</th><td>{% cell "d" "info" "grade" %}</td></tr>
+  <tr><th>선생님</th><td>{% cell "s" "teacher" %}</td></tr>
+  <tr><th>수업명</th><td>{% cell "s" "class_name" %}</td></tr>
+  <tr><th>주차</th><td>{% cell "s" "weeks_label" %}</td></tr>
+  <tr><th>기간</th><td>{% cell "s" "period" %}</td></tr>
+ </table>
+
+ <section class="rc-section">
+  <h3 class="rc-tab">수업내용</h3>
+  <div class="rc-box">{% cell "s" "content" area=1 rows=6 placeholder="이번 기간 수업에서 다룬 내용 (반 학생 모두에게 같이 들어갑니다)" %}</div>
+ </section>
+
+ <section class="rc-section">
+  <h3 class="rc-tab">과제 제출</h3>
+  <table class="rc-grid rc-weeks">
+   {% for row in week_rows %}
+   <tr class="rc-grid-head"><th>{% if batch.course_class_id %}수업일{% else %}주차{% endif %}</th>{% for i, w in row %}<th>{% if w %}{{ w.label }}{% endif %}</th>{% endfor %}</tr>
+   <tr><th>제출여부</th>{% for i, w in row %}<td>{% if w %}{% cell "d" "weeks" i "status" cls="rc-center" choices=submit_choices %}{% endif %}</td>{% endfor %}</tr>
+   {% endfor %}
+  </table>
+ </section>
+
+ <section class="rc-section">
+  <h3 class="rc-tab">개별 코멘트</h3>
+  <table class="rc-comment">
+   <tr><th>개별 코멘트</th><td>{% cell "d" "comment" area=1 rows=8 placeholder="학부모님께 드리는 학생별 코멘트" %}</td></tr>
+   <tr><th>{{ last_label }}</th><td>{% cell "d" last_key area=1 rows=4 %}</td></tr>
+  </table>
+ </section>
+</div>

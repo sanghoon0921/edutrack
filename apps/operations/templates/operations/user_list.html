@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}{% load pager_tags %}
+
+{% block content %}
+<section class="workflow-page-hero" data-reveal>
+  <div><h1>사용자 관리</h1><p>계정 정보와 학생·강사 배정 범위를 관리합니다.</p></div>
+  <a class="workflow-button is-primary" href="{% url 'operations:user-create' %}">새 사용자 등록</a>
+</section>
+
+<section class="workflow-filter-panel" data-reveal>
+  <form method="get" class="workflow-filter-grid">
+    {% for field in filter_form %}
+      <div class="workflow-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}</div>
+    {% endfor %}
+    <button class="workflow-button is-primary" type="submit">검색</button>
+  </form>
+</section>
+
+<section class="workflow-table-panel" data-reveal>
+  <header><div><h2>계정 {{ result_count }}명</h2></div></header>
+  {% if page_obj.object_list %}
+    <div class="workflow-table-shell">
+      <table class="workflow-table">
+        <thead><tr><th>사용자</th><th>아이디</th><th>역할</th><th>학생 연결</th><th>최근 로그인</th><th></th></tr></thead>
+        <tbody>
+          {% for item in page_obj.object_list %}
+            <tr>
+              <td><strong>{{ item.effective_name }}</strong><small>{{ item.email|default:"이메일 없음" }}</small></td>
+              <td>{{ item.username }}</td>
+              <td><span class="workflow-role-chip">{{ item.get_role_display }}</span></td>
+              <td>
+                {% if item.active_link_count %}<strong>{{ item.active_link_count }}명 연결</strong>
+                {% elif item.role == "STUDENT" or item.role == "PARENT" %}<span class="operations-link-warning">미연결</span>
+                {% else %}<span class="operations-muted">해당 없음</span>{% endif %}
+              </td>
+              <td>{% if item.last_login %}{{ item.last_login|date:"Y.m.d H:i" }}{% else %}<span class="operations-muted">로그인 없음</span>{% endif %}</td>
+              <td><a class="workflow-inline-link" href="{% url 'operations:user-detail' item.pk %}">관리 →</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}<div class="operations-empty-state"><strong>조건에 맞는 계정이 없습니다.</strong><p>검색 조건을 변경해 주세요.</p></div>{% endif %}
+
+  {% pager page_obj label="계정 쪽 이동" %}
+</section>
+{% endblock %}

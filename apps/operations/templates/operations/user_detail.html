@@ -1,0 +1,72 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="workflow-page-hero" data-reveal>
+  <div>
+    <h1>{{ target_user.effective_name }}</h1>
+    <p>{{ target_user.username }} · {{ target_user.email|default:"이메일 없음" }}</p>
+  </div>
+  <div class="workflow-hero-actions">
+    <span class="workflow-role-badge">{{ target_user.get_role_display }}</span>
+    <a class="workflow-button is-primary" href="{% url 'operations:user-update' target_user.pk %}">정보 수정</a>
+  </div>
+</section>
+
+<section class="workflow-summary-grid" data-reveal>
+  <article><small>아이디</small><strong>{{ target_user.username }}</strong></article>
+  <article><small>이름</small><strong>{{ target_user.effective_name }}</strong></article>
+  <article><small>역할</small><strong>{{ target_user.get_role_display }}</strong></article>
+  <article><small>최근 로그인</small><strong>{% if target_user.last_login %}{{ target_user.last_login|date:"Y.m.d H:i" }}{% else %}없음{% endif %}</strong></article>
+</section>
+
+{% if target_user.role == "STUDENT" or target_user.role == "PARENT" %}
+<section class="workflow-panel" data-reveal>
+  <header><div><h2>학생 연결</h2><p>학생 계정은 한 명, 학부모 계정은 여러 자녀를 연결할 수 있습니다.</p></div></header>
+  <div class="workflow-link-list">
+    {% for link in links %}
+      {% if link.is_active %}
+      <article>
+        <div><strong>학생번호 {{ link.student_no }}</strong><small>{{ link.get_relationship_display }}{% if link.is_primary %} · 대표 학생{% endif %}</small></div>
+        <div class="workflow-row-actions">
+          {% if not link.is_primary %}<form method="post" action="{% url 'operations:link-primary' target_user.pk link.pk %}">{% csrf_token %}<button type="submit">대표 지정</button></form>{% endif %}
+          <form method="post" action="{% url 'operations:link-deactivate' target_user.pk link.pk %}">{% csrf_token %}<button type="submit" class="is-danger" data-confirm-message="이 학생 연결을 해제할까요?">학생 연결 해제</button></form>
+        </div>
+      </article>
+      {% endif %}
+    {% empty %}<p class="operations-empty">연결된 학생이 없습니다.</p>{% endfor %}
+  </div>
+  <form method="post" action="{% url 'operations:link-add' target_user.pk %}" class="workflow-inline-form">
+    {% csrf_token %}
+    <div class="workflow-field"><label>{{ link_form.student_no.label }}</label>{{ link_form.student_no }}</div>
+    <label class="workflow-check">{{ link_form.is_primary }}<span>{{ link_form.is_primary.label }}</span></label>
+    <button class="workflow-button is-primary" type="submit">학생 연결</button>
+  </form>
+</section>
+{% endif %}
+
+{% if target_user.role == "TEACHER" %}
+<section class="workflow-panel" data-reveal>
+  <header><div><h2>담당 학생</h2><p>강사 화면에는 아래 학생만 자동으로 표시됩니다.</p></div></header>
+  <div class="workflow-link-list">
+    {% for access in teacher_accesses %}
+      <article>
+        <div><strong>{{ access.student_name|default:access.student_no }}</strong><small>학생번호 {{ access.student_no }}</small></div>
+        <form method="post" action="{% url 'operations:teacher-access-remove' target_user.pk access.pk %}">{% csrf_token %}<button type="submit" class="is-danger" data-confirm-message="이 담당 학생 배정을 해제할까요?">담당 배정 해제</button></form>
+      </article>
+    {% empty %}<p class="operations-empty">배정된 담당 학생이 없습니다.</p>{% endfor %}
+  </div>
+  <form method="post" action="{% url 'operations:teacher-access-add' target_user.pk %}" class="workflow-inline-form">
+    {% csrf_token %}
+    <div class="workflow-field"><label>{{ teacher_access_form.student_no.label }}</label>{{ teacher_access_form.student_no }}</div>
+    <button class="workflow-button is-primary" type="submit">담당 학생 배정</button>
+  </form>
+</section>
+{% endif %}
+
+<section class="workflow-panel" data-reveal>
+  <header><div><h2>최근 변경 기록</h2></div><a href="{% url 'operations:audit-list' %}?q={{ target_user.username|urlencode }}">전체 기록</a></header>
+  <div class="workflow-audit-list">
+    {% for log in audit_logs %}<article><span>{{ log.get_action_display }}</span><div><strong>{{ log.summary }}</strong><small>{{ log.actor.effective_name|default:"시스템" }} · {{ log.created_at|date:"Y.m.d H:i" }}</small></div></article>{% empty %}<p class="operations-empty">변경 기록이 없습니다.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

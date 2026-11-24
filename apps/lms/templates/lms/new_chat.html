@@ -1,0 +1,18 @@
+{% extends "lms/base.html" %}{% load static %}
+{% block extra_js %}<script src="{% static 'lms/js/new-chat.js' %}?v=1116" defer></script>{% endblock %}
+{% block lms_content %}
+<form method="post" class="ux-new-chat chat-picker" data-compact-form data-chat-page data-chat-picker data-single="{{ can_group|yesno:'false,true' }}">{% csrf_token %}
+ {% if group %}<input type="hidden" name="group" value="{{ group.pk }}">{% endif %}
+ <header class="ux-editor-toolbar"><h1>{% if group %}{{ group.title }} · 그룹 대화{% else %}새 대화{% endif %}</h1><div class="ux-actions"><a class="ux-btn" href="{% url 'lms:inbox' %}">취소</a><button class="ux-btn primary" type="submit" data-chat-start>대화 시작</button></div></header>
+ {{ form.non_field_errors }}{{ form.recipients.errors }}
+ <p class="ux-hint">{% if can_group %}한 명을 고르면 1:1 대화, 두 명 이상 고르면 그룹 대화가 됩니다. 같은 사람들과의 대화가 이미 있으면 그 방으로 이어집니다.{% else %}대화할 강사 한 명을 고르세요. 이미 나눈 대화가 있으면 그 방으로 이어집니다.{% endif %}</p>
+ <div class="chat-picker-bar">
+  <input type="search" data-chat-search placeholder="이름·학생번호로 찾기" aria-label="대화할 사람 찾기" autocomplete="off">
+  {% if can_group %}<label class="ux-check chat-pick-all"><input type="checkbox" data-chat-pick-all> 전체 선택</label>{% endif %}
+  <span class="chat-picker-count" data-chat-picked aria-live="polite">0명 선택</span>
+ </div>
+ <div class="chat-picker-chosen" data-chat-chosen></div>
+ <div class="chat-picker-list" role="group" aria-label="대화할 사람">{% for option in form.recipients %}<label class="chat-pick" data-search="{{ option.choice_label|lower }}">{{ option.tag }}<span>{{ option.choice_label }}</span><small>{{ option.data.value.instance.get_role_display }}</small></label>{% empty %}<p class="ux-hint">대화할 수 있는 사람이 없습니다. 담당 학생·반이 지정되면 여기에 나타납니다.</p>{% endfor %}</div>
+ <p class="ux-hint" data-chat-no-match hidden>찾는 이름이 없습니다.</p>
+</form>
+{% endblock %}

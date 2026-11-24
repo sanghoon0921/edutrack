@@ -1,0 +1,2 @@
+{% extends "layouts/base.html" %}
+{% block content %}<section class="workflow-panel workflow-confirm"><h1>과제를 삭제할까요?</h1><p>‘{{ assignment.title }}’ 과제와 학생 배정, 제출물, 피드백이 함께 삭제됩니다.</p><form method="post">{% csrf_token %}<a class="workflow-button is-ghost" href="{% url 'assignments:detail' assignment.pk %}">← 과제로 돌아가기</a><button class="workflow-button is-danger" type="submit">과제 영구 삭제</button></form></section>{% endblock %}

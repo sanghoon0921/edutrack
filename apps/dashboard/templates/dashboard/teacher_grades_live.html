@@ -1,0 +1,35 @@
+{% extends "layouts/base.html" %}{% load static assessment_tags pager_tags %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/learning-overview.css' %}?v=portal2">{% endblock %}
+{% block content %}<div class="portal-grades">
+<header class="portal-home-head"><div><h1>성적 분석</h1><p>학생을 고르면 아래에 DSG 성적과 누적 분석이 열립니다. 반으로 거르거나 이름·학생번호로 찾을 수 있습니다.</p></div>{% if request.user.role != 'TA' %}<a class="portal-link-button" href="{% url 'operations:teacher-student-assignment' %}">담당 학생 지정</a>{% endif %}</header>
+
+<section class="workflow-panel u-grades-list" aria-label="학생 목록">
+ <form method="get" class="u-filter-bar" role="search">
+  <label class="u-filter-field"><span>반</span><select name="group" data-auto-submit aria-label="반 고르기"><option value="">전체 반</option>{% for g in groups %}<option value="{{ g.pk }}"{% if selected_group and g.pk == selected_group.pk %} selected{% endif %}>{{ g.title }}</option>{% endfor %}</select></label>
+  <label class="u-filter-field is-grow"><span>이름·학생번호</span><input name="q" value="{{ q }}" placeholder="이름이나 학생번호" autocomplete="off"></label>
+  <button class="workflow-button is-primary" type="submit">찾기</button>
+  {% if q or selected_group %}<a class="workflow-button" href="{% url 'teacher_grades' %}">처음으로</a>{% endif %}
+ </form>
+ <p class="u-list-count">학생 <strong>{{ total }}</strong>명{% if selected_group %} · {{ selected_group.title }}{% endif %}{% if q %} · '{{ q }}' 검색{% endif %}</p>
+ {% if lookup_error %}<p class="home-warning">인트라넷 학생 정보를 읽지 못했습니다. 이름·번호만 보입니다.</p>{% endif %}
+ {% if rows %}
+ <div class="lms-table-wrap"><table class="u-grades-table">
+  <thead><tr><th class="num">번호</th><th>학생번호</th><th>이름</th><th>학교</th><th>학년</th><th>반</th></tr></thead>
+  <tbody>{% for r in rows %}<tr class="{% if r.student_no == selected_student_no %}is-selected{% endif %}">
+   <td class="num">{{ r.index }}</td><td>{{ r.student_no }}</td>
+   <td><a href="?{% if selected_group %}group={{ selected_group.pk }}&amp;{% endif %}{% if q %}q={{ q|urlencode }}&amp;{% endif %}page={{ page.number }}&amp;student_no={{ r.student_no|urlencode }}#grade-detail">{{ r.name }}</a></td>
+   <td>{{ r.school|default:"-" }}</td><td>{{ r.grade|default:"-" }}</td><td>{{ r.groups|default:"-" }}</td>
+  </tr>{% endfor %}</tbody>
+ </table></div>
+ {% pager page label="학생 쪽 이동" %}
+ {% else %}<p class="portal-empty">{% if q or selected_group %}조건에 맞는 학생이 없습니다.{% else %}볼 수 있는 학생이 없습니다. 반별 학습의 반 명단이나 담당 학생 지정을 확인하세요.{% endif %}</p>{% endif %}
+</section>
+
+<div id="grade-detail">
+{% if selected_student_no %}
+ {% if lookup_error and not student %}<p class="home-warning">학생 정보를 조회하지 못했습니다. 연결을 확인하고 다시 시도하세요.</p>{% elif missing_student %}<p class="home-warning">연결된 학생 원장 정보를 찾지 못했습니다.</p>{% elif student %}
+ <section class="portal-card"><div class="portal-card-head"><h2>{{ student.name }} · DSG 시험 성적</h2><a class="portal-link-button" href="{% url 'assessments:student-insight' student.student_id %}">누적 학습 분석 →</a></div>{% student_score_overview student.student_id %}</section>
+ {% endif %}
+{% else %}<p class="portal-empty">위 목록에서 학생 이름을 누르면 여기에 DSG 성적이 열립니다.</p>{% endif %}
+</div>
+</div>{% endblock %}

@@ -1,0 +1,22 @@
+{% load static %}<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page_title }}</title>
+<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">
+<script src="{% static 'reports/js/report-card.js' %}?v=rc1120d" defer></script>
+</head>
+<body class="rc-print-body" data-rc-print>
+<div class="rc-print-bar">
+ <strong>{{ batch.group.title }} · {{ batch.title }} · {{ sheets|length }}명</strong>
+ <span>인쇄 창에서 대상을 <b>PDF로 저장</b>으로 고르면 PDF 파일이 됩니다. 학생마다 한 장씩 나뉩니다.</span>
+ <button type="button" data-rc-print-now>인쇄 / PDF 저장</button>
+</div>
+{% for s in sheets %}
+ {% include "reports/_card.html" with batch=s.batch card=s.card card_data=s.card_data shared=s.shared spec=s.spec editing=False kind=s.kind days=s.days blocks=s.blocks chart_rw=s.chart_rw chart_math=s.chart_math chart_toefl=s.chart_toefl week_rows=s.week_rows last_key=s.last_key last_label=s.last_label %}
+{% empty %}
+ <p class="rc-empty">이 묶음에 학생 카드가 없습니다.</p>
+{% endfor %}
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<div class="portal-home portal-admin-home learner-home">
+ <header class="lh-hero">
+  <div class="lh-hero-copy">
+   <h1>{{ display_name }}님, 오늘의 운영 현황입니다.</h1>
+   <p>{{ admin_home.today|date:'n월 j일 l' }} · 처리할 일부터 확인하세요.</p>
+  </div>
+  <nav class="lh-actions" aria-label="바로 가기">
+   <a class="lh-action" href="{% url 'students:list' %}">학생 관리</a>
+   <a class="lh-action" href="{% url 'reports:list' %}">리포트카드</a>
+   <a class="lh-action is-primary" href="{% url 'lms:gradebook' %}">성적·제출현황</a>
+  </nav>
+ </header>
+
+ <section class="ad-tiles admin-queue" aria-labelledby="admin-queue-title">
+  <h2 id="admin-queue-title" class="sr-only">오늘 처리할 일</h2>
+  {% for row in admin_home.queue %}
+  <a class="ad-tile admin-queue-row{% if row.count %} has-work{% endif %}" href="{{ row.url }}">
+   <span>{{ row.label }}</span>
+   <b>{{ row.count }}</b>
+   <small>{% if row.count %}확인하기 →{% else %}처리할 것 없음{% endif %}</small>
+  </a>
+  {% endfor %}
+ </section>
+
+ <div class="portal-priority-grid admin-home-grid">
+  {% include 'dashboard/portal_notices.html' with data=admin_home %}
+  {% include 'dashboard/portal_messages.html' with data=admin_home %}
+  <section class="portal-card admin-shortcuts" aria-labelledby="admin-shortcuts-title">
+   <div class="portal-card-head"><h2 id="admin-shortcuts-title">관리 바로가기</h2></div>
+   <nav class="ad-shortcuts admin-shortcut-list" aria-label="관리 바로가기">
+    <a href="{% url 'operations:user-list' %}"><svg class="et-icon" aria-hidden="true"><use href="#i-users"/></svg>계정 관리</a>
+    <a href="{% url 'communications:notice-manage' %}"><svg class="et-icon" aria-hidden="true"><use href="#i-megaphone"/></svg>공지 관리</a>
+    <a href="{% url 'admin_classes' %}"><svg class="et-icon" aria-hidden="true"><use href="#i-calendar"/></svg>Class 리스트</a>
+    <a href="{% url 'lms:rooms' %}"><svg class="et-icon" aria-hidden="true"><use href="#i-layers"/></svg>반별 학습</a>
+    <a href="{% url 'data_imports:dashboard' %}"><svg class="et-icon" aria-hidden="true"><use href="#i-inbox"/></svg>데이터 가져오기</a>
+    <a href="{% url 'operations:audit-list' %}"><svg class="et-icon" aria-hidden="true"><use href="#i-list-check"/></svg>변경 기록</a>
+   </nav>
+   <p class="ad-accounts admin-accounts">활성 계정 {% for label, count in admin_home.accounts %}<span>{{ label }} <b>{{ count }}</b></span>{% endfor %}</p>
+  </section>
+ </div>
+</div>
+{% endblock %}

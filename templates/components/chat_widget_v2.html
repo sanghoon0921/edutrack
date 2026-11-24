@@ -1,0 +1,28 @@
+<div id="portal-messenger" data-chat-widget data-user="{{ request.user.pk }}" data-summary="{% url 'lms:chat-summary' %}" data-snapshot="{% url 'lms:chat-snapshot' 0 %}" data-inbox="{% url 'lms:inbox' %}">
+  <button type="button" class="portal-chat-fab" data-chat-launch aria-label="작은 메신저 열기"{% if chat_fab_hidden %} hidden{% endif %}>메시지 <span class="portal-count" data-chat-count>{{ chat_unread_count }}</span></button>
+  <section class="portal-chat-window" data-chat-window hidden role="dialog" aria-modal="false" aria-labelledby="portal-chat-title">
+    <header class="portal-chat-titlebar" data-chat-drag tabindex="0" aria-label="대화창 이동: 끌거나 방향키 사용">
+      <button type="button" data-chat-back aria-label="대화 목록" hidden>‹</button>
+      <h2 id="portal-chat-title">메신저</h2>
+      <button type="button" data-chat-reset aria-label="대화창 위치 초기화" title="위치 초기화">↙</button>
+      <a data-chat-expand data-chat-page href="{% url 'lms:inbox' %}" aria-label="전체 메시지 화면" title="전체 화면">↗</a>
+      <button type="button" data-chat-close aria-label="대화창 닫기">×</button>
+    </header>
+    <div data-chat-threads class="portal-chat-threads"><p class="portal-empty">대화를 불러오는 중입니다.</p></div>
+    <a class="portal-chat-new" data-chat-new href="{% url 'lms:new-conversation' %}">＋ 새 대화</a>
+    <div class="portal-thread" data-chat-thread hidden>
+      <p class="portal-chat-members" data-mini-members hidden></p>
+      <button type="button" class="portal-older" data-chat-older hidden>이전 메시지</button>
+      <div class="portal-chat-log" data-chat-log role="log" aria-label="대화 내용" aria-live="polite"></div>
+      <button type="button" class="portal-jump" data-chat-jump hidden>새 메시지 보기 ↓</button>
+      <form data-chat-form class="portal-chat-compose" method="post">{% csrf_token %}
+        <input type="hidden" name="client_token">
+        <label for="portal-chat-input" class="sr-only">메시지 입력</label>
+        <textarea id="portal-chat-input" name="body" rows="2" maxlength="4000" placeholder="메시지 입력" aria-describedby="portal-chat-help"></textarea>
+        <button type="submit" class="portal-send">전송</button>
+        <small id="portal-chat-help">Enter 전송 · Shift + Enter 줄바꿈</small>
+      </form>
+    </div>
+    <p class="portal-chat-status" data-chat-status role="status">대화창을 열면 새 메시지를 3초마다 확인합니다.</p>
+  </section>
+</div>

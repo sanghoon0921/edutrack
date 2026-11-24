@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">{% endblock %}
+{% block extra_js %}<script src="{% static 'reports/js/report-card.js' %}?v=rc1120d" defer></script>{% endblock %}
+{% block content %}
+<form method="post" class="ux-editor rc-new rc-mocks-page">
+ {% csrf_token %}
+ {% if back %}<input type="hidden" name="card" value="{{ back.pk }}">{% endif %}
+ <header class="ux-editor-toolbar"><h1>모의고사 고르기</h1><div class="ux-actions"><a class="ux-btn" href="{{ back_url }}">취소</a><button class="ux-btn primary" type="submit">저장하고 다시 불러오기</button></div></header>
+ <p class="ux-hint">{{ batch.group.title }} · {{ batch.shared.period }} · {{ course_type }} 수업(칸마다 {{ limit }}개까지). 저장하면 반 학생 모두의 카드에 다시 불러옵니다. 직접 고친 칸은 그대로 둡니다.</p>
+ {{ form.non_field_errors }}
+ <fieldset class="rc-forms rc-mocks">
+  <legend>{{ form.mock_exams.label }}</legend>
+  {% include "reports/_mock_picker.html" %}
+ </fieldset>
+</form>
+{% endblock %}

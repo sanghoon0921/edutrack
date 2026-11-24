@@ -1,0 +1,109 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="import-page-hero" data-reveal>
+  <div>
+    <h1>기존 과제 데이터 이전</h1>
+    <p>
+      기존 과제·대상 학생·텍스트 제출·피드백 이력을 현재 LMS 구조로 이전합니다.
+      동일 과제는 legacy_assignment_key를 같은 값으로 반복합니다.
+    </p>
+  </div>
+  <div class="import-page-actions">
+    <a href="{% url 'data_imports:assignment-template' %}">CSV 양식 다운로드</a>
+    <a href="{% url 'data_imports:dashboard' %}">이전 센터</a>
+  </div>
+</section>
+
+<section class="import-guide-grid" data-reveal>
+  <article><span>legacy_assignment_key</span><strong>기존 과제 고유키</strong><small>재실행 시 중복 생성을 막는 기준</small></article>
+  <article><span>teacher_username</span><strong>등록 강사</strong><small>EduTrack에 먼저 생성된 강사 아이디</small></article>
+  <article><span>student_no</span><strong>과제 대상</strong><small>인트라넷 학생번호로 연결</small></article>
+  <article><span>attachments</span><strong>첨부파일 제외</strong><small>1차 이전은 텍스트·상태·피드백 중심</small></article>
+</section>
+
+<section class="import-form-shell" data-reveal>
+  <form method="post" enctype="multipart/form-data" class="import-upload-form">
+    {% csrf_token %}
+    {% include "data_imports/_form_errors.html" %}
+
+    <div class="import-form-field is-wide">
+      <label for="{{ form.csv_file.id_for_label }}">{{ form.csv_file.label }}</label>
+      {{ form.csv_file }}
+      <small>{{ form.csv_file.help_text }}</small>
+      {% for error in form.csv_file.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+
+    <div class="import-form-field">
+      <label for="{{ form.mode.id_for_label }}">{{ form.mode.label }}</label>
+      {{ form.mode }}
+      {% for error in form.mode.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+
+    <label class="import-confirm-card">
+      {{ form.confirm_apply }}
+      <span>
+        <strong>{{ form.confirm_apply.label }}</strong>
+        <small>미리보기만 실행할 때는 선택하지 않아도 됩니다.</small>
+      </span>
+    </label>
+    {% for error in form.confirm_apply.errors %}<p class="field-error is-wide">{{ error }}</p>{% endfor %}
+
+    <div class="import-form-actions">
+      <button class="operations-secondary-link" type="submit" name="action" value="preview">미리보기·검증</button>
+      <button class="operations-primary-link" type="submit" name="action" value="apply">실제 데이터 이전 <span>→</span></button>
+    </div>
+  </form>
+</section>
+
+{% if preview %}
+<section class="import-preview-panel {% if not preview.is_valid %}has-errors{% endif %}" data-reveal>
+  <header>
+    <div>
+      <h2>검증 결과</h2>
+      <p>{{ preview.source_filename }} · {{ preview.total_rows }}행 · {{ preview.encoding }}</p>
+    </div>
+    {% if preview.is_valid %}
+      <span class="import-preview-state is-valid">실제 반영 가능</span>
+    {% else %}
+      <span class="import-preview-state is-error">오류 {{ preview.issues|length }}건</span>
+    {% endif %}
+  </header>
+
+  {% if preview.issues %}
+    <div class="import-issue-list">
+      {% for issue in preview.issues %}
+        <div><strong>{{ issue.row_number }}행 · {{ issue.key }}</strong><span>{{ issue.message }}</span></div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="import-table-shell">
+    <table class="import-table">
+      <thead><tr><th>행</th><th>기존 과제키</th><th>과제명</th><th>강사</th><th>대상</th><th>마감</th><th>예상 처리</th></tr></thead>
+      <tbody>
+        {% for item in preview.items %}
+          <tr>
+            <td>{{ item.row_number }}</td>
+            <td><strong>{{ item.external_key }}</strong></td>
+            <td>{{ item.title }}</td>
+            <td>{{ item.teacher_username }}</td>
+            <td>{{ item.recipient_count }}명</td>
+            <td>{{ item.due_at|date:"Y.m.d H:i" }}</td>
+            <td><span class="import-action is-{{ item.predicted_action|lower }}">{{ item.predicted_action }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+<section class="import-security-note" data-reveal>
+  <strong>1차 이전 범위</strong>
+  <p>
+    과제 제목·내용·마감·대상 학생·텍스트 답안·제출일·피드백을 이전합니다.
+    기존 첨부파일은 경로와 소유권 검증이 필요하므로 이번 단계에서 자동 복사하지 않습니다.
+  </p>
+</section>
+{% endblock %}

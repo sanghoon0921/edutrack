@@ -1,0 +1,13 @@
+<nav class="learning-tabs" aria-label="학습 메뉴">
+  {% if request.user.role == "ADMIN" or request.user.role == "TEACHER" or request.user.role == "TA" or request.user.is_superuser %}
+    <a class="{% if active_learning_tab == 'assignments' %}is-active{% endif %}" href="{% url 'assignments:list' %}">과제</a>
+    <a class="{% if active_learning_tab == 'discussions' %}is-active{% endif %}" href="{% url 'learning:discussion-list' %}">토론</a>
+    <a class="{% if active_learning_tab == 'quizzes' %}is-active{% endif %}" href="{% url 'learning:quiz-list' %}">퀴즈</a>
+  {% else %}
+    <a class="{% if active_learning_tab == 'assignments' %}is-active{% endif %}" href="{% url 'assignments:my' %}">과제</a>
+    <a class="{% if active_learning_tab == 'discussions' %}is-active{% endif %}" href="{% url 'learning:my-discussions' %}">토론</a>
+    <a class="{% if active_learning_tab == 'quizzes' %}is-active{% endif %}" href="{% url 'learning:my-quizzes' %}">퀴즈</a>
+  {% endif %}
+  <a href="{% url 'lms:rooms' %}">반별 학습</a>
+  <a href="{% url 'lms:gradebook' %}">성적·제출현황</a>
+</nav>

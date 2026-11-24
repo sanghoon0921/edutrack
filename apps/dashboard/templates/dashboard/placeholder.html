@@ -1,0 +1,18 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <h1>{{ section_title }}</h1>
+    <p>{{ section_description }}</p>
+  </div>
+  <span class="status-badge">2단계 화면 구조 완료</span>
+</section>
+
+<section class="content-card content-card-large">
+  <div class="placeholder-visual">
+    <span>다음 단계 데이터 연결 영역</span>
+  </div>
+  {% include "components/empty_state.html" with empty_title="화면과 권한 구조가 준비되었습니다." empty_description="현재는 빈 화면이며 이후 단계에서 DSG·인트라넷 데이터를 연결합니다." %}
+</section>
+{% endblock %}

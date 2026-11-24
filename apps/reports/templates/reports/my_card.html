@@ -1,0 +1,15 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">{% endblock %}
+{% block content %}
+<header class="rc-toolbar">
+ <div class="rc-toolbar-title">
+  <a href="{% url 'reports:my' %}">리포트카드</a>
+  <strong>{{ batch.group.title }}</strong>
+  <span>{{ form_label }} · {{ batch.title }}</span>
+ </div>
+ <div class="rc-actions">
+  <a class="ux-btn primary" href="{% url 'reports:my-card' card.pk %}?print=1" target="_blank" rel="noopener">PDF로 저장 · 인쇄</a>
+ </div>
+</header>
+<div class="rc-stage">{% include "reports/_card.html" %}</div>
+{% endblock %}

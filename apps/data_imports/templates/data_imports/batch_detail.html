@@ -1,0 +1,59 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="import-page-hero" data-reveal>
+  <div>
+    <h1>{{ batch.get_kind_display }}</h1>
+    <p>{{ batch.source_filename }} · SHA256 {{ batch.source_sha256|slice:":12" }}…</p>
+  </div>
+  <div class="import-page-actions">
+    <a href="{% url 'data_imports:batch-results' batch.pk %}">결과 CSV</a>
+    <a href="{% url 'data_imports:dashboard' %}">이전 센터</a>
+  </div>
+</section>
+
+<section class="import-batch-summary" data-reveal>
+  <article><small>상태</small><strong class="import-status-text is-{{ batch.status|lower }}">{{ batch.get_status_display }}</strong><span>{{ batch.get_mode_display }}</span></article>
+  <article><small>전체 행</small><strong>{{ batch.total_rows }}</strong><span>CSV 데이터 행</span></article>
+  <article><small>생성</small><strong>{{ batch.created_count }}</strong><span>신규 객체</span></article>
+  <article><small>갱신</small><strong>{{ batch.updated_count }}</strong><span>기존 객체 수정</span></article>
+  <article><small>건너뜀</small><strong>{{ batch.skipped_count }}</strong><span>중복·신규 전용</span></article>
+  <article class="{% if batch.error_count %}has-warning{% endif %}"><small>오류</small><strong>{{ batch.error_count }}</strong><span>검토 필요</span></article>
+</section>
+
+<section class="import-batch-meta" data-reveal>
+  <div><span>실행 관리자</span><strong>{{ batch.actor.effective_name|default:"시스템" }}</strong></div>
+  <div><span>시작</span><strong>{{ batch.created_at|date:"Y.m.d H:i:s" }}</strong></div>
+  <div><span>완료</span><strong>{{ batch.completed_at|date:"Y.m.d H:i:s"|default:"처리 중" }}</strong></div>
+  <div><span>원본 인코딩</span><strong>{{ batch.summary.encoding|default:"—" }}</strong></div>
+</section>
+
+<section class="import-history-panel" data-reveal>
+  <header>
+    <div><h2>행별 처리 결과</h2></div>
+    <a href="{% url 'data_imports:batch-results' batch.pk %}">전체 CSV 다운로드</a>
+  </header>
+
+  {% if rows %}
+    <div class="import-table-shell">
+      <table class="import-table">
+        <thead><tr><th>행</th><th>외부 식별값</th><th>처리</th><th>대상</th><th>메시지</th></tr></thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td>{{ row.row_number }}</td>
+              <td><strong>{{ row.external_key|default:"—" }}</strong></td>
+              <td><span class="import-action is-{{ row.action|lower }}">{{ row.get_action_display }}</span></td>
+              <td>{{ row.target_type|default:"—" }}{% if row.target_id %} #{{ row.target_id }}{% endif %}</td>
+              <td>{{ row.message }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if row_limit_reached %}<p class="import-limit-note">화면에는 500행까지만 표시됩니다. 전체 결과는 CSV로 확인하세요.</p>{% endif %}
+  {% else %}
+    <p class="operations-empty">기록된 행 결과가 없습니다.</p>
+  {% endif %}
+</section>
+{% endblock %}

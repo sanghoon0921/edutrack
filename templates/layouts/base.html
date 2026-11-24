@@ -1,0 +1,46 @@
+{% load static tz %}{% get_current_timezone as ui_timezone %}
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page_title|default:"EduTrack" }}</title>
+  <link rel="stylesheet" href="{% static 'css/layers/00-base.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/10-premium-portal.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/20-workflow.css' %}?v=1110nv3">
+  {% block extra_css %}{% endblock %}
+  <link rel="stylesheet" href="{% static 'css/layers/30-stability.css' %}?v=20261008-r2">
+  <link rel="stylesheet" href="{% static 'css/layers/40-navigation-editor.css' %}?v=1110nv3">
+  {% block page_css %}{% endblock %}
+  <link rel="stylesheet" href="{% static 'css/layers/50-intranet-theme.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/60-visual-refresh.css' %}?v=20261008-r2">
+  <link rel="stylesheet" href="{% static 'css/layers/70-home-messenger.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/80-readability.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/90-usability.css' %}?v=1110nv3">
+  <script src="{% static 'js/global/student-browser.js' %}?v=1111d" defer></script>
+  <script src="{% static 'js/global/form-usability.js' %}?v=1119b" defer></script>
+  <script src="{% static 'js/global/date-picker.js' %}?v=1119c" defer></script>
+  <script src="{% static 'js/global/linkify.js' %}?v=1110" defer></script>
+  <script src="{% static 'js/global/ui-shell.js' %}?v=20261110" defer></script>
+  <script src="{% static 'lms/js/polling.js' %}?v=1110" defer></script>
+  <script src="{% static 'lms/js/chat-composer.js' %}?v=portal2" defer></script>
+  <script src="{% static 'lms/js/chat-widget.js' %}?v=1116" defer></script>
+  {% block extra_js %}{% endblock %}
+  <link rel="stylesheet" href="{% static 'css/layers/95-portal-focus.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/97-polish.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/98-refine.css' %}?v=1117">
+  <link rel="stylesheet" href="{% static 'css/layers/99-unify.css' %}?v=1120c">
+</head>
+<body class="app-body intranet-app-body visual-refresh-body{% if messenger_enabled and not chat_fab_hidden %} has-chat-fab{% endif %}" data-area="{{ current_area|default:'home' }}" data-ui-version="intranet-v2" data-readability-version="2" data-usability-version="1" data-ui-timezone="{{ ui_timezone }}">
+  {% include "components/icon_sprite.html" %}
+  <a class="intranet-skip-link" href="#main-content">본문으로 이동</a>
+  {% include "components/header.html" %}
+
+  <main id="main-content" class="page-shell intranet-page-shell" tabindex="-1">
+    {% include "components/page_back_bar.html" %}
+    {% include "components/messages.html" %}
+    {% block content %}{% endblock %}
+  </main>
+  {% if messenger_enabled %}{% include "components/chat_widget_v2.html" %}{% endif %}
+</body>
+</html>

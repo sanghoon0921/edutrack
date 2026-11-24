@@ -1,0 +1,47 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">{% endblock %}
+{% block extra_js %}<script src="{% static 'reports/js/report-card.js' %}?v=rc1120d" defer></script>{% endblock %}
+{% block content %}
+<section class="workflow-hero">
+ <div>
+  <p class="rc-crumb"><a href="{% url 'reports:list' %}">리포트카드</a></p>
+  <h1>{{ batch.group.title }}</h1>
+  <p>{{ form_label }} · {{ batch.title }} · {{ batch.period_start|date:"n/j" }} ~ {{ batch.period_end|date:"n/j" }}{% if batch.course_label %} · {{ batch.course_label }}{% endif %}</p>
+ </div>
+ <div class="rc-batch-actions">
+  {% if is_admin %}
+  {% if batch.published_at %}
+   <span class="rc-state is-public">공개 중 · {{ batch.published_at|date:"n/j H:i" }}</span>
+   <form method="post" action="{% url 'reports:unpublish' batch.pk %}" data-confirm="공개를 취소할까요? 학생·학부모 화면에서 보이지 않게 됩니다.">{% csrf_token %}<button class="ux-btn" type="submit">공개 취소</button></form>
+   <form method="post" action="{% url 'reports:publish' batch.pk %}" data-confirm="고친 내용을 알림으로 다시 알릴까요?">{% csrf_token %}<button class="ux-btn" type="submit">다시 알림</button></form>
+  {% else %}
+   <span class="rc-state">미발송 · 학생·학부모에게 안 보임</span>
+   <form method="post" action="{% url 'reports:publish' batch.pk %}" data-confirm="{{ cards|length }}명의 학생·학부모에게 공개하고 알림을 보낼까요?">{% csrf_token %}<button class="ux-btn primary" type="submit">학부모에게 발송(공개)</button></form>
+  {% endif %}
+  {% else %}
+  <span class="rc-state{% if batch.published_at %} is-public{% endif %}">{% if batch.published_at %}발송 · {{ batch.published_at|date:"n/j H:i" }}{% else %}미발송 · 관리자 검토 후 발송{% endif %}</span>
+  {% endif %}
+  {% if cards %}<a class="ux-btn" href="{% url 'reports:print' batch.pk %}?print=1" target="_blank" rel="noopener">반 전체 인쇄</a>{% endif %}
+ </div>
+</section>
+<section class="workflow-panel rc-list">
+ {% if cards %}
+ <p class="rc-status-line">작성 <strong data-rc-saved>{{ saved_count }}</strong> / {{ cards|length }}명 저장{% if is_admin %} · 강사·TA가 저장하면 15초 안에 여기에 반영됩니다{% endif %}</p>
+ <table class="rc-list-table" data-rc-status="{% url 'reports:status' batch.pk %}">
+  <thead><tr><th>학생</th><th>학생번호</th><th>작성 현황</th><th></th></tr></thead>
+  <tbody>
+  {% for c in cards %}
+   <tr>
+    <td><a href="{% if c.saved_at or batch.published_at %}{% url 'reports:card-view' batch.pk c.pk %}{% else %}{% url 'reports:card' batch.pk c.pk %}{% endif %}"><strong>{{ c.student_name }}</strong></a>{% if not c.saved_at and not batch.published_at %} <span class="rc-state">작성 전</span>{% endif %}</td>
+    <td>{{ c.student_no }}</td>
+    <td data-rc-status-cell="{{ c.pk }}">{% if c.saved_at or batch.published_at %}<span class="rc-state is-saved">저장</span> {{ c.updated_at|date:"n/j H:i" }}{% if c.updated_by %} · {{ c.updated_by.display_name|default:c.updated_by.username }}{% endif %}{% else %}<span class="rc-state">작성 전</span>{% endif %}</td>
+    <td class="rc-list-actions">{% if c.saved_at or batch.published_at %}<a class="ux-btn" href="{% url 'reports:card-view' batch.pk c.pk %}">열기</a><a class="ux-btn primary" href="{% url 'reports:card' batch.pk c.pk %}">수정</a>{% else %}<a class="ux-btn primary" href="{% url 'reports:card' batch.pk c.pk %}">열기</a>{% endif %}</td>
+   </tr>
+  {% endfor %}
+  </tbody>
+ </table>
+ {% else %}
+ <div class="workflow-empty">이 묶음에 학생 카드가 없습니다. 반 명단을 채운 뒤 카드에서 '데이터 다시 불러오기'를 누르세요.</div>
+ {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,75 @@
+/* Home/Messenger V1: scoped additions, existing readable intranet palette stays. */
+body.intranet-app-body .home-nav-group { margin-top:16px; padding-top:12px; border-top:1px solid #35465e; }
+body.intranet-app-body .home-nav-group-label { margin:0 12px 6px; color:#d0ddef; font-size:15px; line-height:1.5; letter-spacing:0; }
+body.intranet-app-body .home-nav-children { padding-left:10px; }
+body.intranet-app-body .home-nav-settings { margin-top:28px; padding-bottom:12px; }
+.student-home { color:#172a46; max-width:1440px; margin:0 auto; }
+.student-home * { box-sizing:border-box; }
+.student-home-header { display:flex; align-items:center; justify-content:space-between; gap:20px; margin:0 0 24px; }
+.student-home-header h1 { margin:8px 0; }
+.student-home-header p { color:#52627a; margin:0; }
+.student-home .home-date { font-size:14px; color:#52627a; }
+.home-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-bottom:24px; }
+.home-summary>a { padding:20px; border:1px solid #d8e0eb; border-radius:12px; background:#fff; display:grid; gap:2px; }
+.home-summary>a:hover { border-color:#547cc6; background:#f8faff; }
+.home-summary strong { font-size:34px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.35; color:#1f3156; }
+.home-summary span { font-size:15px; font-weight:600; }
+.home-summary small { color:#52627a; }
+.home-grid { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:22px; align-items:start; }
+.home-panel { border:1px solid #d8e0eb; background:#fff; border-radius:12px; min-width:0; padding:22px; }
+.home-panel-head { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; margin-bottom:18px; }
+.home-panel-head h2 { margin:0 0 4px; }
+.home-panel-head p { margin:0; color:#52627a; }
+.home-panel-head>a,.home-deadline-head>a { font-size:14px; color:#1f3156; white-space:nowrap; padding-top:4px; }
+.home-list { display:grid; gap:0; }
+.home-notice,.home-message-row,.home-deadline { padding:15px 0; border-top:1px solid #e3e9f2; display:flex; align-items:center; gap:14px; min-width:0; }
+.home-notice:hover,.home-message-row:hover,.home-deadline:hover { background:#f8faff; }
+.home-notice>div,.home-message-main,.home-deadline>div { min-width:0; flex:1; }
+.home-notice strong,.home-message-main strong,.home-deadline strong { display:block; color:#172a46; overflow-wrap:anywhere; font-size:16px; line-height:1.55; }
+.home-kicker { display:block; font-size:14px; color:#52627a; line-height:1.6; }
+.home-notice time,.home-deadline time { flex-shrink:0; font-size:14px; color:#52627a; font-variant-numeric:tabular-nums; }
+.home-message-main p { margin:3px 0; color:#52627a; overflow-wrap:anywhere; }
+.home-pill { display:inline-flex; font-size:14px; color:#475569; background:#f1f5f9; padding:4px 8px; border-radius:6px; flex-shrink:0; line-height:1.6; }
+.home-pill.is-unread,.home-pill.is-done { color:#13213d; background:#eaf1ff; }
+.home-pill.is-expired { color:#9a3412; background:#fff3eb; }
+.home-button { min-height:42px; display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:9px 14px; font-size:15px; font-weight:600; border-radius:8px; color:#243650; background:#fff; border:1px solid #bdcadd; cursor:pointer; line-height:1.5; word-break:keep-all; }
+.home-button.primary { color:#fff; background:#1f3156; border-color:#1f3156; }
+.home-button.primary:hover { background:#13213d; }
+.home-panel-foot { display:flex; justify-content:space-between; align-items:center; gap:12px; border-top:1px solid #e3e9f2; padding-top:14px; margin-top:10px; }
+.home-panel-foot small { color:#52627a; }
+.home-text-button { border:0; background:transparent; color:#1f3156; font-size:14px; padding:6px; cursor:pointer; white-space:nowrap; }
+.home-empty { color:#52627a; padding:18px 0; margin:0; }
+.home-hint { margin:14px 0 0; font-size:14px; color:#52627a; }
+.home-zoom-panel { border-top:3px solid #315fbc; }
+.home-zoom-symbol { width:36px; height:36px; border-radius:8px; display:grid; place-items:center; color:#1f3156; background:#edf0f6; font-size:22px; }
+.home-zoom-list { display:grid; gap:12px; }
+.home-zoom-card { border:1px solid #dce5f2; background:#f7faff; border-radius:10px; padding:16px; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:12px; }
+.home-zoom-card h3 { margin:0 0 3px; }
+.home-zoom-card p { margin:0; color:#52627a; white-space:pre-line; overflow-wrap:anywhere; }
+.home-room-link { grid-column:1/-1; color:#1f3156; font-size:14px; }
+.home-deadline-head { margin-top:24px; padding-top:18px; border-top:1px solid #d8e0eb; display:flex; justify-content:space-between; gap:14px; }
+.home-deadline-head h3 { margin:0 0 12px; }
+.home-session { display:grid; grid-template-columns:108px minmax(0,1fr); gap:14px; border-top:1px solid #e3e9f2; padding:16px 0; }
+.home-session-time { font-size:15px; font-weight:700; color:#1f3156; font-variant-numeric:tabular-nums; }
+.home-session-main strong { display:block; font-size:16px; margin-bottom:4px; }
+.home-session-main p { margin:0 0 8px; color:#52627a; }
+.home-session-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.home-session.is-cancelled { color:#52627a; background:#f8fafc; }
+.home-warning { border:1px solid #e7c9a6; border-radius:10px; background:#fff8ef; color:#744010; padding:16px; margin-bottom:18px; }
+.home-warning p { margin:4px 0 0; }
+.home-inbox-pagination { display:flex; gap:18px; margin-top:16px; color:#1f3156; }
+#message-jump { margin:10px 0; }
+@media(max-width:1100px){.home-grid{grid-template-columns:minmax(0,1fr);} .home-summary{gap:10px;}}
+@media(max-width:640px){
+ .student-home-header{flex-direction:column;align-items:stretch;gap:12px;}
+ .home-summary{gap:8px;margin-bottom:18px;} .home-summary>a{padding:12px 8px;} .home-summary strong{font-size:28px;}
+ .home-summary small{display:none;} .home-summary span{font-size:14px;word-break:keep-all;}
+ .home-grid{gap:16px;} .home-panel{padding:16px;} .home-zoom-card{grid-template-columns:minmax(0,1fr);}
+ .home-zoom-card .home-button{width:100%;} .home-panel-foot{flex-wrap:wrap;}
+ .home-session{grid-template-columns:minmax(0,1fr);gap:4px;}
+ .home-notice,.home-message-row,.home-deadline{gap:10px;} .home-deadline{flex-wrap:wrap;}
+ .home-message-row{align-items:flex-start;}
+}
+@media(prefers-reduced-motion:reduce){.student-home *{scroll-behavior:auto;}}
+.home-message-main p { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.student-home :is(#home-today,#home-deadlines,#home-messages) { scroll-margin-top:100px; }

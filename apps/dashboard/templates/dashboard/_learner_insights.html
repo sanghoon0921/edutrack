@@ -1,0 +1,58 @@
+{% if not insight.linked %}
+<p class="hi-note">학생 연결이 필요합니다. 담당자에게 계정 연결을 요청하면 시험·출석·과제 현황이 여기에 나타납니다.</p>
+{% else %}{% with exam=insight.exam att=insight.attendance hw=insight.assignments %}
+<div class="hi-grid">
+ <article class="hi-tile hi-exam" aria-labelledby="hi-exam-title">
+  <header class="hi-tile-head"><h2 id="hi-exam-title">최근 본 시험</h2><a href="{% url 'students:my-detail' %}">성적 자세히</a></header>
+  {% if exam.state == "ok" and exam.total %}
+   <p class="hi-exam-name">{{ exam.name|default:"Digital SAT" }}{% if exam.date %} · {{ exam.date|date:"n월 j일" }}{% endif %}</p>
+   <div class="hi-exam-score">
+    <strong data-count-to="{{ exam.total }}">{{ exam.total }}</strong><span>/ 1600</span>
+    {% if exam.delta %}<em class="hi-delta {% if exam.delta > 0 %}is-up{% else %}is-down{% endif %}">직전 대비 {% if exam.delta > 0 %}+{% endif %}{{ exam.delta }}</em>{% endif %}
+   </div>
+   <dl class="hi-bars">
+    <div class="hi-bar"><dt>Reading &amp; Writing</dt><dd><span class="hi-bar-track"><span class="hi-bar-fill" style="--w: {{ exam.rw_pct|default:0 }}%"></span></span><b>{{ exam.rw|default:"—" }}</b></dd></div>
+    <div class="hi-bar"><dt>Math</dt><dd><span class="hi-bar-track"><span class="hi-bar-fill is-math" style="--w: {{ exam.math_pct|default:0 }}%"></span></span><b>{{ exam.math|default:"—" }}</b></dd></div>
+   </dl>
+  {% elif exam.state == "error" %}
+   <p class="hi-empty">DSG 성적을 잠시 불러오지 못했습니다. 잠시 후 새로고침해 주세요.</p>
+  {% else %}
+   <p class="hi-empty">아직 완료한 Digital SAT 시험이 없습니다. 첫 시험을 보면 점수가 여기에 나타납니다.</p>
+  {% endif %}
+ </article>
+
+ <article class="hi-tile hi-donut" data-donut data-value="{{ exam.average_pct|default:0 }}" style="--tone: var(--hi-blue)">
+  <header class="hi-tile-head"><h2>평균 점수</h2></header>
+  <div class="hi-ring-wrap">
+   <svg class="hi-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="hi-ring-track" cx="50" cy="50" r="42"/><circle class="hi-ring-value" cx="50" cy="50" r="42" pathLength="100" style="--v: {{ exam.average_pct|default:0 }}"/></svg>
+   <div class="hi-ring-center">{% if exam.average %}<strong data-count-to="{{ exam.average }}">{{ exam.average }}</strong><small>/ 1600</small>{% else %}<strong>—</strong>{% endif %}</div>
+  </div>
+  <p class="hi-foot">{% if exam.average %}최고 {{ exam.highest|default:"—" }} · 전체 SAT {{ exam.count }}회{% else %}시험 기록이 쌓이면 표시됩니다{% endif %}</p>
+ </article>
+
+ <article class="hi-tile hi-donut" data-donut data-value="{{ att.value|default:0 }}" style="--tone: var(--hi-cyan)">
+  <header class="hi-tile-head"><h2>출석률</h2><a href="{% url 'student_attendance' %}">출결</a></header>
+  <div class="hi-ring-wrap">
+   <svg class="hi-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="hi-ring-track" cx="50" cy="50" r="42"/><circle class="hi-ring-value" cx="50" cy="50" r="42" pathLength="100" style="--v: {{ att.value|default:0 }}"/></svg>
+   <div class="hi-ring-center">{% if att.value is not None %}<strong data-count-to="{{ att.value }}">{{ att.value }}</strong><small>%</small>{% else %}<strong>—</strong>{% endif %}</div>
+  </div>
+  <p class="hi-foot">{% if att.state == "ok" %}지난 수업 {{ att.done }}회 중 {{ att.attended }}회 참여{% elif att.state == "error" %}출결을 잠시 불러오지 못했습니다{% else %}아직 진행한 수업이 없습니다{% endif %}</p>
+ </article>
+
+ <article class="hi-tile hi-donut" data-donut data-value="{{ hw.value|default:0 }}" style="--tone: var(--hi-violet)">
+  <header class="hi-tile-head"><h2>과제 제출률</h2><a href="{% url 'assignments:my' %}">{% if is_parent %}학습{% else %}내 학습{% endif %}</a></header>
+  <div class="hi-ring-wrap">
+   <svg class="hi-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="hi-ring-track" cx="50" cy="50" r="42"/><circle class="hi-ring-value" cx="50" cy="50" r="42" pathLength="100" style="--v: {{ hw.value|default:0 }}"/></svg>
+   <div class="hi-ring-center">{% if hw.value is not None %}<strong data-count-to="{{ hw.value }}">{{ hw.value }}</strong><small>%</small>{% else %}<strong>—</strong>{% endif %}</div>
+  </div>
+  <p class="hi-foot">{% if hw.state == "ok" %}마감 지난 {{ hw.total }}개 중 {{ hw.submitted }}개 제출{% else %}마감 지난 과제가 없습니다{% endif %}</p>
+ </article>
+</div>
+{% if insight.report %}
+<a class="hi-report" href="{{ insight.report.url }}">
+ <svg class="et-icon" aria-hidden="true"><use href="#i-file"/></svg>
+ <span class="hi-report-copy"><strong>새 리포트카드가 있습니다</strong><small>{{ insight.report.group }} · {{ insight.report.form }} · {{ insight.report.title }} · {{ insight.report.published_at|date:"n월 j일" }} 공개</small></span>
+ <span class="hi-report-go">보기</span>
+</a>
+{% endif %}
+{% endwith %}{% endif %}

@@ -1,0 +1,476 @@
+/* 97-polish: 디자인 다듬기 마지막 층.
+   - 메뉴별 색 구역: body·요소의 data-area (apps/accounts/context_processors.py NAV_META) → --area, --area-soft, --area-on-dark, --area-chip
+   - 아이콘: templates/components/icon_sprite.html (제목 앞 칩·빈 상태 아이콘은 같은 그림에 색을 넣어 이 파일에 담음,
+     다시 만들 때는 아이콘 그림과 색표를 바꾼 뒤 위쪽 :root·[data-area] 줄만 교체)
+   - 규칙: 글자 14px 이상, 초록 계열 금지, 명조체 금지 (apps/dashboard/tests/test_readability.py)
+   - 움직임: 눌렀을 때 반응·펼침·탭 전환·저장 알림·메시지 창만, 움직임 줄이기 설정이면 모두 끔 */
+:root {
+  --pl-ink: #172235;
+  --pl-muted: #526077;
+  --pl-line: #e2e8f1;
+  --pl-line-strong: #cbd5e3;
+  --pl-radius: 12px;
+  --pl-shadow: 0 1px 2px rgba(17, 28, 48, .05), 0 6px 16px -10px rgba(17, 28, 48, .18);
+  --pl-shadow-hover: 0 2px 4px rgba(17, 28, 48, .06), 0 12px 24px -14px rgba(17, 28, 48, .28);
+  --pl-ease: cubic-bezier(.16, 1, .3, 1);
+  --pl-fast: 150ms;
+  --pl-mid: 200ms;
+}
+:root {
+  --area-home: #1f3156; --area-home-soft: #eaf0ff; --area-home-on-dark: #9cb8ff;
+  --area-students: #1f3156; --area-students-soft: #e5f1fa; --area-students-on-dark: #86c6ef;
+  --area-classes: #3554d1; --area-classes-soft: #e9edfd; --area-classes-on-dark: #a7b6ff;
+  --area-learning: #7a5b22; --area-learning-soft: #f1ecfd; --area-learning-on-dark: #c6aefc;
+  --area-resources: #a2367f; --area-resources-soft: #fbeaf5; --area-resources-on-dark: #efa7d6;
+  --area-grades: #b45309; --area-grades-soft: #fff2df; --area-grades-on-dark: #f6c27c;
+  --area-messages: #1f3156; --area-messages-soft: #ecebfd; --area-messages-on-dark: #b4aefc;
+  --area-notices: #c2410c; --area-notices-soft: #fff0e6; --area-notices-on-dark: #ffae88;
+  --area-ops: #475569; --area-ops-soft: #eef1f6; --area-ops-on-dark: #bfcadb;
+  --area-billing: #475569; --area-billing-soft: #eef1f6; --area-billing-on-dark: #bfcadb;
+  --pl-empty-icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%237a879c%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M22 12h-6l-2 3h-4l-2-3H2%22/%3E%3Cpath d=%22M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z%22/%3E%3C/svg%3E");
+}
+[data-area="home"] { --area: var(--area-home); --area-soft: var(--area-home-soft); --area-on-dark: var(--area-home-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%232454cc%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z%22/%3E%3Cpath d=%22M9 22V13h6v9%22/%3E%3C/svg%3E"); }
+[data-area="students"] { --area: var(--area-students); --area-soft: var(--area-students-soft); --area-on-dark: var(--area-students-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%230b6aa8%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2%22/%3E%3Ccircle cx=%229%22 cy=%227%22 r=%224%22/%3E%3Cpath d=%22M22 21v-2a4 4 0 0 0-3-3.87%22/%3E%3Cpath d=%22M16 3.13a4 4 0 0 1 0 7.75%22/%3E%3C/svg%3E"); }
+[data-area="classes"] { --area: var(--area-classes); --area-soft: var(--area-classes-soft); --area-on-dark: var(--area-classes-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%233554d1%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%223%22 y=%224%22 width=%2218%22 height=%2218%22 rx=%222%22/%3E%3Cpath d=%22M16 2v4M8 2v4M3 10h18%22/%3E%3C/svg%3E"); }
+[data-area="learning"] { --area: var(--area-learning); --area-soft: var(--area-learning-soft); --area-on-dark: var(--area-learning-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236d4bc7%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%228%22 y=%222%22 width=%228%22 height=%224%22 rx=%221%22/%3E%3Cpath d=%22M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2%22/%3E%3Cpath d=%22m9 14 2 2 4-4%22/%3E%3C/svg%3E"); }
+[data-area="resources"] { --area: var(--area-resources); --area-soft: var(--area-resources-soft); --area-on-dark: var(--area-resources-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23a2367f%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z%22/%3E%3C/svg%3E"); }
+[data-area="grades"] { --area: var(--area-grades); --area-soft: var(--area-grades-soft); --area-on-dark: var(--area-grades-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23b45309%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M3 3v18h18%22/%3E%3Cpath d=%22M18 17V9M13 17V5M8 17v-3%22/%3E%3C/svg%3E"); }
+[data-area="messages"] { --area: var(--area-messages); --area-soft: var(--area-messages-soft); --area-on-dark: var(--area-messages-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%234338ca%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z%22/%3E%3C/svg%3E"); }
+[data-area="notices"] { --area: var(--area-notices); --area-soft: var(--area-notices-soft); --area-on-dark: var(--area-notices-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23c2410c%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m3 11 18-5v12L3 14z%22/%3E%3Cpath d=%22M11.6 16.8a3 3 0 1 1-5.8-1.6%22/%3E%3C/svg%3E"); }
+[data-area="ops"] { --area: var(--area-ops); --area-soft: var(--area-ops-soft); --area-on-dark: var(--area-ops-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23475569%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4%22/%3E%3C/svg%3E"); }
+[data-area="billing"] { --area: var(--area-billing); --area-soft: var(--area-billing-soft); --area-on-dark: var(--area-billing-on-dark); --area-chip: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23475569%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z%22/%3E%3Cpath d=%22M16 8H8M16 12H8M13 16H8%22/%3E%3C/svg%3E"); }
+/* 공용 선 아이콘: 크기를 따로 주지 않으면 글자 크기에 맞춤 */
+.et-icon { width: 1.15em; height: 1.15em; flex: none; vertical-align: -.2em; }
+
+/* 왼쪽 메뉴: 메뉴마다 아이콘과 색, 선택된 메뉴는 그 색으로 옅게 칠함 */
+body.visual-refresh-body .intranet-nav-link { gap: 11px; }
+body.visual-refresh-body .intranet-nav-link .intranet-nav-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  color: var(--area-on-dark, #c7d4e7);
+}
+body.visual-refresh-body .intranet-nav-link.is-active {
+  background: color-mix(in srgb, var(--area-on-dark, #9cb8ff) 24%, #142237) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+body.visual-refresh-body .intranet-nav-link.is-active .intranet-nav-icon { color: #fff; }
+
+/* 화면 제목 앞 색 구역 아이콘: 지금 어느 메뉴에 있는지 한눈에 */
+body.intranet-app-body #main-content h1::before {
+  content: "";
+  display: inline-block;
+  width: 1.35em;
+  height: 1.35em;
+  margin-right: .45em;
+  vertical-align: -.28em;
+  border-radius: .38em;
+  background: var(--area-soft, #eaf0ff) var(--area-chip, none) center / 62% no-repeat;
+}
+body.intranet-app-body #main-content .portal-home-head h1::before { display: none; }
+
+/* 카드: 같은 둥글기와 옅은 그림자로 층을 구분 */
+body.intranet-app-body :is(.portal-card, .workflow-panel, .catalog-table-card) {
+  border-color: var(--pl-line) !important;
+  border-radius: var(--pl-radius) !important;
+  box-shadow: var(--pl-shadow) !important;
+}
+body.intranet-app-body .portal-card-head h2 { display: flex; align-items: center; gap: 9px; }
+body.intranet-app-body .portal-card-head h2 svg.portal-symbol {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  padding: 6px;
+  border-radius: 8px;
+  background: var(--area-soft, #eaf0ff);
+  color: var(--area, #1f3156);
+}
+.portal-notices { --area: var(--area-notices); --area-soft: var(--area-notices-soft); }
+.portal-home-messages { --area: var(--area-messages); --area-soft: var(--area-messages-soft); }
+.portal-zoom { --area: var(--area-classes); --area-soft: var(--area-classes-soft); }
+.admin-queue, .admin-shortcuts { --area: var(--area-home); --area-soft: var(--area-home-soft); }
+
+/* 관리자 홈: 오늘 처리할 일 · 관리 바로가기 · 활성 계정 */
+.portal-admin-home .admin-queue { margin-bottom: 16px; }
+.admin-queue-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
+.admin-queue-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1px solid var(--pl-line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--pl-ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.admin-queue-row svg { width: 20px; height: 20px; flex: 0 0 20px; color: var(--area); }
+.admin-queue-row b { margin-left: auto; color: var(--pl-muted); font-size: 22px; line-height: 1; font-variant-numeric: tabular-nums; }
+.admin-queue-row.has-work { border-color: color-mix(in srgb, var(--area) 30%, #fff); background: var(--area-soft); }
+.admin-queue-row.has-work b { color: var(--area); }
+.admin-queue-row:hover { border-color: var(--area); box-shadow: var(--pl-shadow-hover); }
+.admin-shortcut-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+.admin-shortcut-list a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--pl-ink);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.admin-shortcut-list a svg { width: 18px; height: 18px; flex: 0 0 18px; color: var(--area); }
+.admin-shortcut-list a:hover { background: var(--area-soft); color: var(--area); }
+.admin-accounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--pl-line);
+  color: var(--pl-muted);
+  font-size: 14px;
+}
+.admin-accounts b { color: var(--pl-ink); font-variant-numeric: tabular-nums; }
+body.intranet-app-body .portal-link-button { font-size: 14px; }
+body.intranet-app-body .portal-link-button svg { width: 16px; height: 16px; }
+
+/* 빈 상태: 큰 빈 상자 대신 아이콘 + 한 줄 안내 */
+body.intranet-app-body :is(.portal-empty, .workflow-empty, .lms-empty, .operations-empty, .operations-empty-state, .learner-empty-state, .premium-empty-state, .score-tab-empty, .st-empty, .et-class-detail-empty) {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: start;
+  min-height: 0 !important;
+  margin: 0;
+  padding: 12px 14px !important;
+  border: 1px dashed var(--pl-line-strong) !important;
+  border-radius: 10px !important;
+  background: #fafbfd !important;
+  box-shadow: none !important;
+  color: var(--pl-muted);
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: left !important;
+}
+body.intranet-app-body :is(.portal-empty, .workflow-empty, .lms-empty, .operations-empty, .operations-empty-state, .learner-empty-state, .premium-empty-state, .score-tab-empty, .st-empty, .et-class-detail-empty)::before {
+  content: "";
+  grid-column: 1;
+  grid-row: 1 / span 4;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  background: var(--pl-empty-icon) center / contain no-repeat;
+}
+body.intranet-app-body :is(.portal-empty, .workflow-empty, .lms-empty, .operations-empty, .operations-empty-state, .learner-empty-state, .premium-empty-state, .score-tab-empty, .st-empty, .et-class-detail-empty) > * {
+  grid-column: 2;
+  justify-self: start;
+  margin: 0 !important;
+  text-align: left !important;
+}
+body.intranet-app-body :is(.workflow-empty, .premium-empty-state, .learner-empty-state) strong { color: var(--pl-ink); font-size: 14px; }
+
+/* 강사 담당 수업: 담당 학생을 화면 폭 전체 줄 대신 작은 이름 카드로 나란히 */
+body.intranet-app-body .et-v5-assigned-summary { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+body.intranet-app-body .et-v5-assigned-summary-row { border-radius: 10px !important; }
+body.intranet-app-body .et-v5-assigned-summary-row > div { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+body.intranet-app-body .et-v5-assigned-summary-row strong { color: var(--pl-ink); font-size: 15px; }
+body.intranet-app-body .et-v5-assigned-summary-row small { margin: 0; }
+body.intranet-app-body .et-v5-assigned-summary-row span { color: var(--area, #3554d1); }
+body.intranet-app-body .et-v5-assigned-summary-row:hover { border-color: var(--area, #3554d1) !important; background: var(--area-soft, #e9edfd) !important; }
+
+/* 목록 줄: 좁은 화면에서도 화살표가 첫 줄 오른쪽에 붙어 있도록 */
+@media (max-width: 900px) {
+  body.intranet-app-body :is(.compact-row, .compact-row.is-learning, .assignment-compact-row) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: 10px;
+  }
+  body.intranet-app-body .compact-row > .compact-arrow { grid-column: 3; grid-row: 1 / span 2; align-self: center; }
+}
+/* 학습 탭: 휴대폰에서 두 줄로 접히지 않고 한 줄로 밀어서 보기 */
+@media (max-width: 600px) {
+  body.intranet-app-body .learning-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  body.intranet-app-body .learning-tabs::-webkit-scrollbar { display: none; }
+}
+
+/* 공지 구분·공개 대상: 체크칸을 누르기 쉬운 칩으로 */
+body.intranet-app-body .ux-field :is(#id_audiences, #id_category) { display: flex; flex-wrap: wrap; gap: 6px; }
+body.intranet-app-body .ux-field :is(#id_audiences, #id_category) > div { margin: 0; }
+body.intranet-app-body .ux-field :is(#id_audiences, #id_category) label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 6px 13px;
+  border: 1px solid var(--pl-line-strong);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--pl-ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+body.intranet-app-body .ux-field :is(#id_audiences, #id_category) label:hover { border-color: var(--area-notices); }
+body.intranet-app-body .ux-field :is(#id_audiences, #id_category) label:has(input:checked) {
+  border-color: var(--area-notices);
+  background: var(--area-notices-soft);
+  color: var(--area-notices);
+}
+body.intranet-app-body .ux-field :is(#id_audiences, #id_category) input { width: 16px; height: 16px; margin: 0; accent-color: var(--area-notices); }
+/* 학원 공지를 고르면 '반' 칸은 필요 없으므로 숨김 */
+body.intranet-app-body .ux-editor-students:has(#id_category input[value="ACADEMY"]:checked) .ux-field:has(#id_group) { display: none; }
+
+/* 누르면 바로 반응(0.15초), 키보드로 옮길 때 위치 표시 */
+body.intranet-app-body :is(a, button, summary, .compact-row, .admin-queue-row) {
+  transition: background-color var(--pl-fast) ease, border-color var(--pl-fast) ease, color var(--pl-fast) ease,
+              box-shadow var(--pl-fast) ease, transform var(--pl-fast) var(--pl-ease);
+}
+body.intranet-app-body :is(button, .ux-btn, .workflow-button, .lms-btn, .portal-link-button, .et-v5-button, .portal-chat-fab):active:not(:disabled) {
+  transform: translateY(1px);
+}
+body.intranet-app-body :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--area, #1f3156);
+  outline-offset: 2px;
+}
+
+/* 상태가 바뀔 때만 움직임: 펼친 내용, 탭 전환, 저장 알림, 메시지 창, 새 메시지 숫자 */
+@keyframes pl-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes pl-pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes pl-bump { 0% { transform: scale(1); } 40% { transform: scale(1.22); } 100% { transform: scale(1); } }
+body.intranet-app-body :is(.message-card, [data-score-panel]:not([hidden]), details[open] > :not(summary)) {
+  animation: pl-enter var(--pl-mid) var(--pl-ease) both;
+}
+body.intranet-app-body .portal-chat-window:not([hidden]) {
+  transform-origin: bottom right;
+  animation: pl-pop var(--pl-mid) var(--pl-ease) both;
+}
+body.intranet-app-body .is-bumped { display: inline-block; animation: pl-bump 420ms var(--pl-ease); }
+@media (prefers-reduced-motion: reduce) {
+  body.intranet-app-body *, body.intranet-app-body *::before, body.intranet-app-body *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 등록 화면 정리(과제·퀴즈·토론): 마감·배점·제출 방식 한 줄, 공개 시간 예약 체크, 쪽 넘김은 쪽이 하나면 숨김 */
+body.intranet-app-body .ux-three-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { body.intranet-app-body .ux-three-fields { grid-template-columns: 1fr; } }
+body.intranet-app-body .ux-schedule { display: grid; align-content: start; gap: 6px; }
+body.intranet-app-body .ux-check { display: inline-flex; align-items: center; gap: 8px; color: var(--pl-ink); font-size: 14px; font-weight: 600; cursor: pointer; }
+body.intranet-app-body .ux-check input { width: 18px; height: 18px; margin: 0; accent-color: var(--area, #1f3156); }
+body.intranet-app-body .ux-pager:has([data-browse-prev]:disabled):has([data-browse-next]:disabled) { display: none; }
+body.intranet-app-body .ux-selector-controls { justify-content: flex-end; }
+body.intranet-app-body [data-selector-side] { user-select: none; }
+
+/* 담당 학생 지정 ① 수업 찾기: 높이가 정해진 세로 목록에서 줄이 눌려 둘째 줄(학기·상태·인원)이 잘리지 않게, 줄은 더 작게 */
+body.intranet-app-body .portal-class-panel .portal-class-results { gap: 4px; }
+.portal-class-panel .portal-class-row { flex: 0 0 auto; gap: 1px; padding: 6px 10px; line-height: 1.35; }
+
+/* 작은 메신저(모든 화면): 그룹 대화·반 단체방 참여자 줄 */
+body.intranet-app-body .portal-chat-members { margin: 0; padding: 6px 10px; border-bottom: 1px solid var(--pl-line); background: #fafbfd; color: #475569; font-size: 14px; line-height: 1.4; max-height: 3.1em; overflow: hidden; }
+
+/* ── 전체 촘촘하게(10/22 요청: 칸·글씨가 커서 정리) ─────────────────────────────
+   글자 14px 기준(최소 14px 규칙 유지), 제목 22/16/15px, 위쪽 막대 56px, 메뉴 줄 36px,
+   입력칸·버튼 34px 안팎, 카드 여백 14~16px. 예전 층(80·90)의 !important 값을 여기서 다시 씁니다. */
+:root { --et-topbar-height: 56px; --et-sidebar-width: 216px; }
+html:has(body.intranet-app-body) { font-size: 15px !important; }
+body.intranet-app-body { font-size: 14px !important; line-height: 1.55 !important; }
+body.intranet-app-body .page-shell h1 { font-size: 22px !important; }
+body.intranet-app-body .page-shell h2 { font-size: 16px !important; }
+body.intranet-app-body .page-shell h3 { font-size: 15px !important; }
+body.intranet-app-body .page-shell :is(p, li, dt, dd) { font-size: 14px; line-height: 1.6; }
+body.intranet-app-body[data-usability-version] .page-shell { padding-top: calc(var(--et-topbar-height) + 12px) !important; }
+body.intranet-app-body .page-shell.intranet-page-shell { padding-right: 20px !important; padding-left: 20px !important; }
+
+/* 위쪽 막대·왼쪽 메뉴 */
+body.intranet-app-body .intranet-topbar { padding-top: 0 !important; padding-bottom: 0 !important; }
+body.intranet-app-body :is(.intranet-topbar-search, .intranet-logout-button, .intranet-icon-button) { min-height: 32px !important; }
+body.intranet-app-body .intranet-page-context strong { font-size: 15px !important; }
+body.intranet-app-body .intranet-nav-link { min-height: 34px !important; padding: 6px 12px !important; font-size: 14px !important; line-height: 1.4 !important; }
+body.intranet-app-body .intranet-sidebar-quick a { min-height: 32px !important; }
+
+/* 입력칸·선택칸·글상자 */
+body.intranet-app-body input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=range]):not([type=color]),
+body.intranet-app-body select:not([multiple]) {
+  min-height: 34px !important; padding: 5px 10px !important; font-size: 14px !important; line-height: 1.45 !important;
+}
+body.intranet-app-body textarea:not(.ann-inline-text):not(.ann-inline-comment) { padding: 7px 10px !important; font-size: 14px !important; line-height: 1.5 !important; }
+body.intranet-app-body textarea:not(.ann-inline-text):not(.ann-inline-comment):not([rows="1"]) { min-height: 72px; }
+body.intranet-app-body[data-usability-version] .ux-field textarea { min-height: 80px !important; }
+body.intranet-app-body[data-usability-version] .ux-editor :is(textarea[name=description], textarea[name=content]) { height: 96px !important; min-height: 80px !important; }
+
+/* 버튼 */
+body.intranet-app-body :is(.workflow-button, .lms-btn, .ux-btn, .portal-link-button, .stage14-action, .et-v5-action, .btn,
+  .premium-primary-button, .premium-dashboard-primary-action, .score-learning-insight-link, .operations-primary-link,
+  .operations-secondary-link, .import-action, .et-v5-manage-link, .teacher-picker-search button, .page-back-link,
+  .learner-course-action, .home-text-button) {
+  min-height: 32px !important; padding: 5px 12px !important; font-size: 14px !important; line-height: 1.4 !important;
+}
+
+/* 카드·머리 칸·목록 줄·표 */
+body.intranet-app-body :is(.workflow-panel, .lms-panel, .catalog-table-card) { padding: 14px 16px !important; }
+body.intranet-app-body .portal-card { padding: 14px 16px !important; }
+body.intranet-app-body :is(.workflow-hero, .workflow-page-hero) { min-height: 0 !important; padding: 12px 16px !important; gap: 8px 16px !important; }
+body.intranet-app-body :is(.workflow-hero, .workflow-page-hero) p { margin: 2px 0 0 !important; }
+body.intranet-app-body .compact-row { min-height: 0 !important; padding: 8px 4px !important; gap: 4px 12px !important; }
+body.intranet-app-body :is(table th, table td) { padding: 7px 10px !important; line-height: 1.5 !important; }
+body.intranet-app-body .ux-editor-toolbar { padding: 8px 14px !important; }
+body.intranet-app-body .ux-editor-columns { gap: 12px !important; }
+/* 예전 층의 '버튼 최소 42px'(30-stability)·'입력칸 38px'(90-usability)도 같은 세기로 되돌림 */
+.app-body button { min-height: 0; }
+body.intranet-app-body[data-usability-version] :is(.ux-field, .ux-filter-row, .ux-student-filters, .ux-new-chat) :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]), select) {
+  min-height: 34px !important; padding: 5px 10px !important;
+}
+/* 홈 바로가기·목록 줄·성적표 칸·빈 대화 안내도 한 단계 작게 */
+body.intranet-app-body .portal-shortcuts a { padding: 8px 8px !important; }
+body.intranet-app-body :is(.portal-notice-row, .portal-message-preview) { padding-top: 7px !important; padding-bottom: 7px !important; }
+body.intranet-app-body .gradebook-cell { min-height: 0; }
+body.intranet-app-body .gradebook-cell strong { font-size: 15px; }
+body.intranet-app-body .ux-chat-empty { padding: 16px; }
+body.intranet-app-body .ux-chat-empty strong { font-size: 16px !important; }
+/* 메시지 방 목록: 이름 옆에 시간, 아래 한 줄 미리보기(카톡처럼 한 줄 두 칸) */
+body.intranet-app-body[data-usability-version] .ux-chat-room-list .home-message-row { padding: 8px 10px; }
+body.intranet-app-body .ux-chat-room-list .home-message-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; align-items: baseline; }
+body.intranet-app-body .ux-chat-room-list .home-message-main strong { font-size: 14px !important; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+body.intranet-app-body .ux-chat-room-list .home-message-main time { grid-column: 2; grid-row: 1; white-space: nowrap; }
+body.intranet-app-body .ux-chat-room-list .home-message-main p { grid-column: 1 / -1; max-width: none; margin: 2px 0 0; line-height: 1.4; }
+/* 첨삭 도구 막대: 아이콘·이름을 더 촘촘하게 */
+body.intranet-app-body .ann-tool { padding: 3px 6px 2px; gap: 0; line-height: 1.25; }
+body.intranet-app-body .ann-tool .et-icon { width: 18px; height: 18px; }
+/* 대화 입력칸 */
+@media (min-width: 761px) {
+  body.intranet-app-body[data-usability-version] .ux-chat-composer textarea { min-height: 40px !important; height: 40px; padding: 8px 10px !important; font-size: 14px !important; }
+  .ux-chat-composer { padding: 8px 12px !important; }
+}
+/* 휴대폰: 입력 글씨가 16px 아래면 iPhone이 화면을 확대하므로 입력칸 글씨만 16px 유지 */
+@media (max-width: 760px) {
+  body.intranet-app-body input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=range]):not([type=color]),
+  body.intranet-app-body select:not([multiple]), body.intranet-app-body textarea:not(.ann-inline-text):not(.ann-inline-comment) { font-size: 16px !important; }
+}
+/* 성적·요약 숫자: 강조는 남기고 크기만 한 단계 낮춤 */
+body.intranet-app-body .score-latest-card > strong { font-size: clamp(36px, 4vw, 48px); }
+body.intranet-app-body .score-kpi-grid strong { font-size: 20px; }
+body.intranet-app-body .score-attempt-result > strong { font-size: 17px; }
+body.intranet-app-body .learner-summary-strip strong { font-size: 20px; }
+/* 관리자 수업 관리·데이터 이전의 큰 남색 머리 칸: 얇게, 숫자 상자도 작게, 남색 위 파란 글씨는 밝게 */
+body.intranet-app-body :is(.catalog-hero, .import-hero, .import-page-hero) { padding: 12px 18px !important; gap: 16px !important; border-radius: 12px !important; box-shadow: none !important; align-items: center !important; }
+body.intranet-app-body :is(.import-hero, .import-page-hero)::before { display: none; }
+body.intranet-app-body :is(.catalog-hero, .import-hero, .import-page-hero) h1 { margin: 2px 0 4px !important; line-height: 1.25 !important; }
+body.intranet-app-body :is(.catalog-hero, .import-hero, .import-page-hero) p { line-height: 1.5 !important; }
+body.intranet-app-body :is(.catalog-hero, .import-hero, .import-page-hero) .eyebrow { color: #bfd3f5 !important; }
+body.intranet-app-body :is(.catalog-hero-count, .import-hero-status) { flex: 0 0 auto !important; min-width: 0 !important; padding: 6px 14px !important; border-radius: 10px !important; backdrop-filter: none !important; }
+body.intranet-app-body :is(.catalog-hero-count, .import-hero-status) strong { margin: 0 !important; font-size: 20px !important; line-height: 1.3 !important; color: #fff !important; }
+body.intranet-app-body :is(.import-summary-grid, .import-batch-summary) strong { font-size: 20px !important; }
+/* 남은 옛 '버튼 42~44px' 규칙들 */
+.app-body [class*="-button"] { min-height: 0; }
+body.intranet-app-body :is(.operations-filter-form, .operations-audit-filter) button,
+body.intranet-app-body :is(.operations-filter-form, .operations-audit-filter) > a { min-height: 34px !important; padding: 0 14px !important; }
+body.intranet-app-body :is(.catalog-reset-button, .catalog-search-button) { min-height: 34px !important; padding: 5px 12px !important; }
+body.intranet-app-body .catalog-hero-count { display: flex; align-items: baseline; gap: 6px; }
+body.intranet-app-body .catalog-hero-count :is(span, small) { display: inline; }
+/* 수업 관리 표: 칸 너비를 내용만큼만 → 화면 안에 다 들어오게, 머리글은 낱말 중간에서 끊지 않음 */
+body.intranet-app-body .catalog-table.edutrack-class-fast-table { min-width: 960px !important; }
+body.intranet-app-body .edutrack-class-fast-table th { overflow-wrap: normal !important; }
+body.intranet-app-body .edutrack-class-fast-table :is(th, td) { padding: 7px 6px !important; }
+/* 출결 상세의 남색 원 안 '현재 출석률' 숫자: 머리 칸 글씨색 규칙(50-intranet-theme)이 남색으로 덮어 안 보이던 것을 흰색으로 */
+body.intranet-app-body .premium-attendance-hero .premium-rate-ring strong { color: #fff !important; }
+body.intranet-app-body .premium-attendance-hero .premium-rate-ring :is(span, small) { color: rgba(255, 255, 255, .86) !important; }
+
+/* ── 학생 상세·출결 상세(+ 내 성적의 같은 성적 카드): 칸·글씨 한 단계 작게, 흰 칸끼리 구분되게, 움직임 없음 ── */
+body.intranet-app-body .page-shell.intranet-page-shell:has(.premium-profile-hero, .premium-attendance-hero) { background: #eef2f7 !important; }
+body.intranet-app-body .score-latest-card { justify-content: flex-start !important; }
+body.intranet-app-body .page-shell:has(.premium-profile-hero, .premium-attendance-hero) *,
+body.intranet-app-body .page-shell:has(.premium-profile-hero, .premium-attendance-hero) *::before,
+body.intranet-app-body .page-shell:has(.premium-profile-hero, .premium-attendance-hero) *::after { animation: none !important; transition: none !important; }
+body.intranet-app-body .page-shell:has(.premium-profile-hero, .premium-attendance-hero) :is(a, article, button, span, div):hover { transform: none !important; }
+
+/* 바깥 흰 상자는 걷어내고(카드 속 카드 X), 안쪽 카드만 테두리로 또렷하게 */
+body.intranet-app-body .score-insight-section { padding: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
+body.intranet-app-body :is(.score-latest-card, .score-trend-card, .score-attempts-card, .premium-course-card, .premium-achievement-panel, .premium-day-card, .premium-profile-grid > article, .score-kpi-grid > article) {
+  border: 1px solid #d3dce8 !important; border-radius: 10px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(15, 23, 42, .05) !important;
+}
+body.intranet-app-body :is(.premium-profile-hero, .premium-attendance-hero) { margin-bottom: 10px !important; padding-bottom: 6px !important; }
+body.intranet-app-body .premium-profile-grid { gap: 10px !important; margin-bottom: 12px !important; }
+body.intranet-app-body .premium-profile-grid > article { padding: 10px 12px !important; }
+
+/* 성적 카드 */
+body.intranet-app-body .score-insight-hero { gap: 12px !important; }
+body.intranet-app-body :is(.score-latest-card, .score-trend-card, .score-attempts-card) { padding: 14px 16px !important; }
+body.intranet-app-body .score-latest-card > strong { font-size: 32px !important; line-height: 1.2 !important; margin: 4px 0 8px !important; }
+body.intranet-app-body .score-kpi-grid { gap: 10px !important; margin: 12px 0 !important; }
+body.intranet-app-body .score-kpi-grid > article { padding: 10px 12px !important; }
+body.intranet-app-body .score-kpi-grid strong { font-size: 18px !important; }
+body.intranet-app-body .score-attempt-row { padding: 8px 10px !important; gap: 10px !important; }
+body.intranet-app-body .score-attempt-result > strong { font-size: 16px !important; }
+body.intranet-app-body .score-chart-shell { height: auto !important; padding: 0 !important; margin-top: 6px; }
+
+/* 수업 카드(학생 상세 아래) */
+body.intranet-app-body .premium-course-list { gap: 12px !important; }
+body.intranet-app-body .premium-course-top { padding: 14px 16px !important; gap: 16px !important; }
+body.intranet-app-body .premium-course-copy h3 { font-size: 16px !important; margin: 4px 0 2px !important; }
+body.intranet-app-body .dual-rate-panel { padding: 10px 14px !important; border-radius: 10px !important; gap: 12px !important; }
+body.intranet-app-body .dual-rate-panel strong { font-size: 22px !important; }
+body.intranet-app-body .premium-course-timeline { padding: 10px 16px !important; }
+body.intranet-app-body .premium-course-footer { padding: 10px 16px !important; gap: 12px !important; }
+
+/* 출결 상세 */
+body.intranet-app-body .premium-rate-ring { width: 116px !important; height: 116px !important; }
+body.intranet-app-body .premium-rate-ring::before { width: 92px !important; height: 92px !important; }
+body.intranet-app-body .premium-rate-ring strong { font-size: 20px !important; }
+body.intranet-app-body .premium-attendance-dashboard { gap: 12px !important; margin-bottom: 14px !important; }
+body.intranet-app-body .premium-achievement-panel { padding: 14px 16px !important; }
+body.intranet-app-body .premium-achievement-panel strong { font-size: 26px !important; }
+body.intranet-app-body .premium-status-grid { gap: 8px !important; }
+body.intranet-app-body .premium-status-grid > * { padding: 10px 12px !important; border-radius: 10px !important; border: 1px solid #c7d6ec; }
+body.intranet-app-body .premium-status-grid > .is-absent { border-color: #f3c9bd; }
+body.intranet-app-body .premium-status-grid > .is-late { border-color: #f1dfb2; }
+body.intranet-app-body .premium-status-grid > .is-recorded { border-color: #ddd0ee; }
+body.intranet-app-body .premium-status-grid strong { font-size: 22px !important; }
+body.intranet-app-body .premium-day-card { padding: 8px !important; }
+body.intranet-app-body .premium-day-header { padding: 8px 12px !important; }
+body.intranet-app-body .premium-day-header strong { font-size: 15px !important; }
+body.intranet-app-body .premium-session-row { padding: 6px 10px !important; gap: 10px !important; }
+body.intranet-app-body .premium-upcoming-strip, body.intranet-app-body .premium-history-grid { gap: 8px !important; }
+/* 공지 관리: 제목을 누르면 공지로 */
+body.intranet-app-body a.compact-title { color: #172a46; font-weight: 700; text-decoration: none; }
+body.intranet-app-body a.compact-title:hover { color: #1f3156; text-decoration: underline; text-underline-offset: 3px; }
+/* 학생 관리·담당 학생 목록: 인트라넷 목록처럼 촘촘하게(목록·보조 글씨 13px) */
+body.intranet-app-body :is([data-student-directory], [data-local-student-list]) :is(.st-row, .st-row *, .st-head span, .ux-hint, .ux-filter-row label > span, .ux-results-meta, .ux-filter-details summary, input, select) { font-size: 13px !important; }
+body.intranet-app-body :is([data-student-directory], [data-local-student-list]) .st-row { padding-top: 5px !important; padding-bottom: 5px !important; }
+body.intranet-app-body .premium-search-hero h1 { font-size: 20px !important; }
+body.intranet-app-body .premium-search-hero p { font-size: 13px !important; }
+/* 학생 상세·출결 상세의 보조 글씨(설명·날짜·단위)도 13px */
+body.intranet-app-body .page-shell:has(.premium-profile-hero, .premium-attendance-hero) :is(small, .premium-course-copy p, .premium-attendance-copy p, .premium-profile-hero p) { font-size: 13px !important; }
+@media (max-width: 760px) {
+  body.intranet-app-body :is([data-student-directory], [data-local-student-list]) :is(input, select) { font-size: 16px !important; }
+}
+
+/* 공지사항: 학원 전체 공지 아래 반별 공지 묶음(운영팀 요청 10.29) */
+.notice-class-title { margin: 0 0 10px; font-size: 17px; font-weight: 800; color: #172a46; }
+.notice-class-group { margin-top: 8px; border: 1px solid #dfe3e8; border-radius: 10px; background: #fff; }
+.notice-class-group > summary { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; font-size: 15px; }
+.notice-class-group > summary span { color: #475569; font-size: 14px; }
+.notice-class-group > .compact-list { padding: 0 8px 8px; }
+
+/* 학부모 출결: '녹화' 칸을 누르면 녹화본 발송 일시(운영팀 요청 10.29) */
+.premium-recorded-card > summary { list-style: none; cursor: pointer; display: grid; gap: 2px; }
+.premium-recorded-card > summary::-webkit-details-marker { display: none; }
+.premium-recorded-card > summary small { color: #475569; font-size: 13px; font-weight: 600; }
+.premium-recorded-list { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.premium-recorded-list li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-top: 1px dashed #cbd5e1; font-size: 13px; }
+.premium-recorded-list strong { color: #13213d; }
+.premium-recording-sent { display: block; margin-top: 2px; color: #13213d; font-size: 13px; font-weight: 600; }
+
+/* 글 속 주소 링크(11/10): 파란색·밑줄, 긴 주소는 줄바꿈. 입력칸 아래 링크 미리보기 */
+a.et-autolink, .rc-text a, .lms-copy a { color: #1f3156; text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
+a.et-autolink:hover, .rc-text a:hover, .lms-copy a:hover { color: #13213d; }
+.et-linkpeek { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; font-size: 13px; line-height: 1.4; }
+.et-linkpeek[hidden] { display: none; }
+.et-linkpeek::before { content: "링크"; color: #64748b; font-weight: 600; }
+.et-linkpeek a { color: #1f3156; text-decoration: underline; overflow-wrap: anywhere; max-width: 100%; }

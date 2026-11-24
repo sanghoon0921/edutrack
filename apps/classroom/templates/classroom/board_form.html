@@ -1,0 +1,10 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/components/student-transfer-selector.css' %}?v=1110nv3">{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/compact-pages.css' %}?v=1110nv3">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/components/student-transfer-selector.js' %}?v=ux6" defer></script>{% endblock %}
+{% block content %}<form method="post" class="ux-editor workflow-form et-v5-classroom" data-compact-form>{% csrf_token %}
+<header class="ux-editor-toolbar"><h1>{% if form_mode == 'update' %}과목 자료 수정{% else %}과목 자료 등록{% endif %}</h1><div class="ux-actions"><a class="ux-btn" href="{% if board %}{% url 'classroom:board-detail' board.pk %}{% else %}{% url 'classroom:board-list' %}{% endif %}">취소</a><button class="ux-btn primary" type="submit">{% if form_mode == 'update' %}변경사항 저장{% else %}과목 자료 등록{% endif %}</button></div></header>
+{{ form.non_field_errors }}<div class="ux-editor-columns"><section class="ux-editor-main">
+{% for field in form %}{% if field.name != 'student_ids' %}{% include 'components/compact_field.html' with field=field %}{% endif %}{% endfor %}
+<p class="ux-muted">새 과목에는 TEXTBOOK·수업 자료·VOCAB이 생성됩니다. 지정한 학생에게 자료를 제공합니다.</p>
+</section><aside class="ux-editor-students">{% include 'components/student_transfer_selector.html' with selector=student_selector %}</aside></div></form>{% endblock %}

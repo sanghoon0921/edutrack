@@ -1,0 +1,1 @@
+{% if editing and edit_scope is None %}<input class="rc-input rc-title-input" name="batch_title" value="{{ batch.title }}" maxlength="60" size="16" aria-label="제목(시즌, 예: 26FW · 2026 가을 정규)" title="시즌 제목(예: 26FW, 2026 가을 정규). 이 반 카드 모두에 같이 바뀝니다.">{% else %}{{ batch.title }}{% endif %}

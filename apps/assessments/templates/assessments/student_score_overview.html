@@ -1,0 +1,119 @@
+{% load assessment_tags %}<section
+  class="score-insight-section"
+  data-reveal
+>
+  <div class="premium-section-heading score-insight-heading">
+    <div>
+      <h2>Digital SAT 성적</h2>
+      <p>
+        완료된 DSG 시험을 기준으로 최근 점수와
+        전체 SAT 변화 흐름을 정리합니다.
+      </p>
+    </div>
+
+    {% if score_overview.status == "ok" %}
+      <div class="score-insight-heading-actions">
+        <div class="score-insight-connection">
+          <span></span>
+          DSG 연결
+          <strong>
+            {{ score_overview.exam_count }}회
+          </strong>
+        </div>
+
+        <a
+          class="score-learning-insight-link"
+          href="{% url 'assessments:student-insight' student_id %}"
+        >
+          누적 학습 인사이트
+          <span>→</span>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if score_overview.status == "ok" %}
+    <div class="score-insight-hero">
+      <div class="score-side">
+        <article class="score-latest-card">
+          <span class="score-label">최근 전체 SAT</span>
+          <div class="score-total">
+            <strong>{% if score_overview.latest_total_score is not None %}{{ score_overview.latest_total_score }}{% else %}—{% endif %}</strong>
+            <small>/ 1600</small>
+          </div>
+          <dl class="score-latest-sections">
+            <div><dt>Reading &amp; Writing</dt><dd><i class="score-mini-bar"><i style="width: {% if score_overview.latest_rw_score %}{% widthratio score_overview.latest_rw_score 800 100 %}{% else %}0{% endif %}%"></i></i><b>{{ score_overview.latest_rw_score|default:"—" }}</b></dd></div>
+            <div><dt>Math</dt><dd><i class="score-mini-bar is-math"><i style="width: {% if score_overview.latest_math_score %}{% widthratio score_overview.latest_math_score 800 100 %}{% else %}0{% endif %}%"></i></i><b>{{ score_overview.latest_math_score|default:"—" }}</b></dd></div>
+          </dl>
+          <div class="score-delta-row">
+            <span class="{% if score_overview.first_delta > 0 %}is-positive{% elif score_overview.first_delta < 0 %}is-negative{% endif %}">첫 시험 대비 <b>{% if score_overview.first_delta is not None %}{% if score_overview.first_delta > 0 %}+{% endif %}{{ score_overview.first_delta }}{% else %}—{% endif %}</b></span>
+            <span class="{% if score_overview.previous_delta > 0 %}is-positive{% elif score_overview.previous_delta < 0 %}is-negative{% endif %}">직전 대비 <b>{% if score_overview.previous_delta is not None %}{% if score_overview.previous_delta > 0 %}+{% endif %}{{ score_overview.previous_delta }}{% else %}—{% endif %}</b></span>
+          </div>
+        </article>
+        <dl class="score-kpi-list">
+          <div><dt>전체 SAT 응시</dt><dd>{{ score_overview.full_sat_count }}회</dd></div>
+          <div><dt>평균 총점</dt><dd>{% if score_overview.average_total_score is not None %}{{ score_overview.average_total_score|floatformat:0 }}{% else %}—{% endif %}</dd></div>
+          <div><dt>최고 총점</dt><dd>{{ score_overview.highest_total_score|default:"—" }}</dd></div>
+          <div><dt>최근 3회 평균</dt><dd>{% if score_overview.recent_three_average is not None %}{{ score_overview.recent_three_average|floatformat:0 }}{% else %}—{% endif %}</dd></div>
+          <div><dt>전체 정답률 <small>문항 수 가중</small></dt><dd>{% if score_overview.overall_accuracy is not None %}{{ score_overview.overall_accuracy|floatformat:1 }}%{% else %}—{% endif %}</dd></div>
+        </dl>
+      </div>
+      <article class="score-trend-card">
+        <div class="score-card-heading">
+          <h3>전체 SAT 총점 추이 <small>최근 {{ score_overview.chart_points|length }}회</small></h3>
+          <small>점 위 숫자 = 총점</small>
+        </div>
+        {% if score_overview.chart_points %}
+          <div class="score-chart-shell">{% score_trend_chart score_overview.chart_points %}</div>
+        {% else %}
+          <div class="score-chart-empty">전체 SAT 시험이 2회 이상 쌓이면 총점 추이를 확인할 수 있습니다.</div>
+        {% endif %}
+      </article>
+    </div>
+    {% include "assessments/_score_attempts_card.html" %}
+
+    <div class="score-insight-footnote">
+      <span>
+        DSG student {{ score_overview.dsg_student_id }}
+      </span>
+      <span>
+        매핑 기준 {{ score_overview.matched_field|default:"확인됨" }}
+      </span>
+      {% if score_overview.dsg_grade %}
+        <span>
+          DSG Grade {{ score_overview.dsg_grade }}
+        </span>
+      {% endif %}
+    </div>
+
+  {% else %}
+    <div class="score-insight-state is-{{ score_overview.status }}">
+      <div class="score-state-symbol">
+        {% if score_overview.status == "error" %}
+          !
+        {% elif score_overview.status == "empty" %}
+          0
+        {% else %}
+          ↔
+        {% endif %}
+      </div>
+
+      <div>
+        <strong>
+          {% if score_overview.status == "error" %}
+            성적 연결 오류
+          {% elif score_overview.status == "empty" %}
+            완료된 시험 없음
+          {% else %}
+            DSG 성적 미연결
+          {% endif %}
+        </strong>
+
+        <p>{{ score_overview.message }}</p>
+      </div>
+    </div>
+    {% if score_overview.status == "empty" and score_overview.module_attempts %}
+      {% include "assessments/_score_attempts_card.html" %}
+    {% endif %}
+  {% endif %}
+</section>

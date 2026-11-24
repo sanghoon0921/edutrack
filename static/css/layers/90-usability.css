@@ -1,0 +1,210 @@
+/* Usability V1: small, consistent controls; no decorative metrics or tiny-font compression. */
+body.intranet-app-body[data-usability-version] {--ux-line:#dbe2ec;--ux-ink:#1f2d43;--ux-muted:#52647e;--ux-soft:#f7f9fc;--ux-blue:#1f3156;}
+body.intranet-app-body[data-usability-version] .page-shell {padding-top:14px!important;padding-bottom:22px!important;}
+body.intranet-app-body[data-usability-version] :is(.workflow-hero,.et-v5-page-heading,.lms-heading) {margin-bottom:12px!important;padding:12px 16px!important;min-height:0!important;}
+body.intranet-app-body[data-usability-version] :is(.workflow-hero,.et-v5-page-heading) .eyebrow {display:none;}
+body.intranet-app-body[data-usability-version] :is(.workflow-panel,.lms-panel) {padding:16px!important;margin-bottom:12px;box-shadow:none!important;}
+body.intranet-app-body[data-usability-version] .workflow-form-grid {gap:12px!important;}
+body.intranet-app-body[data-usability-version] .workflow-hero p {margin-top:4px;line-height:1.55!important;}
+body.intranet-app-body[data-usability-version] :is(.ux-editor,.ux-selector,.ux-student-filters,.ux-chat-shell,.ux-new-chat) * {box-sizing:border-box;min-width:0;}
+body.intranet-app-body[data-usability-version] :is(.ux-btn,.ux-text-btn,.ux-date-button) {font:inherit;font-size:14px!important;font-weight:600!important;line-height:1.4!important;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid #c5cfdd;border-radius:6px!important;background:#fff;color:#334155;box-shadow:none!important;cursor:pointer;text-decoration:none;min-height:36px;padding:7px 12px;white-space:normal;word-break:keep-all;}
+body.intranet-app-body[data-usability-version] .ux-btn.primary {background:#1f3156!important;border-color:#1f3156!important;color:#fff!important;}
+body.intranet-app-body[data-usability-version] :is(.ux-text-btn,.ux-date-button) {background:transparent;border-color:transparent;padding:3px 6px;min-height:30px;color:#1f3156;}
+body.intranet-app-body[data-usability-version] .ux-date-button {border-color:#dbe2ec;background:#fff;color:#445775;}
+body.intranet-app-body[data-usability-version] :is(.ux-btn,.ux-text-btn,.ux-date-button):disabled {opacity:.5;cursor:not-allowed;}
+body.intranet-app-body[data-usability-version] :is(.ux-btn,.ux-text-btn,.ux-date-button):hover:not(:disabled) {filter:brightness(.96);}
+body.intranet-app-body[data-usability-version] :is(.ux-hint,.ux-timezone) {font-size:14px!important;line-height:1.55;color:#52647e;margin:5px 0;}
+.ux-grow {flex:1 1 160px;}
+.ux-actions,.ux-filter-row,.ux-section-head,.ux-editor-toolbar,.ux-selector-controls,.ux-pager {display:flex;align-items:center;gap:8px;}
+.ux-actions,.ux-selector-controls,.ux-pager {flex-wrap:wrap;}
+.ux-section-head,.ux-editor-toolbar {justify-content:space-between;}
+body.intranet-app-body[data-usability-version] .ux-section-head :is(h2,h3) {font-size:15px!important;line-height:1.5;margin:0;font-weight:650!important;}
+body.intranet-app-body[data-usability-version] :is(.ux-editor-toolbar,.ux-chat-header,.ux-new-chat) h1 {font-size:22px!important;line-height:1.45;margin:0;letter-spacing:-.015em!important;font-weight:650!important;}
+body.intranet-app-body[data-usability-version] :is(.ux-editor,.ux-new-chat) {background:#fff;border:1px solid #dbe2ec;border-radius:8px;overflow:visible;margin:0;}
+body.intranet-app-body[data-usability-version] .ux-editor-toolbar {padding:12px 16px;border-bottom:1px solid #dbe2ec;background:#fff;position:sticky;top:var(--et-topbar-height,68px);z-index:5;gap:10px;flex-wrap:wrap;}
+.ux-editor-columns {display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);}
+.ux-editor-main,.ux-editor-students {padding:16px;}
+.ux-editor-students {border-left:1px solid #dbe2ec;}
+.ux-two-fields,.ux-simple-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.ux-simple-fields {padding:16px;}
+.ux-simple-fields .ux-field:has(textarea),.ux-wide {grid-column:1/-1;}
+.ux-field {display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+body.intranet-app-body[data-usability-version] .ux-field>label {font-size:14px!important;font-weight:600!important;color:#334155;}
+body.intranet-app-body[data-usability-version] :is(.ux-field,.ux-filter-row,.ux-student-filters,.ux-new-chat) :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea) {width:100%;min-height:38px!important;border:1px solid #bdc9d9!important;border-radius:6px!important;background:#fff;color:#1f2d43;padding:8px 10px!important;line-height:1.5!important;font-size:15px!important;}
+body.intranet-app-body[data-usability-version] .ux-field textarea {min-height:116px!important;max-height:260px;resize:vertical;}
+body.intranet-app-body[data-usability-version] .ux-field :is(small,p) {font-size:14px!important;line-height:1.5;}
+.ux-required {color:#9f3232;}
+.ux-date-tools {display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;}
+.ux-date-tools + .ux-timezone {margin:0;}
+.ux-options,.ux-private-note {border:1px solid #dbe2ec;border-radius:6px;padding:9px 10px;margin:8px 0;}
+.ux-options summary,.ux-filter-details summary {cursor:pointer;color:#445775;font-size:14px;}
+.ux-options[open] summary {margin-bottom:8px;}
+.ux-private-note {color:#704819;background:#fff8ec;}
+.ux-editor .errorlist {padding:8px 10px 8px 26px;font-size:14px!important;background:#fff2f2;color:#9b2525;line-height:1.55;margin:4px 0;}
+body.intranet-app-body[data-usability-version] .ux-selector {border:0!important;padding:0!important;background:transparent!important;margin:0!important;border-radius:0!important;}
+.ux-student-filters {display:grid;gap:8px;margin:10px 0;}
+.ux-student-filters .ux-filter-row {align-items:flex-end;flex-wrap:wrap;}
+.ux-filter-row label {display:grid;gap:4px;flex:1 1 100px;font-size:14px!important;}
+.ux-filter-row>.ux-btn {flex:0 0 auto;}
+.ux-student-filters>div>label {display:grid;gap:4px;font-size:14px;}
+.ux-student-filters select {max-width:100%;text-overflow:ellipsis;}
+.ux-filter-details {padding:0;}
+.ux-filter-details[open] .ux-filter-row {margin-top:7px;}
+.ux-selector-controls {justify-content:space-between;border-top:1px solid #edf0f5;padding-top:4px;}
+.ux-pager {font-size:14px;justify-content:center;}
+.ux-pager .ux-btn {min-height:30px!important;padding:3px 9px!important;}
+.ux-selector-lists {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.ux-selector-lists>section {border:1px solid #dbe2ec;border-radius:6px;overflow:hidden;}
+.ux-selector-lists>section>.ux-section-head {padding:8px 9px;background:#f7f9fc;flex-wrap:wrap;}
+body.intranet-app-body[data-usability-version] .ux-selector .student-transfer-list {height:210px;min-height:120px!important;max-height:210px;overflow:auto;padding:4px!important;border:0;display:block;}
+.ux-selector-lists>section>.ux-btn {margin:7px;}
+.ux-roster-form {display:grid!important;grid-template-columns:minmax(0,2fr) minmax(200px,1fr);gap:16px;align-items:start;}
+.ux-roster-form>.ux-selector {grid-row:1/5;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .ta-help {margin:6px 0;font-size:14px;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-search-row {display:block;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-student-list {height:300px;min-height:120px;overflow:auto;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-transfer-heading {padding:12px;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .ta-action-row {flex-wrap:wrap;}
+/* Actual conversations: viewport panel and independent history scroll, composer always visible. */
+body.intranet-app-body[data-usability-version] .ux-chat-shell {display:grid;grid-template-columns:300px minmax(0,1fr);height:calc(100dvh - 138px);min-height:440px;border:1px solid #dbe2ec;border-radius:8px;background:#fff;overflow:hidden;}
+.ux-chat-sidebar {display:flex;flex-direction:column;border-right:1px solid #dbe2ec;padding:14px 10px;min-height:0;gap:10px;}
+.ux-chat-sidebar>.ux-section-head {padding:0 4px;}
+body.intranet-app-body[data-usability-version] .ux-chat-sidebar h1 {font-size:22px!important;margin:0;}
+.ux-chat-room-list {flex:1 1 auto;overflow:auto;min-height:0;}
+body.intranet-app-body[data-usability-version] .ux-chat-room-list .home-message-row {border:0;border-bottom:1px solid #edf0f5;border-radius:0;margin:0;padding:12px 10px;gap:6px;}
+body.intranet-app-body[data-usability-version] .ux-chat-room-list .home-message-row:hover,body.intranet-app-body[data-usability-version] .ux-chat-room-list .is-current {background:#f0f5ff!important;}
+.ux-chat-room-list .home-message-main strong {font-size:15px!important;}
+.ux-chat-room-list .home-message-main p {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;margin:4px 0;font-size:14px!important;}
+.ux-chat-room-list time {font-size:14px;color:#52647e;}
+.ux-chat-main {display:flex;flex-direction:column;min-height:0;position:relative;}
+.ux-chat-header {padding:12px 16px;border-bottom:1px solid #dbe2ec;display:flex;align-items:center;gap:12px;flex:0 0 auto;}
+.ux-chat-people {font-size:14px!important;color:#52647e;margin-top:3px;}
+.ux-chat-people p {margin:5px 0;}
+.ux-chat-history {text-align:center;flex:0 0 auto;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message-list {flex:1 1 auto;min-height:100px!important;max-height:none!important;overflow:auto;height:auto!important;background:#f7f9fc!important;padding:18px 18px!important;display:flex;flex-direction:column;gap:14px;scrollbar-gutter:stable;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message {background:transparent!important;border:0!important;box-shadow:none!important;margin:0!important;padding:0!important;max-width:85%;min-width:100px;width:fit-content;align-self:flex-start;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message.own {align-self:flex-end;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message>div {display:flex;gap:10px;align-items:center;margin-bottom:4px;font-size:14px;color:#52647e;flex-wrap:wrap;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message>div strong {font-size:14px!important;font-weight:550!important;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message p {white-space:pre-wrap;overflow-wrap:anywhere;background:#fff;color:#25374f;margin:0;padding:10px 12px;border:1px solid #e0e6ef;border-radius:0 8px 8px 8px;font-size:15px!important;line-height:1.6!important;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message.own p {background:#1f3156!important;color:#fff!important;border-color:#1f3156;border-radius:8px 0 8px 8px;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message.own>div {justify-content:flex-end;}
+.ux-chat-composer {padding:12px 16px!important;background:#fff;border-top:1px solid #dbe2ec;flex:0 0 auto;margin:0;}
+.ux-compose-row {display:flex;align-items:flex-end;gap:8px;}
+body.intranet-app-body[data-usability-version] .ux-chat-composer textarea {flex:1;min-height:48px!important;height:48px;max-height:112px;resize:none!important;overflow:auto;font:inherit!important;font-size:15px!important;line-height:1.5!important;border:1px solid #bac8dc!important;border-radius:7px!important;background:#fff!important;padding:10px!important;margin:0!important;}
+.ux-compose-row button {flex:0 0 auto;min-height:46px!important;}
+.ux-compose-info {display:flex;gap:12px;justify-content:space-between;margin-top:6px;font-size:14px!important;color:#52647e;flex-wrap:wrap;}
+#message-jump {align-self:center;position:absolute;bottom:126px;box-shadow:0 2px 8px #172a4620!important;z-index:3;}
+.ux-chat-groups {border:1px solid #dbe2ec;padding:8px;border-radius:6px;font-size:14px;}
+.ux-chat-groups summary {cursor:pointer;}
+.ux-chat-groups a {display:block;margin-top:8px;color:#1f3156;}
+.ux-chat-empty {display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;color:#52647e;gap:8px;}
+.ux-chat-empty strong {font-size:22px!important;color:#25374f;font-weight:600!important;}
+.ux-chat-empty p {margin:0 0 8px;}
+.ux-new-chat {max-width:760px;margin:0 auto!important;padding:0 20px 20px!important;}
+.ux-new-chat .ux-editor-toolbar {padding:12px 0;}
+.ux-new-chat [name=recipients] {height:300px!important;min-height:250px!important;}
+.ux-new-chat>label {display:block;margin-top:14px;}
+.ux-new-chat .ux-field {margin-top:12px;}
+@media(min-width:1200px){
+ .ux-editor-columns>.ux-editor-main,.ux-editor-columns>.ux-editor-students {max-height:calc(100dvh - 220px);overflow-y:auto;scrollbar-gutter:stable;}
+ .ux-roster-form .ux-selector {max-height:calc(100dvh - 230px);overflow:auto!important;}
+}
+@media(max-width:1199px){.ux-editor-columns {grid-template-columns:1fr;}.ux-editor-students {border-left:0;border-top:1px solid #dbe2ec;}.ux-chat-shell {grid-template-columns:250px minmax(0,1fr)!important;}}
+@media(max-width:760px){
+ .ux-editor-main,.ux-editor-students,.ux-simple-fields {padding:12px;}
+ .ux-two-fields,.ux-simple-fields,.ux-roster-form {grid-template-columns:1fr!important;}
+ .ux-roster-form>.ux-selector {grid-row:auto;}
+ .ux-editor-toolbar {position:static!important;}
+ body.intranet-app-body[data-usability-version] .ux-chat-shell {display:flex;flex-direction:column;height:calc(100dvh - 112px);min-height:420px;}
+ .ux-chat-shell:not(.ux-chat-inbox) .ux-chat-sidebar {display:none;}
+ .ux-chat-inbox .ux-chat-sidebar {flex:1 1 auto;border:0;}
+ .ux-chat-inbox .ux-chat-empty {display:none;}
+ .ux-chat-main {flex:1 1 auto;}
+ body.intranet-app-body[data-usability-version] .ux-chat-header h1 {font-size:18px!important;}
+ body.intranet-app-body[data-usability-version] .ux-chat-main .lms-message-list {padding:12px!important;}
+ .ux-chat-composer {padding:10px!important;}
+ .ux-compose-info {gap:2px;font-size:14px!important;}
+ body.intranet-app-body[data-usability-version] :is(.ux-field,.ux-filter-row,.ux-student-filters,.ux-new-chat) :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea),body.intranet-app-body[data-usability-version] .ux-chat-composer textarea {font-size:16px!important;}
+ .ux-selector-lists {gap:7px;}
+ body.intranet-app-body[data-usability-version] .ux-selector .student-transfer-list {height:220px;}
+ .ux-new-chat {padding:0 12px 12px!important;}
+}
+@media(prefers-reduced-motion:reduce){body[data-usability-version] *{scroll-behavior:auto!important;}}
+
+body.app-body .ux-roster-columns {grid-template-columns:minmax(0,2fr) minmax(260px,1fr)}
+body.app-body .ux-notice-columns {grid-template-columns:minmax(0,2fr) minmax(280px,1fr)}
+@media(max-width:1199px){body.app-body .ux-roster-columns,body.app-body .ux-notice-columns{grid-template-columns:minmax(0,1fr)}}
+/* Keep content below the fixed utility header, without a redundant second back row. */
+body.intranet-app-body[data-usability-version] .page-shell {padding-top:calc(var(--et-topbar-height,72px) + 14px)!important;}
+body.intranet-app-body[data-usability-version]:has(:is(.ux-editor,.ux-chat-shell,.ux-new-chat,.teacher-assignment-repair)) .page-back-bar {display:none!important;}
+body.intranet-app-body[data-usability-version] .ux-editor .rich-paste-toolbar {padding:6px 10px!important;min-height:0!important;gap:8px;}
+body.intranet-app-body[data-usability-version] .ux-editor .rich-paste-toolbar>div>span {display:none;}
+body.intranet-app-body[data-usability-version] .ux-editor .rich-paste-toolbar strong {font-size:14px!important;font-weight:500!important;}
+body.intranet-app-body[data-usability-version] .ux-editor .rich-paste-status {padding:5px 10px!important;margin:0!important;line-height:1.45!important;}
+body.intranet-app-body[data-usability-version] .ux-editor .rich-paste-file-button {min-height:30px!important;padding:4px 9px!important;}
+body.intranet-app-body[data-usability-version] .ux-chat-shell {height:calc(100dvh - 108px);}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair {padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .ta-help {padding:7px 12px;line-height:1.5;margin:8px 0;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-page-heading h1 {font-size:22px!important;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-transfer-panel {padding:12px!important;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-transfer-heading {padding:5px 10px 10px!important;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-transfer-heading>div>span {display:none;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-status:empty {display:none;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-status {border:0!important;background:none!important;border-radius:0!important;line-height:1.5!important;padding:4px 0!important;margin:4px 0!important;font-weight:400!important;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-student-list {height:260px;}
+@media(min-width:1200px){
+ .ux-editor-columns>.ux-editor-main,.ux-editor-columns>.ux-editor-students {max-height:calc(100dvh - 248px);}
+ body.intranet-app-body[data-usability-version] .teacher-assignment-repair .ta-panels>.et-v5-transfer-panel {max-height:calc(100dvh - 255px);overflow:auto;scrollbar-gutter:stable;}
+}
+@media(max-width:760px){
+ body.intranet-app-body[data-usability-version] .ux-chat-shell {height:calc(100dvh - 108px);}
+ .ux-editor-toolbar {flex-wrap:wrap;gap:10px;}
+}
+body.intranet-app-body[data-usability-version] .ux-editor .rich-paste-status:not([data-kind]) {display:none;}
+body.intranet-app-body[data-usability-version] .ux-editor :is(textarea[name=description],textarea[name=content]) {height:110px!important;min-height:100px!important;resize:vertical!important;}
+@media(min-width:1200px){body.intranet-app-body[data-usability-version] .teacher-assignment-repair .ta-panels>.et-v5-transfer-panel {max-height:calc(100dvh - 310px);}}
+.ux-editor-tabs {display:flex;gap:8px;border-bottom:1px solid #dbe2ec;padding:10px 12px;}
+.ux-editor-tabs[hidden] {display:none!important;}
+body.intranet-app-body[data-usability-version] .ux-editor-tabs .ux-btn {flex:1;}
+body.intranet-app-body[data-usability-version] .ux-editor-tabs [aria-selected=true] {background:#eef3ff;color:#204daf;border-color:#98b4ec;}
+.ux-editor-columns>[hidden] {display:none!important;}
+@media(max-width:1199px){body.intranet-app-body[data-usability-version] .ux-editor-toolbar {position:sticky!important;top:var(--et-topbar-height,72px);z-index:15;}}
+
+/* Filters stay compact so that class members remain visible without scrolling the whole panel. */
+.ux-class-lookup {margin-top:6px;}
+.ux-results-meta {display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+body.intranet-app-body[data-usability-version] .ux-results-meta .ux-hint {margin:0;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .et-v5-status:empty {display:none!important;min-height:0!important;}
+body.intranet-app-body[data-usability-version] .teacher-assignment-repair .ta-action-row {padding:6px 0;}
+/* 학생 한 줄 행 — 공용 학생 목록 부품 (static/js/global/student-browser.js row, templates/components/student_row.html) */
+.st-table,.student-transfer-list,.portal-student-list {container-type:inline-size;}
+.st-table {border:1px solid #dbe2ec;border-radius:8px;overflow:hidden;background:#fff;}
+.st-head,.st-row {display:grid;grid-template-columns:minmax(80px,1fr) minmax(56px,.6fr) minmax(120px,1.4fr) minmax(48px,.6fr) minmax(120px,1.8fr) auto;gap:4px 10px;align-items:center;padding:6px 10px;font-size:14px;line-height:1.45;}
+.st-row.has-check {grid-template-columns:18px minmax(80px,1fr) minmax(56px,.6fr) minmax(120px,1.4fr) minmax(48px,.6fr) minmax(120px,1.8fr) auto;}
+.st-head {background:#f4f6fa;color:#52647e;font-weight:600;border-bottom:1px solid #dbe2ec;}
+.st-row {border-bottom:1px solid #edf0f5;color:#16243a;text-decoration:none;min-width:0;cursor:pointer;}
+.st-row[hidden] {display:none!important;}
+a.st-row:hover,label.st-row:hover {background:#f6f8fc;}
+.st-row .st-more {display:contents;}
+.st-row .st-name,.st-row .st-no,.st-row .st-more>span {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.st-row .st-name {font-weight:600;}
+.st-row .st-no,.st-row .st-more>span {color:#52647e;}
+.st-badge {justify-self:end;border:1px solid #ccd7e7;border-radius:999px;padding:0 8px;font-size:14px;color:#52647e;white-space:nowrap;}
+.st-row.is-unresolved {background:#fff8e8;cursor:not-allowed;}
+.st-row:has(input:checked) {background:#edf3ff;}
+.st-row:has(input:disabled) {background:#f8fafc;}
+body.intranet-app-body[data-usability-version] .st-row input[type=checkbox] {width:16px!important;height:16px!important;min-height:16px!important;margin:0;padding:0!important;accent-color:#1f3156;}
+.st-empty {padding:10px 12px;margin:0;}
+.st-error {display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:8px;padding:10px 12px;border:1px solid #f1c7c7;border-radius:8px;background:#fff5f5;color:#9b2525;font-size:14px;line-height:1.5;}
+.st-error p {margin:0;flex:1 1 220px;}
+@container (max-width:680px) {
+ .st-head {display:none;}
+ .st-row,.st-row.has-check {display:flex;flex-wrap:wrap;align-items:center;gap:0 8px;}
+ .st-row .st-badge {margin-left:auto;}
+ /* 좁은 칸에서도 한 학생은 두 줄: 둘째 줄(학교·학년·지점·듣는 수업)은 한 줄로 자르고 전체는 마우스를 올리면(title) 보인다 */
+ .st-row .st-more {display:block;flex:1 0 100%;order:5;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#52647e;}
+ .st-row.has-check .st-more {padding-left:26px;}
+ .st-row .st-more>span {display:inline;}
+ .st-row .st-more>span:not(:empty)~span:not(:empty)::before {content:" · ";}
+}

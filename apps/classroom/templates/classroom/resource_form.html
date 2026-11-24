@@ -1,0 +1,109 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/compact-pages.css' %}?v=1110nv3">{% endblock %}
+{% block extra_js %}<script src="{% static 'classroom/js/resource-form.js' %}" defer></script>{% endblock %}
+{% block content %}
+<div class="et-v5-shell et-v5-classroom">
+  <section class="workflow-hero is-compact et-v5-form-hero">
+    <div>
+      <h1>{{ page_title }}</h1>
+      <p>{{ board.title }} · {{ category.title }} 카테고리에 PDF, 일반 파일 또는 외부 링크를 등록합니다.</p>
+    </div>
+  </section>
+
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    class="workflow-panel workflow-form course-resource-editor et-v5-form-panel"
+    data-course-resource-form
+    data-selected-type="{{ selected_resource_type|default:'PDF' }}"
+    data-form-mode="{{ form_mode }}"
+    {% if resource.file %}data-has-existing-file="true"{% endif %}
+  >
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="workflow-error">{{ form.non_field_errors }}</div>{% endif %}
+
+    <section class="course-resource-type-section et-v5-type-section" aria-labelledby="resource-type-heading">
+      <div>
+        <h2 id="resource-type-heading">등록 방식을 선택하세요</h2>
+        <p>PDF는 등록 후 브라우저 미리보기와 다운로드를 바로 제공합니다.</p>
+      </div>
+      <div class="course-resource-type-switch et-v5-type-switch" data-resource-type-switch>
+        <button type="button" class="course-resource-type-card" data-resource-type-choice="PDF">
+          <span class="course-resource-type-icon">PDF</span>
+          <strong>PDF 등록</strong>
+          <small>교재·문제집</small>
+        </button>
+        <button type="button" class="course-resource-type-card" data-resource-type-choice="FILE">
+          <span class="course-resource-type-icon">FILE</span>
+          <strong>일반 파일 등록</strong>
+          <small>문서·이미지·ZIP</small>
+        </button>
+        <button type="button" class="course-resource-type-card" data-resource-type-choice="LINK">
+          <span class="course-resource-type-icon">LINK</span>
+          <strong>외부 링크 등록</strong>
+          <small>웹·영상 자료</small>
+        </button>
+      </div>
+    </section>
+
+    <div class="workflow-form-grid course-resource-fields et-v5-form-grid">
+      <div class="workflow-field is-wide">
+        <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+        {{ form.title }}
+        {% for error in form.title.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="workflow-field">
+        <label for="{{ form.resource_type.id_for_label }}">{{ form.resource_type.label }}</label>
+        {{ form.resource_type }}
+        <small>위의 유형 버튼과 같은 값입니다.</small>
+        {% for error in form.resource_type.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="workflow-field is-wide">
+        <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+        {{ form.description }}
+        {% for error in form.description.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="workflow-field is-wide course-upload-field et-v5-upload-field" data-resource-file-field>
+        <div class="course-upload-heading">
+          <div>
+            <label for="{{ form.file.id_for_label }}" data-resource-file-label>{{ form.file.label }}</label>
+            <small data-resource-file-help>{{ form.file.help_text }}</small>
+          </div>
+          <span class="course-upload-limit">최대 {{ resource_max_mb }}MB</span>
+        </div>
+        <div class="course-upload-dropzone et-v5-upload-dropzone">
+          {{ form.file }}
+          <p><strong>파일 선택</strong>을 눌러 업로드할 자료를 고르세요.</p>
+          <span>PDF 유형은 실제 PDF 파일인지 자동으로 검사합니다.</span>
+        </div>
+        {% if resource and resource.file %}
+          <p class="course-existing-file">현재 파일: <strong>{{ resource.original_name|default:resource.file.name }}</strong> · 새 파일을 선택하지 않으면 기존 파일이 유지됩니다.</p>
+        {% endif %}
+        {% for error in form.file.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="workflow-field is-wide" data-resource-url-field>
+        <label for="{{ form.external_url.id_for_label }}">{{ form.external_url.label }}</label>
+        {{ form.external_url }}
+        {% if form.external_url.help_text %}<small>{{ form.external_url.help_text }}</small>{% endif %}
+        {% for error in form.external_url.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+    </div>
+
+    <div class="course-resource-submit-guide et-v5-submit-guide" data-resource-submit-guide>
+      PDF 파일을 선택한 뒤 아래 ‘PDF 자료 등록’ 버튼을 누르면 등록이 완료됩니다.
+    </div>
+
+    <div class="workflow-actions et-v5-form-actions">
+      <a class="workflow-button is-ghost" href="{% url 'classroom:board-detail' board.pk %}">← 이전 화면으로</a>
+      <button class="workflow-button is-primary" type="submit" data-resource-submit-button>
+        {% if form_mode == 'update' %}변경사항 저장{% else %}PDF 자료 등록{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

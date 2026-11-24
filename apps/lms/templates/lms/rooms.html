@@ -1,0 +1,11 @@
+{% extends "lms/base.html" %}{% block lms_content %}
+<div class="lms-heading"><div><h1>반별 학습 공간</h1><p>반을 열면 과제·토론·퀴즈·성적제출현황·자료·반 공지를 한 화면에서 탭으로 확인합니다.</p></div>{% if can_create %}<a class="lms-btn primary" href="{% url 'learning:group-manage' %}">반 만들기·그룹 관리</a>{% endif %}</div>
+<form class="u-room-jump" method="get" action="{% url 'lms:rooms' %}"><label><span>반 바로 가기</span><select name="go" data-auto-submit aria-label="반 바로 가기"><option value="">반 고르기</option>{% for g in jump_groups %}<option value="{{ g.pk }}"{% if group and g.pk == group.pk %} selected{% endif %}>{{ g.title }}{% if g.term %} · {{ g.term }}{% endif %}</option>{% endfor %}</select></label><noscript><button class="lms-btn" type="submit">이동</button></noscript></form>
+<form class="lms-toolbar" method="get">
+ <input aria-label="반 이름 검색" name="q" value="{{ q }}" placeholder="반 이름 검색">
+ <select name="term" aria-label="Term"><option value="">전체 Term</option>{% for t in terms %}<option value="{{ t }}"{% if t == term %} selected{% endif %}>{{ t }}</option>{% endfor %}</select>
+ <select name="teacher" aria-label="강사"><option value="">전체 강사</option>{% for t in teachers %}<option value="{{ t.pk }}"{% if t.pk|stringformat:"s" == teacher %} selected{% endif %}>{{ t.effective_name }}</option>{% endfor %}</select>
+ <button class="lms-btn">검색</button>{% if q or term or teacher %}<a class="lms-btn" href="{% url 'lms:rooms' %}">초기화</a>{% endif %}
+</form>
+<div class="lms-table-wrap"><table class="lms-table"><thead><tr><th>반 이름</th><th>Term</th><th>안내</th><th>개설자</th><th>바로가기</th></tr></thead><tbody>{% for group in groups %}<tr><td><a href="{% url 'lms:room' group.pk %}">{{ group.title }}</a></td><td>{{ group.term|default:'—' }}</td><td>{{ group.description|default:'—' }}</td><td>{{ group.created_by.effective_name }}</td><td><a class="lms-btn" href="{% url 'lms:room' group.pk %}">반 열기</a></td></tr>{% empty %}<tr><td colspan="5" class="lms-empty">{% if q or term or teacher %}조건에 맞는 반이 없습니다.{% else %}연결된 반이 없습니다.{% if can_create %} 기존 학습 그룹이 있으면 해당 반의 명단을 등록하세요.{% else %} 운영팀에서 반 명단에 학생을 연결하면 표시됩니다.{% endif %}{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

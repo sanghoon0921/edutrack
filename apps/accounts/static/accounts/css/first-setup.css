@@ -1,0 +1,22 @@
+/* 학생 첫 로그인 설정(11/17): 밝은 바탕, 가운데 카드 한 장. 사이트 색(네이비 + 골드)을 따릅니다. */
+.fs-body { margin: 0; min-height: 100vh; background: #f6f4ef; color: #141a26; font-family: "Malgun Gothic", "Noto Sans CJK KR", sans-serif; }
+.fs-shell { max-width: 520px; margin: 0 auto; padding: 40px 16px 56px; }
+.fs-brand { margin: 0 0 14px; font-size: 14px; font-weight: 800; letter-spacing: .08em; color: #13213d; }
+.fs-brand span { margin-left: 6px; color: #b8924a; }
+.fs-card { padding: 28px 28px 22px; border: 1px solid #e8e2d6; border-radius: 14px; background: #fff; box-shadow: 0 1px 2px rgba(20, 26, 38, .04), 0 10px 24px -16px rgba(20, 26, 38, .25); }
+.fs-card h1 { margin: 0; font-size: 21px; line-height: 1.35; color: #141a26; }
+.fs-lead { margin: 8px 0 18px; font-size: 14px; color: #4b5563; line-height: 1.6; }
+.fs-card fieldset { margin: 0 0 16px; padding: 14px 16px 6px; border: 1px solid #e8e2d6; border-radius: 10px; }
+.fs-card legend { padding: 0 6px; font-size: 14px; font-weight: 800; color: #13213d; }
+.fs-card label { display: block; margin: 10px 0 4px; font-size: 14px; font-weight: 700; }
+.fs-card label b { margin-left: 4px; padding: 1px 6px; border-radius: 999px; background: #f4ecdc; color: #7a5b22; font-size: 12px; }
+.fs-card input[type=password], .fs-card input[type=email], .fs-card input[type=text] { box-sizing: border-box; width: 100%; height: 40px; padding: 0 12px; border: 1px solid #dcd4c4; border-radius: 8px; font: inherit; font-size: 15px; }
+.fs-card input:focus { outline: 2px solid #b8924a; outline-offset: 1px; border-color: #b8924a; }
+.fs-card small { display: block; margin: 4px 0 2px; font-size: 13px; color: #656a73; }
+.fs-card .fs-check { display: flex; align-items: center; gap: 8px; font-weight: 400; }
+.fs-card .errorlist { margin: 4px 0 0; padding: 0; list-style: none; color: #b42318; font-size: 13px; font-weight: 700; }
+.fs-error { margin-bottom: 12px; padding: 10px 12px; border-radius: 8px; background: #fdeceb; color: #b42318; font-size: 14px; }
+.fs-submit { width: 100%; height: 44px; border: 0; border-radius: 10px; background: #13213d; color: #fff; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+.fs-submit:hover { background: #1f3156; }
+.fs-logout { margin-top: 12px; text-align: center; }
+.fs-logout button { border: 0; background: none; color: #656a73; font: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }

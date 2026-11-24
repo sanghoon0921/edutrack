@@ -1,0 +1,70 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="acct-page">
+  <header class="acct-head">
+    <div class="acct-head-text">
+      
+      <h1>계정관리</h1>
+      <p>사용자 계정, 학생·학부모 연결, 강사 담당 범위를 관리합니다.</p>
+    </div>
+    <div class="acct-head-actions">
+      <button type="button" class="acct-btn" popovertarget="recent-changes">
+        <svg class="et-icon" aria-hidden="true"><use href="#i-clock"/></svg>최근 변경 기록
+      </button>
+      <a class="acct-btn is-primary" href="{% url 'operations:user-create' %}">
+        <svg class="et-icon" aria-hidden="true"><use href="#i-user-plus"/></svg>새 사용자 등록
+      </a>
+    </div>
+  </header>
+
+  <section class="acct-stats" aria-label="계정 현황">
+    <div class="acct-stat is-lead"><span>사용 중 계정</span><strong>{{ active_user_count }}</strong></div>
+    <div class="acct-stat"><span>관리자</span><strong>{{ admin_count }}</strong></div>
+    <div class="acct-stat"><span>강사</span><strong>{{ teacher_count }}</strong></div>
+    <div class="acct-stat"><span>학생</span><strong>{{ student_count }}</strong></div>
+    <div class="acct-stat"><span>학부모</span><strong>{{ parent_count }}</strong></div>
+    <div class="acct-stat"><span>담당 학생 배정</span><strong>{{ teacher_scope_count }}</strong></div>
+  </section>
+
+  <section class="acct-links" aria-label="바로가기">
+    <a class="acct-link" href="{% url 'operations:user-list' %}">
+      <span class="acct-link-icon"><svg class="et-icon" aria-hidden="true"><use href="#i-users"/></svg></span>
+      <span class="acct-link-text"><strong>사용자 관리</strong><small>정보·역할 수정, 학생 연결, 비밀번호 변경</small></span>
+      <svg class="et-icon acct-link-arrow" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+    </a>
+    <a class="acct-link" href="{% url 'data_imports:dashboard' %}">
+      <span class="acct-link-icon"><svg class="et-icon" aria-hidden="true"><use href="#i-file"/></svg></span>
+      <span class="acct-link-text"><strong>CSV 일괄 등록</strong><small>여러 계정을 파일 하나로 한 번에 등록</small></span>
+      <svg class="et-icon acct-link-arrow" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+    </a>
+    <a class="acct-link" href="{% url 'communications:notice-manage' %}">
+      <span class="acct-link-icon"><svg class="et-icon" aria-hidden="true"><use href="#i-megaphone"/></svg></span>
+      <span class="acct-link-text"><strong>공지 관리</strong><small>학원·반 공지 작성, 파일·이미지 첨부</small></span>
+      <svg class="et-icon acct-link-arrow" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+    </a>
+    <a class="acct-link" href="{% url 'operations:intranet-sync' %}">
+      <span class="acct-link-icon"><svg class="et-icon" aria-hidden="true"><use href="#i-inbox"/></svg></span>
+      <span class="acct-link-text"><strong>인트라넷 반영 목록{% if intranet_pending %} <em class="acct-count">{{ intranet_pending }}</em>{% endif %}</strong><small>학생이 첫 로그인 때 적은 이메일·DSG ID</small></span>
+      <svg class="et-icon acct-link-arrow" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+    </a>
+  </section>
+</div>
+
+<div id="recent-changes" class="acct-pop" popover role="dialog" aria-labelledby="recent-changes-title">
+  <header class="acct-pop-head">
+    <h2 id="recent-changes-title">최근 변경 기록</h2>
+    <button type="button" class="acct-pop-close" popovertarget="recent-changes" popovertargetaction="hide" aria-label="닫기"><svg class="et-icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+  </header>
+  <ol class="acct-pop-list">
+    {% for log in recent_logs %}
+      <li>
+        <span class="acct-pop-chip">{{ log.get_action_display }}</span>
+        <span class="acct-pop-body"><strong>{{ log.summary|default:log.get_action_display }}</strong><small>{% if log.actor %}{{ log.actor.effective_name }}{% else %}시스템{% endif %}{% if log.target_user %} → {{ log.target_user.effective_name }}{% endif %}</small></span>
+        <time datetime="{{ log.created_at|date:'c' }}">{{ log.created_at|date:"m.d H:i" }}</time>
+      </li>
+    {% empty %}<li class="acct-pop-empty">변경 기록이 없습니다.</li>{% endfor %}
+  </ol>
+  <footer class="acct-pop-foot"><a href="{% url 'operations:audit-list' %}">전체 기록 보기<svg class="et-icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></footer>
+</div>
+{% endblock %}

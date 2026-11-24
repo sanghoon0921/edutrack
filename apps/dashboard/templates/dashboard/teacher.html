@@ -1,0 +1,43 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+<div class="portal-home portal-teacher-home learner-home">
+ <header class="lh-hero">
+  <div class="lh-hero-copy">
+   <h1>{{ display_name }}님, 안녕하세요.</h1>
+   <p>{{ teacher_home.today|date:'n월 j일 l' }} · 피드백 대기 {{ teacher_home.pending }}건{% if teacher_home.drafts %} · 작성 중인 리포트카드 {{ teacher_home.drafts|length }}개{% endif %} · 담당 반 {{ teacher_home.group_count }}개</p>
+  </div>
+  <nav class="lh-actions" aria-label="바로 가기">
+   <a class="lh-action" href="{% url 'lms:rooms' %}">반별 학습</a>
+   <a class="lh-action" href="{% url 'reports:list' %}">리포트카드</a>
+   <a class="lh-action is-primary" href="{% url 'lms:gradebook' %}">성적·제출현황</a>
+  </nav>
+ </header>
+
+ <section class="th-todo" data-teacher-todo aria-label="오늘 할 일">
+  <article class="hi-tile th-col">
+   <header class="hi-tile-head"><h2>피드백 대기 <span class="th-count">{{ teacher_home.pending }}</span></h2><a href="{% url 'lms:gradebook' %}?kind=assignment">전체</a></header>
+   {% if teacher_home.pending_groups %}
+   <ul class="th-list">{% for g in teacher_home.pending_groups %}<li><a href="{{ g.url }}"><span>{{ g.title }}</span><b>{{ g.count }}건</b></a></li>{% endfor %}</ul>
+   {% else %}<p class="hi-empty">채점·피드백을 기다리는 제출물이 없습니다.</p>{% endif %}
+  </article>
+  <article class="hi-tile th-col">
+   <header class="hi-tile-head"><h2>작성 중인 리포트카드</h2><a href="{% url 'reports:list' %}">전체</a></header>
+   {% if teacher_home.drafts %}
+   <ul class="th-list">{% for d in teacher_home.drafts %}<li><a href="{{ d.url }}"><span>{{ d.title }}<small>{{ d.form }} · {{ d.cards }}명</small></span><b>작성 중</b></a></li>{% endfor %}</ul>
+   {% else %}<p class="hi-empty">공개 전인 리포트카드가 없습니다.</p>{% endif %}
+  </article>
+  <article class="hi-tile th-col">
+   <header class="hi-tile-head"><h2>7일 안 마감</h2></header>
+   {% if teacher_home.upcoming %}
+   <ul class="th-list">{% for u in teacher_home.upcoming %}<li><a href="{{ u.url }}"><span>{{ u.title }}<small>{{ u.kind }}{% if u.group %} · {{ u.group }}{% endif %}</small></span><time datetime="{{ u.due_at|date:'c' }}">{{ u.due_at|date:'n/j H:i' }}</time></a></li>{% endfor %}</ul>
+   {% else %}<p class="hi-empty">일주일 안에 마감하는 과제·퀴즈가 없습니다.</p>{% endif %}
+  </article>
+ </section>
+
+ <div class="portal-priority-grid">
+  {% include 'dashboard/portal_notices.html' with data=teacher_home %}
+  {% include 'dashboard/portal_messages.html' with data=teacher_home %}
+  {% include 'dashboard/portal_zoom.html' with data=teacher_home %}
+ </div>
+</div>
+{% endblock %}

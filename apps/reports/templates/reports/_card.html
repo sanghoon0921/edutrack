@@ -1,0 +1,3 @@
+{% load report_tags %}<article class="rc-sheet rc-{{ kind }}" data-form="{{ batch.form }}">
+{% if kind == "weekly" %}{% include "reports/_weekly.html" %}{% elif kind == "junior" %}{% include "reports/_junior.html" %}{% else %}{% include "reports/_term.html" %}{% endif %}
+</article>

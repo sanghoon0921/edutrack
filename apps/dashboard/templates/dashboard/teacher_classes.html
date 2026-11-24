@@ -1,0 +1,44 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/compact-pages.css' %}?v=1110nv3">{% endblock %}
+{% block content %}
+<div class="et-v5-shell et-v5-teacher-page">
+  <section class="et-v5-page-heading">
+    <div>
+      <h1>담당 수업</h1>
+      <p>담당 수업을 확인하면서 현재 등록한 담당 학생을 바로 선택할 수 있습니다.</p>
+    </div>
+    {% if teacher_scope %}<a class="et-v5-manage-link" href="{% url 'operations:teacher-student-assignment' %}">담당 학생 관리</a>{% endif %}
+  </section>
+
+  <section class="et-v5-teacher-panel">
+    <div class="et-v5-teacher-panel-header">
+      <div>
+        <h2>현재 담당 학생</h2>
+        <p>{% if teacher_scope %}등록된 {{ assigned_count }}명 중 학생을 선택하면 상세정보로 이동합니다.{% else %}강사 계정에서 등록 학생 목록이 표시됩니다.{% endif %}</p>
+      </div>
+      {% if teacher_scope %}<a class="et-v5-manage-link" href="{% url 'students:list' %}">전체 학생 보기</a>{% endif %}
+    </div>
+
+    {% if assigned_students %}
+      <div class="et-v5-assigned-summary" aria-label="등록된 담당 학생">
+        {% for student in assigned_students %}
+          <a class="et-v5-assigned-summary-row" href="{% url 'students:detail' student.student_no %}">
+            <div><strong>{{ student.student_name }}</strong><small>학생번호 {{ student.student_no }}</small></div>
+            <span>선택 →</span>
+          </a>
+        {% endfor %}
+      </div>
+    {% elif teacher_scope %}
+      <div class="et-v5-empty-row">등록된 담당 학생이 없습니다. ‘담당 학생 관리’에서 학생을 검색해 추가하세요.</div>
+    {% else %}
+      <div class="et-v5-empty-row">관리자 계정에는 특정 강사의 담당 학생을 표시하지 않습니다.</div>
+    {% endif %}
+  </section>
+
+  <section class="et-v5-teacher-panel">
+    <h2>수업 정보</h2>
+    <p>강사별 수업 배정 데이터가 연결되면 이 영역에 일정과 수업 상태를 표시합니다. 학생 상세에서는 현재 수업과 출결을 바로 확인할 수 있습니다.</p>
+  </section>
+</div>
+{% endblock %}

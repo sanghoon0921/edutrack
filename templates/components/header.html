@@ -1,0 +1,133 @@
+{% load static %}<div class="intranet-mobile-backdrop" data-mobile-menu-overlay aria-hidden="true" hidden></div>
+
+<aside
+  id="primary-navigation"
+  class="intranet-sidebar"
+  data-mobile-menu
+  aria-label="주요 메뉴"
+>
+  <div class="intranet-sidebar-top">
+    <button type="button" class="intranet-sidebar-close" data-mobile-menu-close aria-label="메뉴 닫기">×</button>
+    <div class="intranet-sidebar-date">{% now "Y. m. d. D" %}</div>
+
+    <a class="intranet-brand has-logo" href="{% url 'dashboard' %}" aria-label="VETERANS EDU EduTrack 홈">
+      <img class="intranet-brand-logo" src="{% static 'reports/img/logo-light.png' %}" alt="VETERANS EDU 베테랑스 에듀 · 베테랑스 어학원" width="108" height="100">
+      <small>EduTrack LMS</small>
+    </a>
+
+    <div class="intranet-sidebar-quick" aria-label="빠른 이동">
+      <a href="{% url 'dashboard' %}">홈</a>
+      <a href="{% url 'communications:notice-list' %}">공지사항</a>
+    </div>
+  </div>
+
+  <nav class="intranet-side-navigation" aria-label="역할별 메뉴">
+    <p class="intranet-side-label">MENU</p>
+    {% for item in sidebar_navigation %}
+      {% if item.kind == "group" %}
+        <section class="home-nav-group {% if item.key == 'settings' %}home-nav-settings{% endif %}" aria-labelledby="nav-{{ item.key }}-label">
+          <h2 class="home-nav-group-label" id="nav-{{ item.key }}-label">{{ item.label }}</h2>
+          <div class="home-nav-children">
+          {% for child in item.children %}
+            {% if child.subs %}
+            <div class="nav-flyout{% if child.is_active %} is-open{% endif %}" data-nav-flyout>
+              <div class="nav-flyout-head">
+                <a class="intranet-nav-link home-nav-child {% if child.is_active %}is-active{% endif %}" href="{% url child.url_name %}" {% if child.is_active %}aria-current="page"{% endif %}>
+                  <svg class="et-icon intranet-nav-icon" data-area="{{ child.area }}" aria-hidden="true"><use href="#i-{{ child.icon }}"/></svg><span>{{ child.label }}</span>
+                </a>
+                <button type="button" class="nav-flyout-toggle" data-nav-flyout-toggle aria-expanded="{% if child.is_active %}true{% else %}false{% endif %}" aria-controls="nav-sub-{{ forloop.counter }}" aria-label="{{ child.label }} 하위 메뉴"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+              </div>
+              <div class="nav-sub" id="nav-sub-{{ forloop.counter }}"><div class="nav-sub-inner">
+                {% for s in child.subs %}<a class="nav-sub-link{% if s.is_active %} is-active{% endif %}" href="{% url child.url_name %}{{ s.query }}"{% if s.is_active %} aria-current="page"{% endif %}><span class="nav-sub-dot" aria-hidden="true"></span>{{ s.label }}</a>{% endfor %}
+              </div></div>
+            </div>
+            {% else %}
+            <a class="intranet-nav-link home-nav-child {% if child.is_active %}is-active{% endif %}" href="{% url child.url_name %}" {% if child.is_active %}aria-current="page"{% endif %}>
+              <svg class="et-icon intranet-nav-icon" data-area="{{ child.area }}" aria-hidden="true"><use href="#i-{{ child.icon }}"/></svg><span>{{ child.label }}</span>
+            </a>
+            {% endif %}
+          {% endfor %}
+          </div>
+        </section>
+      {% else %}
+        <a class="intranet-nav-link {% if item.is_active %}is-active{% endif %}" href="{% url item.url_name %}" {% if item.is_active %}aria-current="page"{% endif %}>
+          <svg class="et-icon intranet-nav-icon" data-area="{{ item.area }}" aria-hidden="true"><use href="#i-{{ item.icon }}"/></svg><span>{{ item.label }}</span>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </nav>
+
+  <div class="intranet-sidebar-footer">
+    <strong>VETERANS EDU</strong>
+    <span>베테랑스에듀 통합 학습관리</span>
+    <span>Internal LMS Workspace</span>
+  </div>
+</aside>
+
+<header class="intranet-topbar">
+  <div class="intranet-topbar-left">
+    <button
+      class="intranet-mobile-menu-button"
+      type="button"
+      data-mobile-menu-button
+      aria-expanded="false"
+      aria-controls="primary-navigation"
+      aria-label="메뉴 열기"
+    >
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="intranet-page-context">
+      <span>EduTrack</span>
+      <strong>{{ page_title|default:"통합 학습관리" }}</strong>
+    </div>
+  </div>
+
+  <div class="intranet-topbar-actions">
+    {% if request.user.is_superuser or request.user.role == "ADMIN" or request.user.role == "TEACHER" %}
+      <a class="intranet-topbar-search" href="{% url 'students:list' %}">
+        <span>통합 검색</span>
+        <kbd>Ctrl K</kbd>
+      </a>
+    {% endif %}
+
+    {% if messenger_enabled %}
+    <div class="portal-bell-wrap">
+      <button type="button" class="intranet-icon-button portal-bell" data-portal-bell aria-expanded="false" aria-controls="portal-notification-box" aria-label="알림과 안 읽은 메시지">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+        <span class="portal-count {% if portal_unread_total %}premium-notification-count{% endif %}" data-portal-total {% if not portal_unread_total %}hidden{% endif %}>{{ portal_unread_total }}</span>
+      </button>
+      <section id="portal-notification-box" class="portal-notification-box" hidden aria-label="새 알림">
+        <div class="portal-card-head"><h2>새 알림</h2><a href="{% url 'communications:notification-list' %}">학습 알림 <span data-notice-count>{{ unread_notification_count }}</span></a></div>
+        <p class="portal-muted">안 읽은 대화 <strong data-chat-count>{{ chat_unread_count }}</strong>개</p>
+        <div data-chat-mini-list><p class="portal-empty">메시지를 확인하고 있습니다.</p></div>
+        <a class="portal-link-button" href="{% url 'lms:inbox' %}">메시지 화면 열기</a>
+      </section>
+    </div>
+    <a class="portal-header-chat" href="{% url 'lms:inbox' %}">메시지 <span data-chat-count>{{ chat_unread_count }}</span></a>
+    <noscript><a href="{% url 'communications:notification-list' %}">알림</a></noscript>
+    {% else %}
+    <a class="intranet-icon-button" href="{% url 'communications:notification-list' %}" aria-label="알림">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+      {% if unread_notification_count %}<span class="intranet-notification-count">{{ unread_notification_count }}</span>{% endif %}
+    </a>
+    {% endif %}
+
+    <a class="intranet-icon-button" href="{% url 'profile' %}" aria-label="내 정보 수정">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
+    <div class="intranet-user-greeting">
+      <span class="premium-role-avatar">{{ request.user.get_role_display }}</span>
+      <strong>{{ request.user.effective_name }}님</strong>
+      <span>안녕하세요.</span>
+    </div>
+
+    <form method="post" action="{% url 'logout' %}" class="intranet-logout-form">
+      {% csrf_token %}
+      <button class="intranet-logout-button" type="submit">로그아웃</button>
+    </form>
+  </div>
+</header>

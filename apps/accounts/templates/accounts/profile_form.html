@@ -1,0 +1,30 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="workflow-page-hero" data-reveal>
+  <div>
+    <h1>내 정보 수정</h1>
+    <p>아이디·이름·이메일과 비밀번호를 한 화면에서 변경합니다.</p>
+  </div>
+  <span class="workflow-role-badge">{{ request.user.get_role_display }}</span>
+</section>
+
+<section class="workflow-form-shell" data-reveal>
+  <form method="post" class="workflow-form-card">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-error-box">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+      <div class="workflow-field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+    {% endfor %}
+    <div class="workflow-form-actions">
+      <a class="workflow-button is-secondary" href="{% url 'dashboard' %}">취소</a>
+      <button class="workflow-button is-primary" type="submit">정보 저장</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

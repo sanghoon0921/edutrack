@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/components/student-transfer-selector.css' %}?v=1110nv3">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/components/student-transfer-selector.js' %}?v=ux6" defer></script>{% endblock %}
+{% block content %}
+{# 11/20 반 만들기: 반 정보와 함께 학생(수업·반 통째로 또는 한 명씩)·담당 TA·공동 강사를 한 번에 넣습니다. #}
+<form method="post" class="ux-editor lms-form u-group-create" data-compact-form>{% csrf_token %}
+ <header class="ux-editor-toolbar"><h1>반 만들기</h1><div class="ux-actions"><a class="ux-btn" href="{% url 'lms:rooms' %}">반별 학습으로</a><button type="submit" class="ux-btn primary">반 만들기</button></div></header>
+ {{ form.non_field_errors }}
+ <div class="u-group-fields">
+  {% include 'components/compact_field.html' with field=form.title %}
+  {% include 'components/compact_field.html' with field=form.term %}
+  {% include 'components/compact_field.html' with field=form.description %}
+  {% include 'components/compact_field.html' with field=form.sort_order %}
+ </div>
+ <div class="ux-editor-columns ux-roster-columns">
+  <section class="ux-editor-main">
+   <h2 class="u-group-sub">반 학생 <small>수업·반을 고르면 그 반 학생이 한꺼번에 나옵니다. '검색된 학생 모두 추가'로 다 넣거나, 이름으로 찾아 한 명씩 넣고 뺍니다. 비워 두고 나중에 '명단·TA 지정'에서 넣어도 됩니다.</small></h2>
+   {% include 'components/student_transfer_selector.html' with selector=student_selector %}
+  </section>
+  <aside class="ux-editor-students">{% include 'components/compact_field.html' with field=form.staff %}</aside>
+ </div>
+</form>
+<section class="workflow-panel u-group-list"><h2>등록된 반</h2><div class="compact-list u-group-rows">
+  {% for group in groups %}<article class="compact-row"><div><strong>{{ group.title }}</strong><small>{% if group.term %}{{ group.term }} · {% endif %}{{ group.description|default:"설명 없음" }} · 정렬 {{ group.sort_order }}</small></div><span class="u-group-actions"><a class="workflow-button is-small is-secondary" href="{% url 'lms:roster' group.pk %}">명단·TA 지정</a><a class="workflow-button is-small is-secondary" href="{% url 'learning:group-update' group.pk %}">수정</a></span></article>{% empty %}<div class="workflow-empty">등록된 반이 없습니다.</div>{% endfor %}
+</div></section>
+{% endblock %}

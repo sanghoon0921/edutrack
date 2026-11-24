@@ -1,0 +1,127 @@
+{% extends "layouts/base.html" %}
+{% load billing_tags %}
+
+{% block content %}
+<section
+  class="premium-billing-hero"
+  data-dashboard-spotlight
+  data-reveal
+>
+  <div class="premium-billing-hero-copy">
+    <h1>수업 수납내역</h1>
+    <p>
+      {% if student %}
+        {{ student.name }} 학생의 수업별 등록·환불·이월 처리내역입니다.
+      {% else %}
+        연결 학생번호 {{ student_no }}의 수업별 등록·환불·이월 처리내역입니다.
+      {% endif %}
+    </p>
+  </div>
+
+  <aside class="premium-billing-hero-brief">
+    <span>연결 학생</span>
+    <strong>{% if student %}{{ student.name }}{% else %}{{ student_no }}{% endif %}</strong>
+    <small>학부모 계정 전용 조회</small>
+  </aside>
+</section>
+
+{% if billing_is_demo %}
+<section class="workflow-panel billing-demo-notice" role="status">
+  <h2>테스트 모드에서는 실제 수납내역을 조회하지 않습니다.</h2>
+  <p>개인 수납정보와 실제 금액은 표시하지 않습니다. 실제 데이터 모드에서 연결 학생의 수납내역을 확인할 수 있습니다.</p>
+</section>
+{% else %}
+<section class="premium-billing-summary" data-reveal>
+  <article>
+    <small>수업 등록금액</small>
+    <strong>{{ totals.registered_amount|krw }}</strong>
+    <span>PAID 처리 합계</span>
+  </article>
+  <article>
+    <small>환불 처리금액</small>
+    <strong>{{ totals.refund_amount|krw }}</strong>
+    <span>REFUND 처리 합계</span>
+  </article>
+  <article>
+    <small>이월 처리금액</small>
+    <strong>{{ totals.carry_over_amount|krw }}</strong>
+    <span>CARRY_OVER 이력 합계</span>
+  </article>
+  <article class="is-primary">
+    <small>순수업등록액</small>
+    <strong>{{ totals.net_registered_amount|krw }}</strong>
+    <span>등록금액 − 환불금액</span>
+  </article>
+</section>
+
+<section class="premium-billing-guide" data-reveal>
+  <div>
+    <span class="premium-billing-guide-icon">i</span>
+    <div>
+      <strong>조회 기준</strong>
+      <p>
+        인트라넷에서 수업에 배분된 등록·환불·이월 처리내역만 표시합니다.
+        카드번호·계좌번호·결제수단 상세정보는 노출하지 않습니다.
+      </p>
+    </div>
+  </div>
+</section>
+
+{% if histories %}
+  <section class="premium-billing-list">
+    {% for item in histories %}
+      <article
+        class="premium-billing-card"
+        data-reveal
+        data-reveal-delay="{{ forloop.counter }}"
+      >
+        <div class="premium-billing-card-head">
+          <div>
+            <span class="premium-billing-term">{{ item.term_name }}</span>
+            <h2>{{ item.class_names }}</h2>
+            <p>배정번호 {{ item.assign_no }}</p>
+          </div>
+          <div class="premium-billing-net">
+            <small>순수업등록액</small>
+            <strong>{{ item.net_registered_amount|krw }}</strong>
+          </div>
+        </div>
+
+        <div class="premium-billing-value-grid">
+          <div>
+            <span>등록</span>
+            <strong>{{ item.registered_amount|krw }}</strong>
+          </div>
+          <div>
+            <span>환불</span>
+            <strong>{{ item.refund_amount|krw }}</strong>
+          </div>
+          <div>
+            <span>이월</span>
+            <strong>{{ item.carry_over_amount|krw }}</strong>
+          </div>
+          <div>
+            <span>최근 처리</span>
+            <strong>
+              {% if item.last_processed_at %}
+                {{ item.last_processed_at|date:"Y.m.d" }}
+              {% else %}
+                -
+              {% endif %}
+            </strong>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <section class="premium-billing-empty" data-reveal>
+    <span>₩</span>
+    <h2>표시할 수납내역이 없습니다.</h2>
+    <p>
+      연결 학생에게 수업별 수납·환불·이월 처리내역이 아직 없습니다.
+    </p>
+  </section>
+{% endif %}
+{% endif %}
+{% endblock %}

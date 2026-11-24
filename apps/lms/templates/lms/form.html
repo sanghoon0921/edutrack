@@ -1,0 +1,5 @@
+{% extends "lms/base.html" %}{% block lms_content %}
+<form method="post" enctype="multipart/form-data" class="ux-editor lms-form" data-compact-form>{% csrf_token %}{% if group %}<input type="hidden" name="group" value="{{ group.pk }}">{% endif %}
+<header class="ux-editor-toolbar"><h1>{{ page_title }}</h1><div class="ux-actions">{% if group %}<a class="ux-btn" href="{% url 'lms:room' group.pk %}">취소</a>{% endif %}<button type="submit" class="ux-btn primary">저장</button></div></header>
+{{ form.non_field_errors }}<div class="ux-simple-fields">{% for field in form %}{% include 'components/compact_field.html' with field=field %}{% endfor %}</div>
+{% if form.publication_field %}{% include 'components/publication_note.html' %}{% endif %}</form>{% endblock %}

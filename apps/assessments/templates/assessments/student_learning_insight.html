@@ -1,0 +1,455 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="learning-insight-hero">
+  <div>
+    <a
+      class="learning-insight-back"
+      href="{% url 'students:detail' student.student_id %}"
+    >
+      ← 학생 상세
+    </a>
+
+    <h1>{{ student.name }} 누적 학습 인사이트</h1>
+    <p>
+      최근 시험의 점수·영역·오답·풀이시간을 함께 분석합니다.
+    </p>
+  </div>
+
+  {% if learning_insight.status == "ok" %}
+    <div class="learning-insight-score">
+      <span>최근 전체 SAT</span>
+
+      <strong>
+        {{ learning_insight.latest_total_score|default:"—" }}
+      </strong>
+
+      <small>
+        최초 대비
+        {% if learning_insight.first_score_delta is not None %}
+          {% if learning_insight.first_score_delta > 0 %}+{% endif %}{{ learning_insight.first_score_delta }}
+        {% else %}
+          —
+        {% endif %}
+      </small>
+    </div>
+  {% endif %}
+</section>
+
+{% if learning_insight.status == "ok" %}
+  <section class="learning-insight-kpis">
+    <article>
+      <span>분석 시험</span>
+      <strong>{{ learning_insight.analyzed_exam_count }}</strong>
+      <small>최근 완료 시험</small>
+    </article>
+
+    <article>
+      <span>누적 문항</span>
+      <strong>{{ learning_insight.total_question_count }}</strong>
+      <small>문항 상세가 있는 시험</small>
+    </article>
+
+    <article>
+      <span>누적 획득률</span>
+      <strong>
+        {% if learning_insight.overall_accuracy is not None %}
+          {{ learning_insight.overall_accuracy|floatformat:1 }}%
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <small>계산 가능한 문항 기준</small>
+    </article>
+
+    <article class="is-review">
+      <span>복습 필요</span>
+      <strong>{{ learning_insight.review_count }}</strong>
+      <small>오답·무응답·부분점수</small>
+    </article>
+
+    <article>
+      <span>평균 풀이시간</span>
+      <strong>{{ learning_insight.average_duration_label }}</strong>
+      <small>시간 데이터가 있는 문항</small>
+    </article>
+  </section>
+
+  <section class="learning-insight-summary-grid">
+    <article class="learning-summary-card is-strong">
+      <span>강점 영역</span>
+      <strong>
+        {% if learning_insight.strongest_area %}
+          {{ learning_insight.strongest_area.name }}
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <small>
+        {% if learning_insight.strongest_area and learning_insight.strongest_area.accuracy_rate is not None %}
+          누적 {{ learning_insight.strongest_area.accuracy_rate|floatformat:1 }}%
+        {% else %}
+          계산 가능한 문항 없음
+        {% endif %}
+      </small>
+    </article>
+
+    <article class="learning-summary-card is-priority">
+      <span>우선 학습 영역</span>
+      <strong>
+        {% if learning_insight.priority_area %}
+          {{ learning_insight.priority_area.name }}
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <small>
+        {% if learning_insight.priority_area %}
+          복습 {{ learning_insight.priority_area.review_count }}문항
+          · 취약 {{ learning_insight.priority_area.weak_exam_count }}회
+        {% else %}
+          우선 대상 없음
+        {% endif %}
+      </small>
+    </article>
+
+    <article class="learning-summary-card is-improving">
+      <span>향상 영역</span>
+      <strong>
+        {% if learning_insight.improving_area %}
+          {{ learning_insight.improving_area.name }}
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <small>
+        {% if learning_insight.improving_area and learning_insight.improving_area.delta is not None %}
+          최초 대비 +{{ learning_insight.improving_area.delta|floatformat:1 }}%p
+        {% else %}
+          뚜렷한 상승 영역 없음
+        {% endif %}
+      </small>
+    </article>
+
+    <article class="learning-summary-card is-declining">
+      <span>하락 확인 영역</span>
+      <strong>
+        {% if learning_insight.declining_area %}
+          {{ learning_insight.declining_area.name }}
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <small>
+        {% if learning_insight.declining_area and learning_insight.declining_area.delta is not None %}
+          최초 대비 {{ learning_insight.declining_area.delta|floatformat:1 }}%p
+        {% else %}
+          뚜렷한 하락 영역 없음
+        {% endif %}
+      </small>
+    </article>
+
+    <article class="learning-summary-card is-slow">
+      <span>시간 병목 영역</span>
+      <strong>
+        {% if learning_insight.slowest_area %}
+          {{ learning_insight.slowest_area.name }}
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <small>
+        {% if learning_insight.slowest_area %}
+          평균 {{ learning_insight.slowest_area.average_duration_label }}
+        {% else %}
+          시간 데이터 없음
+        {% endif %}
+      </small>
+    </article>
+  </section>
+
+  <section class="learning-insight-section">
+    <div class="premium-section-heading">
+      <div>
+        <h2>우선 학습 권고</h2>
+        <p>
+          점수·오답·변화·풀이시간을 기준으로 자동 정리했습니다.
+        </p>
+      </div>
+
+      {% if request.user.is_superuser or request.user.role == "ADMIN" %}
+        <a
+          class="learning-insight-refresh"
+          href="?refresh=1"
+        >
+          분석 새로고침
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="learning-recommendation-grid">
+      {% for recommendation in learning_insight.recommendations %}
+        <article class="learning-recommendation-card is-{{ recommendation.kind }}">
+          <span>0{{ recommendation.rank }}</span>
+          <strong>{{ recommendation.title }}</strong>
+          <p>{{ recommendation.description }}</p>
+          <small>{{ recommendation.action }}</small>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="learning-insight-section">
+    <div class="premium-section-heading">
+      <div>
+        <h2>영역별 누적 분석</h2>
+        <p>
+          최근 시험의 획득률과 변화 방향을 함께 표시합니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="learning-area-list">
+      {% for area in learning_insight.area_insights %}
+        <article
+          class="learning-area-row is-{{ area.status }}"
+          data-area-key="{{ area.key }}"
+        >
+          <div class="learning-area-copy">
+            <div>
+              <strong>{{ area.name }}</strong>
+              <span>{{ area.status_label }}</span>
+            </div>
+
+            <small>
+              {{ area.exam_count }}회 시험
+              · {{ area.question_count }}문항
+              · 복습 {{ area.review_count }}
+              · 평균 {{ area.average_duration_label }}
+            </small>
+          </div>
+
+          <div class="learning-area-score">
+            <strong>
+              {% if area.accuracy_rate is not None %}
+                {{ area.accuracy_rate|floatformat:1 }}%
+              {% else %}
+                —
+              {% endif %}
+            </strong>
+
+            <small>
+              {% if area.delta is not None %}
+                변화
+                {% if area.delta > 0 %}+{% endif %}{{ area.delta|floatformat:1 }}%p
+              {% else %}
+                변화 비교 전
+              {% endif %}
+            </small>
+          </div>
+
+          <div class="learning-area-progress">
+            <i
+              style="width: {% if area.accuracy_rate is not None %}{{ area.accuracy_rate|floatformat:0 }}{% else %}0{% endif %}%"
+            ></i>
+          </div>
+
+          <div class="learning-area-timeline">
+            {% for point in area.trend_points %}
+              <span
+                title="{{ point.exam_date_label }} · {{ point.exam_name }}"
+              >
+                <b>
+                  {% if point.accuracy_rate is not None %}
+                    {{ point.accuracy_rate|floatformat:0 }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </b>
+                <small>{{ point.exam_date_label|slice:"5:" }}</small>
+              </span>
+            {% endfor %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="learning-insight-section">
+    <div class="premium-section-heading">
+      <div>
+        <h2>최근 시험 비교</h2>
+        <p>
+          시험별 점수와 복습 문항을 한눈에 비교합니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="learning-exam-grid">
+      {% for exam in learning_insight.recent_exams %}
+        <article class="learning-exam-card">
+          <div>
+            <span>{{ exam.exam_date_label }}</span>
+            <strong>{{ exam.exam_name }}</strong>
+            <small>{{ exam.score_type_label }}</small>
+          </div>
+
+          <div class="learning-exam-score">
+            <strong>{{ exam.display_score|default:"—" }}</strong>
+            <small>/ {{ exam.max_score }}</small>
+          </div>
+
+          <div class="learning-exam-meta">
+            <span>
+              획득률
+              <b>
+                {% if exam.accuracy_rate is not None %}
+                  {{ exam.accuracy_rate|floatformat:1 }}%
+                {% else %}
+                  —
+                {% endif %}
+              </b>
+            </span>
+
+            <span>
+              복습
+              <b>{{ exam.review_count }}</b>
+            </span>
+          </div>
+
+          <a
+            href="{% url 'assessments:attempt-detail' student.student_id exam.attempt_id %}"
+          >
+            시험 상세 보기 →
+          </a>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section
+    class="learning-insight-section"
+    data-review-queue
+  >
+    <div class="premium-section-heading">
+      <div>
+        <h2>복습 문항 큐</h2>
+        <p>
+          최근 시험의 무응답·오답·부분점수 문항을 우선순위로 정렬했습니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="learning-review-filters">
+      <button
+        class="is-active"
+        type="button"
+        data-review-filter="all"
+      >
+        전체
+      </button>
+
+      {% if learning_insight.priority_area %}
+        <button
+          type="button"
+          data-review-filter="{{ learning_insight.priority_area.key }}"
+        >
+          {{ learning_insight.priority_area.name }}
+        </button>
+      {% endif %}
+
+      <button
+        type="button"
+        data-review-filter="wrong"
+      >
+        오답
+      </button>
+
+      <button
+        type="button"
+        data-review-filter="unanswered"
+      >
+        무응답
+      </button>
+
+      <button
+        type="button"
+        data-review-filter="slow"
+      >
+        느린 문항
+      </button>
+    </div>
+
+    <div class="learning-review-list">
+      {% for item in learning_insight.review_queue %}
+        <a
+          class="learning-review-row"
+          href="{% url 'assessments:attempt-detail' student.student_id item.attempt_id %}?question={{ item.question_id }}"
+          data-review-item
+          data-review-area="{{ item.area_key }}"
+          data-review-status="{{ item.result_class }}"
+          data-review-slow="{% if item.is_slow %}1{% else %}0{% endif %}"
+        >
+          <span class="learning-review-number">
+            {{ item.question_no }}
+          </span>
+
+          <div>
+            <span class="exam-result-badge is-{{ item.result_class }}">
+              {{ item.result_label }}
+            </span>
+
+            <strong>{{ item.area_name }}</strong>
+
+            <small>
+              {{ item.exam_date_label }}
+              · {{ item.exam_name }}
+              · {{ item.duration_label }}
+            </small>
+          </div>
+
+          <div class="learning-review-answer">
+            <span>
+              학생
+              <b>{{ item.selected_answer|default:"무응답" }}</b>
+            </span>
+
+            <span>
+              정답
+              <b>{{ item.correct_answer }}</b>
+            </span>
+          </div>
+
+          <span class="learning-review-arrow">↗</span>
+        </a>
+      {% empty %}
+        <div class="learning-review-empty">
+          현재 복습이 필요한 문항이 없습니다.
+        </div>
+      {% endfor %}
+    </div>
+
+    <div
+      class="learning-review-empty is-hidden"
+      data-review-empty
+    >
+      선택한 조건에 해당하는 문항이 없습니다.
+    </div>
+  </section>
+
+  <script
+    src="{% static 'assessments/js/learning-insight.js' %}"
+    defer
+  ></script>
+{% else %}
+  <section class="score-insight-state is-{{ learning_insight.status }}">
+    <div class="score-state-symbol">!</div>
+
+    <div>
+      <strong>누적 학습 인사이트를 표시할 수 없습니다.</strong>
+      <p>{{ learning_insight.message }}</p>
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

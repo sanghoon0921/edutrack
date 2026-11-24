@@ -1,0 +1,10 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="error-page">
+  <p class="error-code">403</p>
+  <h1>접근 권한이 없습니다.</h1>
+  <p>현재 계정 역할로는 이 페이지를 열 수 없습니다.</p>
+  <a class="btn btn-primary" href="{% url 'dashboard' %}">홈로 이동</a>
+</section>
+{% endblock %}

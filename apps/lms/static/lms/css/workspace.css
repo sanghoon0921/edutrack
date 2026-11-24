@@ -1,0 +1,222 @@
+/* Scoped additions on top of intranet UI V2; do not restyle legacy pages. */
+.lms-workspace {color:#263142;font-size:14px;line-height:1.65;min-width:0;max-width:100%;}
+.lms-workspace *, .lms-workspace *::before,.lms-workspace *::after{box-sizing:border-box;}
+.lms-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px;flex-wrap:wrap;}
+.lms-heading h1{font-size:24px;line-height:1.4;margin:0 0 5px;font-weight:700;overflow-wrap:anywhere;}
+.lms-workspace h2{font-size:17px;line-height:1.45;margin:0 0 12px;}
+.lms-workspace h3{font-size:14px;margin:0 0 6px;}
+.lms-heading p{margin:0;color:#667085;}
+.lms-breadcrumb{font-size:14px;margin-bottom:6px!important;}
+.lms-workspace a{color:#2356a6;text-decoration:none;}
+.lms-workspace a:hover{text-decoration:underline;}
+.lms-panel{padding:20px;margin-bottom:18px;background:#fff;border:1px solid #dfe3e8;border-radius:7px;min-width:0;max-width:100%;}
+.lms-panel>h2:not(:first-child){margin-top:24px;}
+.lms-actions,.lms-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.lms-actions form{margin:0;}
+.lms-toolbar{padding:12px;border:1px solid #e4e7ec;background:#fbfcfd;border-radius:6px;margin-bottom:16px;}
+.lms-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:34px;padding:6px 12px;border:1px solid #ccd2db;border-radius:4px;background:#fff;color:#344054!important;font-size:14px;font-weight:600;line-height:1.4;cursor:pointer;text-decoration:none!important;white-space:normal;}
+.lms-btn:hover{background:#f4f6f9;}
+.lms-btn.primary{background:#285bae;border-color:#285bae;color:#fff!important;}
+.lms-btn.danger{color:#b42318!important;border-color:#ebc5c0;}
+.lms-btn:disabled{opacity:.5;cursor:default;}
+.lms-workspace :focus-visible{outline:2px solid #527ecd;outline-offset:2px;}
+.lms-workspace input:not([type=checkbox]):not([type=radio]):not([type=hidden]),.lms-workspace select,.lms-workspace textarea{font-family:inherit;font-size:14px;border:1px solid #cbd2da;border-radius:4px;padding:8px 10px;max-width:100%;min-width:0;background:#fff;color:#202938;}
+.lms-workspace input[type=hidden]{display:none!important;}
+.lms-toolbar input{width:230px;}.lms-toolbar select{max-width:280px;}
+.lms-form{display:flex;flex-direction:column;gap:16px;}.lms-form .lms-btn{align-self:flex-start;}
+.lms-field{display:flex;flex-direction:column;gap:6px;min-width:0;}.lms-field label{font-weight:650;}.lms-field input,.lms-field textarea,.lms-field select{width:100%;}
+.lms-field input[type=checkbox]{width:auto;align-self:flex-start;}.lms-field select[multiple]{min-height:160px;}
+.lms-form small,.lms-muted{color:#667085;font-size:14px;}.lms-workspace .errorlist{color:#b42318;margin:4px 0;padding-left:18px;}
+.lms-notice{background:#f3f6fa;border:1px solid #dce3ed;padding:12px 14px;margin:14px 0;color:#43536b;border-radius:5px;overflow-wrap:anywhere;}
+.lms-info-grid,.lms-review-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;}
+.lms-review-grid{grid-template-columns:minmax(0,1.35fr) minmax(280px,1fr);}
+.lms-table-wrap{width:100%;max-width:100%;overflow:auto;border:1px solid #e2e6eb;border-radius:6px;background:#fff;}
+.lms-table{border-collapse:separate;border-spacing:0;min-width:100%;margin:0;table-layout:auto;}
+.lms-table th,.lms-table td{padding:13px 14px;text-align:left;border-bottom:1px solid #edf0f3;vertical-align:top;white-space:normal;overflow-wrap:anywhere;}
+.lms-table thead th{background:#f7f8fa;font-weight:650;color:#556174;font-size:14px;}
+.lms-table small{display:block;color:#738094;font-size:14px;}
+.lms-table tr:last-child td,.lms-table tr:last-child th{border-bottom:0;}
+.lms-empty{text-align:center!important;padding:35px!important;color:#7b8595;}
+.lms-pagination{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;margin:18px 0;font-size:14px;}
+.lms-chip{border:1px solid #d9e1ed;border-radius:4px;padding:3px 7px;background:#fff;font-size:14px;}
+.gradebook{min-width:100%;}.gradebook th:not(.sticky-student),.gradebook td{min-width:175px;max-width:240px;}
+.gradebook-scroll{max-height:65vh;}.gradebook .sticky-student{position:sticky;left:0;background:#fff;min-width:155px;z-index:2;border-right:1px solid #e1e6ec;}
+.gradebook thead th{position:sticky;top:0;z-index:3;}.gradebook thead .sticky-student{z-index:4;background:#f7f8fa;}
+.gradebook-cell{display:block;min-height:45px;}.gradebook-cell strong{font-size:16px;color:#1e334e;}
+.gradebook td.overdue{background:#fff0ee;}.gradebook td.graded{background:#edf6ff;}.gradebook td.not-assigned{background:#f5f6f8;}
+.lms-copy{white-space:normal;overflow-wrap:anywhere;line-height:1.85;margin-bottom:20px;}
+.lms-file-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid #edf0f3;overflow-wrap:anywhere;}
+.lms-file-row>a,.lms-file-row>span:first-child{flex:1;min-width:100px;}.lms-file-row span{font-size:14px;color:#6a7686;}
+.lms-score{font-size:22px;font-weight:700;color:#2556a0;}.lms-answer{border-bottom:1px solid #e4e7ec;padding:12px 0;}
+.lms-hidden-csrf{display:none;}
+/* 첨삭 채점 화면(Canvas SpeedGrader 방식): 왼쪽 문서, 오른쪽 점수·총평·첨삭 카드 */
+.grader{display:grid;gap:12px;min-width:0;}
+.grader-head{display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap;}
+.grader-title{flex:1 1 260px;min-width:0;}
+.grader-title h1{font-size:22px;line-height:1.35;margin:0 0 2px;font-weight:700;overflow-wrap:anywhere;}
+.grader-title p{margin:0;color:#667085;}
+.grader-switcher{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:6px;border:1px solid #dfe3e8;border-radius:10px;background:#fff;}
+.grader-switcher select{width:auto;min-width:180px;max-width:260px;padding:6px 10px;border:1px solid #cfd8e3;border-radius:8px;background:#fff;font:inherit;}
+.grader-progress{padding:0 6px;color:#526077;font-size:14px;white-space:nowrap;}.grader-progress b{color:#172235;}
+.grader-files{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
+.grader-files a{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #dfe3e8;border-radius:999px;background:#fff;color:#334155;font-size:14px;font-weight:600;white-space:nowrap;text-decoration:none!important;}
+.grader-files a[aria-current=page]{border-color:#6d4bc7;background:#f1ecfd;color:#5b3bb3;}
+.grader-files small{padding:0 7px;border-radius:999px;background:#fff;color:#526077;font-size:14px;font-weight:600;}
+.grader-body{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;align-items:start;min-width:0;}
+.grader-main{min-width:0;}
+.grader-side{display:grid;gap:12px;min-width:0;position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto;}
+.grader-form,.grader-result,.ann-notes,.grader-history{padding:14px;border:1px solid #dfe3e8;border-radius:12px;background:#fff;}
+.grader-form{display:grid;gap:8px;}
+.grader-form label{font-size:14px;font-weight:700;}
+.grader-form .lms-muted{margin:0;font-size:14px;}
+.grader-score{display:flex;align-items:center;gap:8px;}
+.grader-score label{flex:0 0 auto;margin-right:auto;white-space:nowrap;}
+body.intranet-app-body .lms-workspace .grader-score input{width:104px;flex:0 0 104px;padding:6px 10px;font-size:20px;font-weight:700;text-align:right;}
+.grader-score span{flex:0 0 auto;color:#526077;font-size:16px;font-weight:600;white-space:nowrap;}
+.grader-form textarea{min-height:110px;resize:vertical;}
+.grader-submit{width:100%;min-height:44px;font-size:15px;}
+.grader-open{display:grid;justify-items:start;gap:10px;padding:18px;border:1px dashed #cbd5e3;border-radius:12px;background:#fafbfd;}
+.grader-open-name{display:flex;align-items:center;gap:8px;margin:0;font-weight:700;overflow-wrap:anywhere;}
+.grader-open .lms-copy{margin:0;}
+.grader-history summary{cursor:pointer;font-weight:700;}
+.grader-history a{display:block;padding:6px 0;font-size:14px;}
+
+/* 도구 막대: 도구 · 색 · 굵기 · 실행 취소 */
+.ann-editor{display:grid;gap:8px;min-width:0;}
+.ann-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 8px;border:1px solid #dfe3e8;border-radius:12px;background:#fff;}
+.ann-group{display:flex;align-items:center;gap:3px;padding-right:8px;border-right:1px solid #e2e8f1;}
+.ann-tool{display:inline-flex;flex-direction:column;align-items:center;gap:1px;min-width:46px;padding:4px 4px 2px;border:1px solid transparent;border-radius:8px;background:none;color:#334155;font:inherit;font-size:14px;line-height:1.3;cursor:pointer;}
+.ann-tool .et-icon{width:20px;height:20px;}
+.ann-tool:hover{background:#f1f4f9;}
+.ann-tool[aria-pressed=true]{border-color:#6d4bc7;background:#f1ecfd;color:#5b3bb3;}
+.ann-swatch{width:22px;height:22px;padding:0;border:2px solid #fff;border-radius:50%;background:var(--swatch);box-shadow:0 0 0 1px #cbd5e3;cursor:pointer;}
+.ann-swatch[aria-pressed=true]{box-shadow:0 0 0 2px var(--swatch);}
+.ann-width{display:inline-grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid transparent;border-radius:8px;background:none;cursor:pointer;}
+.ann-width i{display:block;width:18px;height:var(--line);border-radius:4px;background:#334155;}
+.ann-width:hover{background:#f1f4f9;}
+.ann-width[aria-pressed=true]{border-color:#6d4bc7;background:#f1ecfd;}
+.ann-icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;height:34px;padding:0 8px;border:1px solid #dfe3e8;border-radius:8px;background:#fff;color:#334155;font:inherit;font-size:14px;cursor:pointer;text-decoration:none!important;}
+.ann-icon-btn:hover:not(:disabled){border-color:#94a3b8;}
+.ann-icon-btn:disabled,.ann-icon-btn.is-disabled{opacity:.4;cursor:default;}
+.ann-pagebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ann-pagebar #ann-page-label{min-width:64px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;}
+.ann-zoom{display:inline-flex;align-items:center;gap:6px;font-size:14px;}
+.ann-zoom select{width:auto;padding:4px 8px;}
+.ann-status{flex:1 1 220px;margin:0;color:#526077;font-size:14px;text-align:right;}
+.ann-status.is-error{color:#b42318;}
+.lms-paper-scroll{overflow:auto;max-height:calc(100vh - 220px);min-height:360px;min-width:0;padding:16px;border:1px solid #dfe3e8;border-radius:12px;background:#e8ebef;}
+.lms-paper{position:relative;width:840px;max-width:none;background:white;box-shadow:0 1px 4px #c7cbd2;line-height:0;}
+.lms-paper img{display:block;width:100%;height:auto;pointer-events:none;}
+.lms-paper svg{position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;user-select:none;cursor:crosshair;}
+.lms-paper[data-tool=freetext] svg{cursor:text;}
+.lms-paper svg.readonly{touch-action:auto;cursor:default;}
+.ann-mark.is-active{filter:drop-shadow(0 0 4px rgba(36,84,204,.85));}
+
+/* 첨삭 카드: 표시를 하면 여기에 설명 칸이 바로 생김 */
+.ann-notes h2{display:flex;align-items:baseline;gap:8px;margin:0 0 8px;font-size:16px;}
+#ann-count{color:#526077;font-size:14px;font-weight:600;}
+.ann-hint{margin:0 0 8px;font-size:14px;}
+#ann-list{display:grid;gap:8px;}
+.ann-note{display:grid;gap:6px;padding:10px;border:1px solid #dfe3e8;border-radius:10px;background:#fff;overflow-wrap:anywhere;font-size:14px;}
+.ann-note.is-active{border-color:#2454cc;box-shadow:0 0 0 2px #dbe5ff;}
+.ann-note-head{display:flex;align-items:center;gap:8px;}
+.ann-note-num{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:var(--mark);color:#fff;font-size:14px;font-weight:700;}
+.ann-note-delete{min-width:30px;height:30px;margin-left:auto;padding:0;border-color:transparent;}
+.ann-note textarea{width:100%;min-height:44px;padding:7px 9px;border:1px solid #d5dce6;border-radius:8px;font:inherit;line-height:1.5;resize:none;overflow:hidden;}
+.ann-note p{margin:0;white-space:pre-wrap;}
+.ann-empty{margin:0;}
+.lms-message-list{display:flex;flex-direction:column;gap:14px;max-height:60vh;overflow:auto;padding:16px 0;}
+.lms-message{align-self:flex-start;width:85%;max-width:760px;background:#f4f6f9;border:1px solid #e2e7ed;padding:12px 16px;border-radius:7px;}
+.lms-message.own{align-self:flex-end;background:#eff5ff;border-color:#dbe7f9;}.lms-message>div{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.lms-message time{font-size:14px;color:#758094;}.lms-message p{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 0;}
+.lms-unread{color:#2356a6;}
+@media(max-width:1100px){.grader-body{grid-template-columns:minmax(0,1fr);}.grader-side{position:static;max-height:none;overflow:visible;}.grader-side .ann-notes{order:-1;}}
+@media(max-width:1050px){.lms-review-grid{grid-template-columns:minmax(0,1fr);}}
+@media(max-width:640px){.lms-heading h1{font-size:20px;}.lms-panel{padding:14px;}.lms-info-grid{grid-template-columns:minmax(0,1fr);}.lms-toolbar input,.lms-toolbar select{width:100%;max-width:none;}.lms-table th,.lms-table td{padding:10px;}.ann-toolbar{gap:6px;}.ann-group{padding-right:0;border-right:0;}.ann-tool{min-width:42px;}.ann-tool span{display:none;}.grader-switcher{width:100%;}.grader-switcher select{flex:1;min-width:0;max-width:none;}.ann-status{text-align:left;}.lms-paper-scroll{max-height:70vh;min-height:240px;}.lms-message{width:95%;}.lms-paper-scroll{padding:8px;}.lms-heading{gap:10px;}.lms-workspace{font-size:14px;}}
+
+/* Explicit specificity over legacy V2 form rules; new LMS pages only. */
+body.intranet-app-body .lms-workspace form.lms-toolbar{display:flex!important;flex-direction:row;align-items:center;gap:8px;flex-wrap:wrap;}
+body.intranet-app-body .lms-workspace form.lms-toolbar input{width:230px;flex:0 1 230px;}
+body.intranet-app-body .lms-workspace form.lms-toolbar select{width:auto;flex:0 1 auto;max-width:280px;}
+body.intranet-app-body .lms-workspace .ann-zoom select,body.intranet-app-body .lms-workspace .grader-switcher select{width:auto;flex:0 1 auto;}
+@media(max-width:640px){body.intranet-app-body .lms-workspace form.lms-toolbar input,body.intranet-app-body .lms-workspace form.lms-toolbar select{width:100%;max-width:100%;flex:1 1 100%;}}
+
+body.intranet-app-body .assignment-submit-columns > *{min-width:0;}
+body.intranet-app-body .assignment-submit-columns .workflow-field{min-width:0;overflow-wrap:anywhere;}
+body.intranet-app-body .assignment-submit-columns input[type=file]{width:100%;min-width:0;}
+body.intranet-app-body .private-file-existing{white-space:normal;overflow-wrap:anywhere;font-size:14px;color:#64748b;}
+body.intranet-app-body .private-file-clear{display:flex;align-items:center;gap:7px;}
+body.intranet-app-body .private-file-clear label{display:inline;margin:0;}
+
+/* 대화 화면(카카오톡식): 날짜 구분선, 같은 사람·같은 분 메시지는 이름 한 번·시간 마지막에만, 말풍선 옆 안 읽은 사람 수.
+   말풍선 색은 90-usability 층(내 메시지 파랑, 상대 흰색)을 그대로 씁니다. */
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-list{gap:3px!important;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-day{display:flex;justify-content:center;margin:14px 0 6px;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-day span{padding:3px 12px;border-radius:999px;background:#e3e9f2;color:#475569;font-size:14px;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-older{align-self:center;margin:2px 0 6px;font-size:14px;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg{display:grid;justify-items:start;gap:3px;max-width:min(80%,620px);}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg.own{justify-items:end;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg.is-first{margin-top:10px!important;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-name{margin-left:2px;color:#334155;font-size:14px;font-weight:600;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg:not(.is-first) .kt-name{display:none;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg>.kt-line{display:flex;flex-wrap:nowrap;align-items:flex-end;justify-content:flex-start;gap:6px;margin:0;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg.own>.kt-line{flex-direction:row-reverse;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg .kt-bubble{min-width:0;border-radius:14px;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg.is-first:not(.own) .kt-bubble{border-top-left-radius:4px;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg.own.is-first .kt-bubble{border-top-right-radius:4px;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-meta{display:grid;flex:0 0 auto;justify-items:start;line-height:1.25;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg.own .kt-meta{justify-items:end;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-meta time{color:#64748b;font-size:14px;white-space:nowrap;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-msg:not(.is-last) .kt-meta time{display:none;}
+body.intranet-app-body[data-usability-version] .ux-chat-main .kt-unread{color:#b7791f;font-size:14px;font-weight:700;}
+/* 글자를 드래그해 그은 형광펜·취소선: 카드에 고른 글을 보여 줌 */
+.ann-quote{display:block;padding:4px 8px;border-left:2px solid #cbd5e3;color:#475569;font-size:14px;line-height:1.5;quotes:none;overflow-wrap:anywhere;}
+/* 첨삭 '글씨' 도구: 누른 자리에 바로 뜨는 입력 칸(글자 크기·색은 표시와 같게) */
+.lms-paper .ann-inline-text{position:absolute;z-index:3;width:auto;min-width:7em;max-width:60%;margin:0;padding:0 3px;border:1px dashed currentColor;border-radius:3px;background:rgba(255,255,255,.88);font-family:sans-serif;line-height:1.35;resize:none;overflow:hidden;field-sizing:content;box-shadow:0 2px 8px rgba(17,28,48,.12);}
+.lms-paper .ann-inline-text:focus{outline:2px solid rgba(36,84,204,.35);outline-offset:1px;}
+/* 첨삭 설명: 번호 바로 옆 말풍선(학생 화면에도 보임)과, 표시 직후 번호 옆에 뜨는 입력칸 */
+/* 첨삭 설명: 문서 밖 오른쪽 여백(번호와 같은 높이) + 번호에서 이어지는 점선 — 본문을 가리지 않습니다(운영팀 요청 10.29). */
+.ann-stage{position:relative;display:flex;align-items:flex-start;gap:28px;width:max-content;min-width:100%;}
+.ann-margin{position:relative;flex:0 0 var(--ann-margin,240px);width:var(--ann-margin,240px);line-height:1.45;}
+.ann-links{position:absolute;left:0;top:0;z-index:1;overflow:visible;pointer-events:none;}
+.ann-links .ann-link{fill:none;stroke-width:1.5;stroke-dasharray:4 4;opacity:.75;}
+.ann-links .ann-link.is-active{stroke-width:2.2;opacity:1;}
+.ann-margin .ann-bubble,body.intranet-app-body .ann-margin textarea.ann-inline-comment{position:absolute;left:0;right:0;z-index:2;margin:0;padding:5px 9px !important;border:1px solid var(--mark,#2563eb) !important;border-left-width:4px !important;border-radius:7px !important;background:#fff !important;color:#1e293b;font-family:inherit;font-size:14px !important;line-height:1.45 !important;box-shadow:0 2px 8px rgba(17,28,48,.12);}
+.ann-margin .ann-bubble{white-space:pre-wrap;overflow-wrap:anywhere;cursor:pointer;}
+.ann-margin .ann-bubble.is-active{box-shadow:0 0 0 2px var(--mark,#2563eb),0 2px 8px rgba(17,28,48,.14);}
+body.intranet-app-body .ann-margin textarea.ann-inline-comment{z-index:3;width:100%;min-height:0 !important;resize:none;overflow:hidden;}
+body.intranet-app-body .ann-margin textarea.ann-inline-comment:focus{outline:2px solid rgba(36,84,204,.35);outline-offset:1px;}
+@media(max-width:760px){body.intranet-app-body .ann-margin textarea.ann-inline-comment{font-size:16px !important;}}
+/* 그룹 대화·반 단체방: 들어가자마자 보이는 참여자 명단(강사 먼저, 많으면 칸 안에서 스크롤) */
+body.intranet-app-body .ux-chat-main .ux-chat-sub{margin:2px 0 0;color:#64748b;font-size:14px;}
+body.intranet-app-body .ux-chat-main .ux-chat-members{display:flex;flex-wrap:wrap;gap:4px 6px;max-height:68px;overflow:auto;padding:8px 12px;border-bottom:1px solid #e2e8f1;background:#fafbfd;}
+.ux-member{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border:1px solid #dfe3e8;border-radius:999px;background:#fff;color:#334155;font-size:14px;white-space:nowrap;}
+.ux-member small{color:#64748b;font-size:14px;}
+.ux-member.is-staff{border-color:#c7d4f5;background:#eef3ff;color:#1e3a8a;}
+.ux-member.is-me{font-weight:700;}
+/* 새 대화: 대화할 사람 체크 목록 + 검색(lms/js/new-chat.js) */
+.chat-picker-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:8px 0;}
+body.intranet-app-body .chat-picker-bar input[type=search]{flex:1 1 260px;width:auto;min-width:0;padding:7px 10px;border:1px solid #cfd8e3;border-radius:8px;font:inherit;}
+.chat-picker-count{color:#2454cc;font-size:14px;font-weight:700;}
+.chat-picker-chosen{display:flex;flex-wrap:wrap;gap:6px;min-height:0;margin-bottom:8px;}
+.chat-chip{padding:3px 10px;border:1px solid #c7d4f5;border-radius:999px;background:#eef3ff;color:#1e3a8a;font:inherit;font-size:14px;cursor:pointer;}
+.chat-chip:hover{border-color:#2454cc;}
+.chat-picker-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;max-height:min(56vh,520px);overflow:auto;padding:2px;}
+.chat-pick{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #dfe3e8;border-radius:10px;background:#fff;cursor:pointer;font-size:14px;}
+.chat-pick input{width:16px;height:16px;margin:0;accent-color:#2454cc;flex:0 0 auto;}
+.chat-pick span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#172235;}
+.chat-pick small{color:#64748b;font-size:14px;}
+.chat-pick.is-on{border-color:#2454cc;background:#eef3ff;}
+.chat-pick[hidden]{display:none;}
+/* 반 화면 탭(운영팀 요청 10.29: 과제·토론·퀴즈·성적제출현황·자료·반 공지를 반 하나에) */
+.lms-room-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;padding:6px;border:1px solid #dfe3e8;border-radius:12px;background:#fff;}
+.lms-room-tab{display:inline-flex;align-items:center;min-height:36px;padding:6px 14px;border-radius:8px;color:#334155;font-size:14px;font-weight:700;text-decoration:none;}
+.lms-room-tab:hover{background:#eef2f7;color:#1e3a8a;}
+.lms-room-tab.is-active{background:#1d4ed8;color:#fff;}
+.lms-subheading{margin:16px 0 8px;font-size:15px;font-weight:800;color:#172a46;}
+/* 대화방 이름 바꾸기(관리자·강사, 운영팀 요청 10.29) */
+.ux-chat-rename{margin-top:4px;font-size:14px;}
+.ux-chat-rename>summary{cursor:pointer;color:#1d4ed8;font-weight:700;}
+.ux-chat-rename form{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;}
+.ux-chat-rename input{min-width:220px;}
+.ux-chat-rename small{color:#475569;}

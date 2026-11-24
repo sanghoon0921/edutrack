@@ -1,0 +1,57 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/components/learning-overview.css' %}?v=20261008-r2">
+{% endblock %}
+
+{% block content %}
+<section class="learner-page-hero">
+  <div>
+    <h1>{% if is_parent %}자녀 출결{% else %}내 출결{% endif %}</h1>
+    <p>
+      {% if student %}{{ student.name }} · 학생번호 {{ student.student_id }}{% else %}연결된 학생의 출결 수업을 확인합니다.{% endif %}
+    </p>
+  </div>
+  {% if student %}<span class="learner-identity-chip">{{ student.school|default:"학교 미입력" }}</span>{% endif %}
+</section>
+
+{% if unlinked_account %}
+  <section class="learner-empty-state">
+    <strong>연결된 학생 정보가 없습니다.</strong>
+    <p>{% if request.user.role == "ADMIN" %}학생 상세 화면에서 테스트할 학생을 먼저 선택해 주세요.{% else %}관리자에게 학생 계정 연결을 요청해 주세요.{% endif %}</p>
+  </section>
+{% elif linked_student_missing %}
+  <section class="learner-empty-state">
+    <strong>연결된 학생 정보를 찾을 수 없습니다.</strong>
+    <p>학생번호 {{ student_id }}의 인트라넷 등록 상태를 확인해 주세요.</p>
+  </section>
+{% elif visible_courses %}
+  {% if course_mode == "history" %}
+    <section class="learner-history-notice">
+      <span>지난 수업</span>
+      <div><strong>현재 진행 중인 수업이 없어 완료된 수업을 표시합니다.</strong><p>종료일이 최근인 수업부터 확인할 수 있습니다.</p></div>
+    </section>
+  {% endif %}
+
+  <section class="learner-course-section">
+    <div class="learner-section-heading">
+      <div>
+        <h2>{% if course_mode == "history" %}과거 수업 출결{% else %}진행 중인 수업{% endif %}</h2>
+        <p>수업을 선택하면 날짜별 출석·결석·지각·녹화 기록을 확인합니다.</p>
+      </div>
+      <span>{{ visible_courses|length }}개</span>
+    </div>
+    <div class="learner-course-list">
+      {% for course in visible_courses %}
+        {% include "components/learner_course_card.html" with course=course student=student show_attendance=True status_label=course.display_status %}
+      {% endfor %}
+    </div>
+  </section>
+{% else %}
+  <section class="learner-empty-state is-prominent">
+    <strong>진행 중이거나 완료된 수업이 없습니다.</strong>
+    <p>출결을 확인할 수 있는 수업이 생기면 이 화면에 자동으로 표시됩니다.</p>
+  </section>
+{% endif %}
+{% endblock %}

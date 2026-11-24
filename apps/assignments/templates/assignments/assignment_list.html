@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+{% include "learning/_tabs.html" with active_learning_tab="assignments" %}
+<section class="workflow-hero is-compact">
+  <div><h1>과제 관리</h1><p>그룹·공개 기간·마감일별로 과제와 제출 현황을 한 화면에서 관리합니다.</p></div>
+  <div class="workflow-actions">{% if request.user.role != "TA" %}<a class="workflow-button is-secondary" href="{% url 'learning:group-manage' %}">+ 그룹</a>{% endif %}<a class="workflow-button is-primary" href="{% url 'assignments:create' %}">+ 과제</a></div>
+</section>
+
+<form method="get" class="workflow-filter-bar">
+  <div class="workflow-filter-search">{{ filter_form.q }}</div>
+  {{ filter_form.group }}{{ filter_form.status }}{{ filter_form.date_from }}{{ filter_form.date_to }}
+  <button class="workflow-button is-secondary" type="submit">검색</button>
+  <a class="workflow-button is-ghost" href="{% url 'assignments:list' %}">초기화</a>
+</form>
+
+<div class="workflow-result-caption">총 {{ result_count }}개 과제</div>
+{% for group_block in assignment_groups %}
+<section class="learning-group-panel" data-reveal>
+  <header class="learning-group-header"><div><span class="learning-drag-mark">⋮⋮</span><h2>{{ group_block.title }}</h2><small>{{ group_block.rows|length }}개</small></div>{% if group_block.group and request.user.role != "TA" %}<a href="{% url 'learning:group-update' group_block.group.pk %}" aria-label="그룹 수정">그룹 설정</a>{% endif %}</header>
+  <div class="compact-list">
+  {% for row in group_block.rows %}
+    <article class="compact-row assignment-compact-row">
+      <div class="compact-icon">과제</div>
+      <div class="compact-main">
+        <div class="compact-badges"><span class="workflow-status is-{{ row.assignment.schedule_status|lower }}">{{ row.assignment.schedule_label }}</span><span>{{ row.assignment.points }}점</span></div>
+        <a class="compact-title" href="{% url 'assignments:detail' row.assignment.pk %}">{{ row.assignment.title }}</a>
+        <small>{{ row.assignment.created_by.effective_name }} · 공개 {% if row.assignment.available_from %}{{ row.assignment.available_from|date:"Y.m.d H:i" }}{% else %}즉시{% endif %} · 마감 {{ row.assignment.due_at|date:"Y.m.d H:i" }}</small>
+      </div>
+      <div class="compact-metrics"><span><strong>{{ row.recipient_count }}</strong><small>대상</small></span><span><strong>{{ row.submitted_count }}</strong><small>제출</small></span><span><strong>{{ row.feedback_count }}</strong><small>피드백</small></span></div>
+      <div class="compact-actions"><a class="workflow-button is-small is-secondary" href="{% url 'assignments:detail' row.assignment.pk %}">현황</a>{% if row.teacher_can_edit %}<a class="workflow-button is-small is-ghost" href="{% url 'assignments:update' row.assignment.pk %}">수정</a>{% else %}<span class="workflow-lock-label">마감 잠금</span>{% endif %}</div>
+    </article>
+  {% endfor %}
+  </div>
+</section>
+{% empty %}<section class="workflow-panel workflow-empty"><strong>조건에 맞는 과제가 없습니다.</strong><p>새 과제를 등록하거나 검색 조건을 변경하세요.</p></section>{% endfor %}
+{% endblock %}

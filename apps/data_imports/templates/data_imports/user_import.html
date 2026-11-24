@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="workflow-hero" data-reveal>
+  <div>
+    <h1>사용자 일괄등록</h1>
+    <p>표준 CSV 양식으로 학생·학부모·강사 계정과 학생 연결을 안전하게 등록합니다.</p>
+  </div>
+  <div class="workflow-actions">
+    <a class="workflow-button is-secondary" href="{% url 'data_imports:user-template' %}">기본 CSV 양식 다운로드</a>
+    <a class="workflow-button is-secondary" href="{% url 'data_imports:user-example' %}">작성 예시 다운로드</a>
+    <a class="workflow-button is-ghost" href="{% url 'data_imports:dashboard' %}">이전 센터</a>
+  </div>
+</section>
+
+<section class="workflow-guide" data-reveal>
+  <div class="workflow-guide-title">
+    <h2>작성 기준</h2>
+    <p>첫 번째 행의 컬럼명은 수정하지 마세요.</p>
+  </div>
+  <div class="workflow-guide-grid">
+    <article><strong>파일</strong><span>CSV · UTF-8 또는 CP949</span></article>
+    <article><strong>학생·학부모</strong><span>student_no 필수</span></article>
+    <article><strong>강사</strong><span>student_no 비워두기</span></article>
+    <article><strong>형제자매</strong><span>같은 username을 여러 행에 반복</span></article>
+    <article><strong>비밀번호</strong><span>비워두면 자동 생성, 직접 입력 시 4자 이상</span></article>
+    <article><strong>역할</strong><span>ADMIN은 최고관리자만 생성·변경</span></article>
+  </div>
+  <pre class="workflow-code-example">username,display_name,email,role,student_no,is_primary,temporary_password
+student_3228,김민준,student@example.com,STUDENT,3228,Y,1234
+parent_3228,김민준 학부모,parent@example.com,PARENT,3228,Y,1234
+teacher_kim,김강사,teacher@example.com,TEACHER,,,1234</pre>
+</section>
+
+<section class="import-form-shell workflow-panel" data-reveal>
+  <form method="post" enctype="multipart/form-data" class="import-upload-form workflow-form">
+    {% csrf_token %}
+    {% include "data_imports/_form_errors.html" %}
+
+    <div class="import-form-field is-wide">
+      <label for="{{ form.csv_file.id_for_label }}">{{ form.csv_file.label }}</label>
+      {{ form.csv_file }}
+      <small>{{ form.csv_file.help_text }}</small>
+      {% for error in form.csv_file.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+
+    <div class="import-form-field">
+      <label for="{{ form.mode.id_for_label }}">{{ form.mode.label }}</label>
+      {{ form.mode }}
+      {% for error in form.mode.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+
+    <label class="import-confirm-card">
+      {{ form.confirm_apply }}
+      <span><strong>{{ form.confirm_apply.label }}</strong><small>미리보기만 실행할 때는 선택하지 않습니다.</small></span>
+    </label>
+    {% for error in form.confirm_apply.errors %}<p class="field-error is-wide">{{ error }}</p>{% endfor %}
+
+    <div class="import-form-actions">
+      <button class="workflow-button is-secondary" type="submit" name="action" value="preview">검증만 실행</button>
+      <button class="workflow-button is-primary" type="submit" name="action" value="apply">실제 일괄등록 <span>→</span></button>
+    </div>
+  </form>
+</section>
+
+{% if preview %}
+<section class="import-preview-panel {% if not preview.is_valid %}has-errors{% endif %}" data-reveal>
+  <header>
+    <div><h2>검증 결과</h2><p>{{ preview.source_filename }} · {{ preview.total_rows }}행 · {{ preview.encoding }}</p></div>
+    {% if preview.is_valid %}<span class="import-preview-state is-valid">실제 반영 가능</span>{% else %}<span class="import-preview-state is-error">오류 {{ preview.issues|length }}건</span>{% endif %}
+  </header>
+  {% if preview.issues %}<div class="import-issue-list">{% for issue in preview.issues %}<div><strong>{{ issue.row_number }}행 · {{ issue.key }}</strong><span>{{ issue.message }}</span></div>{% endfor %}</div>{% endif %}
+  <div class="import-table-shell"><table class="import-table"><thead><tr><th>행</th><th>아이디</th><th>이름</th><th>역할</th><th>학생번호</th><th>예상 처리</th></tr></thead><tbody>{% for item in preview.items %}<tr><td>{{ item.row_number }}</td><td><strong>{{ item.username }}</strong></td><td>{{ item.display_name }}</td><td>{{ item.role_label }}</td><td>{{ item.student_nos|join:", "|default:"—" }}</td><td><span class="import-action is-{{ item.predicted_action|lower }}">{{ item.predicted_action }}</span></td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endif %}
+
+<section class="import-security-note" data-reveal><strong>임시 비밀번호 보안</strong><p>실제 등록 후 신규 계정의 임시 비밀번호 CSV가 한 번 다운로드됩니다. 평문 비밀번호는 데이터베이스·감사기록·이전 이력에 저장되지 않습니다.</p></section>
+{% endblock %}

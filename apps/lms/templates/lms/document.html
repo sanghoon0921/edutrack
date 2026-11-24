@@ -1,0 +1,13 @@
+{% extends "lms/base.html" %}{% load static %}{% block extra_js %}<script src="{% static 'lms/js/annotation.js' %}?v=1117" defer></script>{% endblock %}{% block lms_content %}
+<div class="grader">
+ <header class="grader-head"><div class="grader-title"><h1>파일 첨삭</h1><p>{{ doc.original_name }}{% if not current %} · 이전 제출 이력{% endif %}</p></div><a href="{{ back }}" class="lms-btn">점수·총평 화면으로</a></header>
+ {% if not editable %}<div class="lms-notice">읽기 전용입니다. 저장된 첨삭을 확인할 수 있습니다.</div>{% endif %}
+ <div class="grader-body">
+  <section class="grader-main" aria-label="첨삭 문서">{% include 'lms/_annotator.html' %}</section>
+  <aside class="grader-side">
+   {% if editable %}<div class="grader-form"><button class="lms-btn primary grader-submit" type="button" id="ann-save">첨삭 저장·공개</button><p class="lms-muted">저장하면 학생·연결 학부모가 확인할 수 있습니다.</p></div>{% endif %}
+   <section class="ann-notes" aria-labelledby="ann-notes-title"><h2 id="ann-notes-title">이 쪽 첨삭 <span id="ann-count"></span></h2><div id="ann-list"></div></section>
+  </aside>
+ </div>
+</div>
+{% endblock %}

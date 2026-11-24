@@ -1,0 +1,162 @@
+.learner-page-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 30px 34px;
+  border: 1px solid rgba(29,78,216,0.25);
+  border-radius: 24px;
+  background: radial-gradient(circle at 88% 20%, rgba(100,116,139,0.17), transparent 27%), linear-gradient(135deg,#f8fafc,#e9eff7);
+  box-shadow: 0 14px 38px rgba(23,42,70,0.08);
+}
+.learner-page-hero h1 { margin: 4px 0 8px; font-size: clamp(2rem,4vw,3rem); letter-spacing:-.015em; }
+.learner-page-hero p { margin: 0; color: var(--wf-muted, #52627a); line-height: 1.65; }
+.learner-identity-chip {
+  max-width: 360px;
+  padding: 9px 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: rgba(255,255,255,.75);
+  color: #1e3a5f;
+  font-size:.875rem;
+  font-weight:700;
+  overflow-wrap: anywhere;
+}
+.learner-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.learner-summary-strip > div {
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border: 1px solid var(--wf-line, #cbd5e1);
+  border-radius: 16px;
+  background: #fff;
+}
+.learner-summary-strip span { color: var(--wf-muted, #52627a); font-size:.875rem; font-weight:700; }
+.learner-summary-strip strong { color: var(--wf-green, #1e3a5f); font-size: 1.7rem; }
+.learner-course-section { margin: 0 0 24px; }
+.learner-course-section.is-compact { margin-bottom: 18px; }
+.learner-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+.learner-section-heading h2 { margin: 3px 0 0; font-size: 1.35rem; }
+.learner-section-heading p { margin: 5px 0 0; color: var(--wf-muted, #52627a); font-size:.875rem; }
+.learner-section-heading > span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--wf-green-pale, #e9eff7);
+  color: var(--wf-green, #1e3a5f);
+  font-size:.875rem;
+  font-weight:700;
+}
+.learner-course-list { display: grid; gap: 10px; }
+.learner-course-row {
+  display: grid;
+  grid-template-columns: minmax(260px,1.2fr) minmax(420px,1fr) auto;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 20px;
+  border: 1px solid var(--wf-line, #cbd5e1);
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 7px 20px rgba(23,42,70,0.045);
+}
+.learner-course-row.is-history { background: #f8fafc; }
+.learner-course-row-main { min-width: 0; }
+.learner-course-row-main h3 { margin: 8px 0 5px; color: var(--wf-ink, #172a46); font-size: 1.02rem; overflow-wrap: anywhere; }
+.learner-course-row-main p { margin: 0; color: var(--wf-muted, #52627a); font-size:.875rem; line-height: 1.45; overflow-wrap: anywhere; }
+.learner-course-tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.learner-course-tags > span {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #e9eff7;
+  color: #52627a;
+  font-size:.875rem;
+  font-weight:700;
+}
+.learner-course-tags .learner-status-tag.is-current { background: var(--wf-green-pale, #e9eff7); color: var(--wf-green, #1e3a5f); }
+.learner-course-tags .learner-status-tag.is-completed { background: #e9eff7; color: #1e3a5f; }
+.learner-course-tags .learner-status-tag.is-upcoming { background: #edf2f8; color: #456078; }
+.learner-course-meta { display: grid; grid-template-columns: 1.4fr 1fr .7fr; gap: 14px; margin: 0; }
+.learner-course-meta div { min-width: 0; }
+.learner-course-meta dt { margin-bottom: 4px; color: #52627a; font-size:.875rem; font-weight:700; }
+.learner-course-meta dd { margin: 0; color: var(--wf-ink-soft, #1e3a5f); font-size:.875rem; font-weight:700; overflow-wrap: anywhere; }
+.learner-course-action {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border-radius: 10px;
+  background: var(--wf-green, #1e3a5f);
+  color: #fff;
+  font-size:.875rem;
+  font-weight:700;
+  white-space: nowrap;
+}
+.learner-history-notice,
+.learner-score-note {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background: var(--wf-gold-pale, #e9eff7);
+}
+.learner-history-notice > span {
+  flex: 0 0 auto;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #fff;
+  color: #1e3a5f;
+  font-size:.875rem;
+  font-weight:700;
+}
+.learner-history-notice strong,
+.learner-score-note strong { color: var(--wf-ink, #172a46); }
+.learner-history-notice p,
+.learner-score-note p { margin: 3px 0 0; color: var(--wf-muted, #52627a); font-size:.875rem; line-height: 1.5; }
+.learner-score-note { align-items: flex-start; background: #f8fafc; border-color: var(--wf-line, #cbd5e1); }
+.learner-score-note { display: block; }
+.learner-empty-state {
+  min-height: 260px;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 36px;
+  border: 1px solid var(--wf-line, #cbd5e1);
+  border-radius: 20px;
+  background: #fff;
+  text-align: center;
+}
+.learner-empty-state.is-prominent { border-color: #cbd5e1; background: linear-gradient(145deg,#fff,#f8fafc); }
+.learner-empty-state strong { color: var(--wf-ink, #172a46); font-size: 1.2rem; }
+.learner-empty-state p { margin: 0; color: var(--wf-muted, #52627a); line-height: 1.6; }
+
+@media (max-width: 1120px) {
+  .learner-course-row { grid-template-columns: minmax(0,1fr) auto; }
+  .learner-course-meta { grid-column: 1 / -1; grid-row: 2; }
+  .learner-course-action { grid-column: 2; grid-row: 1; }
+}
+@media (max-width: 760px) {
+  .learner-page-hero { align-items: flex-start; flex-direction: column; padding: 24px; }
+  .learner-summary-strip { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .learner-course-row { grid-template-columns: 1fr; gap: 14px; }
+  .learner-course-meta { grid-column: auto; grid-row: auto; grid-template-columns: 1fr; }
+  .learner-course-action { grid-column: auto; grid-row: auto; width: 100%; }
+  .learner-section-heading { align-items: flex-start; }
+}

@@ -1,0 +1,5 @@
+<section class="portal-card portal-zoom" aria-labelledby="portal-zoom-title">
+ <div class="portal-card-head"><h2 id="portal-zoom-title"><svg class="et-icon portal-symbol" aria-hidden="true"><use href="#i-video"/></svg>Zoom 바로 입장</h2></div>
+ <div class="portal-card-list">{% for room in data.rooms %}<div class="portal-zoom-row"><strong>{{ room.title }}</strong>{% if room.schedule %}<small>{{ room.schedule|truncatechars:75 }}</small>{% endif %}{% if room.url %}<a class="portal-zoom-button" href="{{ room.url }}" target="_blank" rel="noopener noreferrer">Zoom 입장 ↗</a>{% else %}<small>링크 미등록 또는 확인 필요</small>{% endif %}</div>{% empty %}<p class="portal-empty">등록된 반별 Zoom 링크가 없습니다.</p>{% endfor %}</div>
+ <small class="portal-hint">반별 고정 링크 · 수업 시간 확인 후 입장</small>
+</section>

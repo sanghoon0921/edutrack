@@ -1,0 +1,29 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/compact-pages.css' %}?v=1110nv3">{% endblock %}
+{% block content %}
+<div class="et-v5-shell et-v5-classroom">
+  <section class="course-resource-info et-v5-resource-info">
+    <div>
+      <p class="page-context">{{ board.title }} · {{ resource.category.title }}</p>
+      <h1>{{ resource.title }}</h1>
+      <p>{{ resource.description|default:resource.original_name }}</p>
+    </div>
+    <div class="course-header-actions et-v5-header-actions">
+      <a class="stage14-action is-secondary et-v5-action" href="{% url 'classroom:board-detail' board.pk %}">← 과목으로</a>
+      {% if resource.resource_type != 'LINK' %}<a class="stage14-action is-download et-v5-action" href="{% url 'classroom:resource-download' resource.pk %}">파일 다운로드</a>{% endif %}
+      {% if resource.resource_type == 'LINK' %}<a class="stage14-action is-primary et-v5-action" href="{{ resource.external_url }}" target="_blank" rel="noopener">외부 링크 열기</a>{% endif %}
+      {% if manage_mode %}<a class="stage14-action is-secondary et-v5-action" href="{% url 'classroom:resource-update' resource.pk %}">자료 수정</a>{% endif %}
+    </div>
+  </section>
+
+  {% if resource.is_pdf %}
+    <section class="course-pdf-shell et-v5-pdf-shell" aria-label="PDF 미리보기">
+      <iframe class="course-pdf-frame" src="{% url 'classroom:resource-preview' resource.pk %}#toolbar=1&navpanes=0" title="{{ resource.title }} PDF 미리보기"></iframe>
+    </section>
+    <p class="course-form-note">브라우저에서 미리보기가 지원되지 않으면 위의 ‘파일 다운로드’ 버튼을 이용하세요.</p>
+  {% elif resource.resource_type == 'FILE' %}
+    <section class="workflow-panel workflow-empty et-v5-empty-panel"><strong>이 파일은 브라우저 미리보기를 지원하지 않습니다.</strong><p>파일 다운로드 버튼으로 원본을 받아 확인하세요.</p></section>
+  {% endif %}
+</div>
+{% endblock %}

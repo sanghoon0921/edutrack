@@ -1,0 +1,62 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/compact-pages.css' %}?v=1110nv3">{% endblock %}
+
+{% block content %}
+<section class="premium-search-hero" data-reveal>
+  <div>
+    <h1>{% if assigned_mode %}담당 학생{% else %}학생 관리{% endif %}</h1>
+    <p>{% if assigned_mode %}수업·반을 고르거나 이름을 치면 바로 걸러집니다. 새 학생 등록은 ‘담당 학생 지정’에서 진행하세요.{% else %}인트라넷 학생 전체가 이름순으로 보입니다. 수업·반을 고르거나 이름·번호·학교를 치면 바로 걸러집니다.{% endif %}</p>
+  </div>
+  <div class="et-v5-inline-actions">
+    <span class="premium-search-status"><i></i>{% if assigned_mode %}담당 범위 적용{% else %}인트라넷 연결{% endif %}</span>
+    {% if assigned_mode and request.user.role != 'TA' %}<a class="et-v5-button is-primary" href="{% url 'operations:teacher-student-assignment' %}">담당 학생 지정 · 학생 추가·제외</a>{% endif %}
+  </div>
+</section>
+
+{% if assigned_mode %}
+<section class="st-list-panel" data-local-student-list>
+  <div class="ux-student-filters">
+    <div class="ux-filter-row">
+      <label><span>수업·반</span><select data-local-scope aria-label="수업·반으로 거르기">
+        <option value="">전체 담당 학생 ({{ assigned_count }}명)</option>
+        {% if scope_classes %}<optgroup label="인트라넷 수업">{% for c in scope_classes %}<option value="class:{{ c.id }}">{{ c.name }}{% if c.status_label %} · {{ c.status_label }}{% endif %} · {{ c.count }}명</option>{% endfor %}</optgroup>{% endif %}
+        {% if scope_groups %}<optgroup label="EduTrack 반">{% for g in scope_groups %}<option value="group:{{ g.id }}" data-members="{{ g.members|join:' ' }}">{{ g.name }} · {{ g.members|length }}명</option>{% endfor %}</optgroup>{% endif %}
+      </select></label>
+      <label class="ux-grow"><span>이름·번호·학교</span><input type="search" name="q" value="{{ keyword }}" data-local-q placeholder="담당 학생 이름·번호·학교 검색" autocomplete="off" aria-label="담당 학생 검색"></label>
+    </div>
+  </div>
+  <p class="ux-hint" data-local-status role="status" aria-live="polite">{% if unresolved_count %}{{ unresolved_count }}명은 학생번호 확인이 필요합니다.{% endif %}</p>
+  <div class="st-table" data-local-rows>
+    <div class="st-head" aria-hidden="true"><span>이름</span><span>학생번호</span><span>학교 · 학년</span><span>지점</span><span>듣는 수업</span><span></span></div>
+    {% for item in students %}{% include "components/student_row.html" %}{% endfor %}
+  </div>
+  <p class="ux-hint st-empty" data-local-empty{% if students %} hidden{% endif %}>{% if keyword %}‘{{ keyword }}’에 맞는 담당 학생이 없습니다.{% else %}아직 배정된 담당 학생이 없습니다. ‘담당 학생 지정’에서 직접 등록하세요.{% endif %}</p>
+  <noscript><form method="get" action="{% url 'students:list' %}"><label>담당 학생 검색 <input type="search" name="q" value="{{ keyword }}"></label><button type="submit">검색</button></form></noscript>
+</section>
+{% else %}
+<section class="st-list-panel st-directory" data-student-directory>
+  {% include "components/student_filters.html" with directory=True %}
+  <div class="st-dir-toolbar">
+    <label class="st-dir-size"><span class="sr-only">한 쪽에 보일 학생 수</span><select data-page-size aria-label="한 쪽에 보일 학생 수">{% for n in page_sizes %}<option value="{{ n }}"{% if n == page_size %} selected{% endif %}>{{ n }}명</option>{% endfor %}</select></label>
+    <span class="st-dir-total" data-dir-total>총 <b>{{ directory_total }}</b>명</span>
+    <span class="st-dir-pagetext" data-browse-page>1 / {{ directory_pages }}</span>
+  </div>
+  <div class="st-dir-scroll">
+  <table class="st-dir-table" data-remote-rows data-detail-url="{% url 'students:detail' '__ID__' %}">
+    <thead><tr><th class="st-dir-n">번호</th><th>학생번호</th><th>이름</th><th>지점</th><th>학년</th><th>학교</th><th>국가</th><th>도시</th><th>상태</th><th>듣는 수업</th></tr></thead>
+    <tbody>{% for item in students %}{% include "students/_dir_row.html" with n=forloop.counter %}{% empty %}<tr class="st-dir-empty"><td colspan="10">조건에 맞는 학생이 없습니다.</td></tr>{% endfor %}</tbody>
+  </table>
+  </div>
+  <nav class="st-dir-pager" data-directory-pager aria-label="쪽 이동">
+    <button type="button" class="st-dir-step" data-browse-prev{% if directory_pages <= 1 %} disabled{% endif %} aria-label="이전 쪽">‹ 이전</button>
+    <span class="ux-pages" data-browse-pages></span>
+    <button type="button" class="st-dir-step" data-browse-next{% if directory_pages <= 1 %} disabled{% endif %} aria-label="다음 쪽">다음 ›</button>
+  </nav>
+  <noscript>
+    <form method="get" action="{% url 'students:list' %}">{{ form.q }}<button type="submit">검색</button></form>
+    {% if has_searched and not students %}<p class="ux-hint">‘{{ keyword }}’ 검색 결과가 없습니다.</p>{% endif %}
+  </noscript>
+</section>
+{% endif %}
+{% endblock %}

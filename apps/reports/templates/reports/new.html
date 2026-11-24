@@ -1,0 +1,77 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">{% endblock %}
+{% block extra_js %}<script src="{% static 'reports/js/report-card.js' %}?v=rc1120d" defer></script>{% endblock %}
+{% block content %}
+<form method="post" class="ux-editor rc-new" data-rc-new>
+ {% csrf_token %}
+ <header class="ux-editor-toolbar"><h1>새 리포트카드</h1><div class="ux-actions"><a class="ux-btn" href="{% url 'reports:list' %}">취소</a><button class="ux-btn primary" type="submit">만들고 데이터 불러오기</button></div></header>
+ {{ form.non_field_errors }}
+ {% if not has_groups %}<p class="ux-hint">담당하는 반이 없습니다. 반별 학습에서 반을 만들거나 반 담당으로 지정되면 여기에 나타납니다.</p>{% endif %}
+ <div class="rc-new-grid">
+  <section class="rc-new-main">
+   <fieldset class="rc-forms rc-step">
+    <legend><span class="rc-step-no">1</span>양식</legend>
+    {% for choice in form.form %}<label class="rc-form-option">{{ choice.tag }}<span>{{ choice.choice_label }}</span></label>{% endfor %}
+    {{ form.form.errors }}
+   </fieldset>
+   <div class="ux-two-fields rc-step-row">
+    <div class="ux-field rc-step"><label for="{{ form.term.id_for_label }}"><span class="rc-step-no">2</span>Term</label>{{ form.term }}{{ form.term.errors }}
+     <small class="ux-hint">고른 Term이 리포트 제목(시즌)이 됩니다. 카드에서 고칠 수 있습니다.</small></div>
+    <div class="ux-field rc-step"><label for="id_group"><span class="rc-step-no">3</span>반</label>
+     <select name="group" id="id_group" required data-rc-group>
+      <option value="">반을 고르세요</option>
+      {% for g in group_meta %}<option value="{{ g.pk }}" data-term="{{ g.term }}" data-forms="{{ g.forms }}"{% if selected_group == g.pk|stringformat:"d" %} selected{% endif %}>{{ g.title }}{% if g.term %} · {{ g.term }}{% endif %}</option>{% endfor %}
+     </select>{{ form.group.errors }}
+     <small class="ux-hint" data-rc-group-hint>양식과 Term에 맞는 반만 보입니다. 반 명단의 학생마다 카드가 하나씩 만들어집니다.</small></div>
+   </div>
+   <div class="ux-two-fields rc-dates rc-step-row">
+    <div class="ux-field rc-step"><label for="{{ form.period_start.id_for_label }}"><span class="rc-step-no">4</span>{{ form.period_start.label }}</label>{{ form.period_start }}{{ form.period_start.errors }}</div>
+    <div class="ux-field"><label for="{{ form.period_end.id_for_label }}">{{ form.period_end.label }}</label>{{ form.period_end }}{{ form.period_end.errors }}</div>
+   </div>
+   <fieldset class="rc-forms rc-course-type rc-step">
+    <legend><span class="rc-step-no">5</span>{{ form.course_type.label }}</legend>
+    {% for choice in form.course_type %}<label class="rc-form-option">{{ choice.tag }}<span>{{ choice.choice_label }}</span></label>{% endfor %}
+    <small class="ux-hint">SAT 모의고사 개수(정규 1개·특강 2개)를 정합니다. TOEFL 정규는 Skill Mastery 표를 뺍니다.</small>{{ form.course_type.errors }}
+   </fieldset>
+   {% if group %}
+   <fieldset class="rc-forms rc-mocks rc-step" data-rc-only="SAT">
+    <legend><span class="rc-step-no">6</span>{{ form.mock_exams.label }}</legend>
+    {% include "reports/_mock_picker.html" %}
+   </fieldset>
+   {% endif %}
+   <div class="ux-two-fields rc-dates rc-step-row">
+    <div class="ux-field rc-course"><label for="{{ form.course.id_for_label }}">{{ form.course.label }}</label>{{ form.course }}
+     <small class="ux-hint">{% if group %}고르면 WEEK 대신 이 수업의 수업일(개강~종강)이 날짜 칸에 들어갑니다. AP·GPA ESSAY는 수업일이 5칸씩 한 줄로 나옵니다.{% else %}반을 먼저 고르면 그 반 학생들이 듣는 인트라넷 수업이 나옵니다.{% endif %}</small>{{ form.course.errors }}</div>
+    <div class="ux-field"><label for="{{ form.week_base.id_for_label }}">{{ form.week_base.label }}</label>{{ form.week_base }}<small class="ux-hint">{{ form.week_base.help_text }}</small>{{ form.week_base.errors }}</div>
+   </div>
+  </section>
+  <aside class="rc-new-help rc-preview" aria-label="미리보기">
+   <h2>미리보기</h2>
+   <p class="ux-hint" data-rc-preview-empty>양식을 고르면 리포트카드 모양이 여기에 나옵니다.</p>
+   {% for key, spec in form_specs.items %}
+   <div class="rc-mini" data-rc-preview="{{ key }}" hidden>
+    {% if spec.kind == 'weekly' %}
+     <div class="rc-mini-title"><span data-rc-preview-season>시즌</span> MONTHLY STUDENT REPORT</div>
+     <div class="rc-mini-sub">{{ spec.subject }}</div>
+     <ol class="rc-mini-sections"><li>STUDENT INFORMATION<small>학생 이름·지역·학교·리포트 기간·담당 강사</small></li><li>NOTICE</li><li>HOMEWORK STATUS<small>날짜별 PASS·FAIL·LATE (자동)</small></li><li>CLASS ATTITUDE<small>날짜별 {{ spec.roles.0 }}·{{ spec.roles.1 }} 점수</small></li><li>MOCK TEST SCORES<small>이번 달·지난달과 반 평균, 그래프{% if spec.mock == 'sat' %} (DSG 자동){% endif %}</small></li><li>VOCABULARY TEST<small>주간 단어시험 이행 현황 · PASS/PARTIAL/FAIL</small></li><li>COMMENTS<small>과제별·개별 코멘트 (강사·TA)</small></li></ol>
+    {% elif spec.kind == 'term' %}
+     <div class="rc-mini-title">{{ spec.heading }}</div>
+     <ol class="rc-mini-sections"><li>학생 정보<small>이름·지역·학년, 주차·기간</small></li><li>수업 내용<small>반 공통</small></li><li>과제 제출<small>수업일 5칸씩 한 줄 (인트라넷 수업)</small></li><li>개별 코멘트<small>강사·TA</small></li><li>{{ spec.last.1 }}</li></ol>
+    {% else %}
+     <div class="rc-mini-title">{{ spec.heading }}</div>
+     <ol class="rc-mini-sections"><li>학생 정보<small>이름·지역·학년, 주차·기간</small></li><li>이번 기간 수업 내용<small>반 공통</small></li><li>과제 완료 및 수업 태도<small>수업일별 과제·제출·태도·단어</small></li><li>코멘트·성취도·종합 의견<small>강사·TA</small></li></ol>
+    {% endif %}
+   </div>
+   {% endfor %}
+   <h2>자동으로 채워지는 칸</h2>
+   <ul>
+    <li><strong>학생 정보</strong> 이름, 국가·도시·학교, 학년 (인트라넷)</li>
+    <li><strong>과제 제출</strong> 이 반에 낸 과제·퀴즈의 제출 여부와 점수</li>
+    <li><strong>수업일</strong> 인트라넷 수업을 고르면 수업 날짜</li>
+    <li><strong>SAT 모의고사</strong> DSG 점수와 반 평균, 그래프</li>
+   </ul>
+   <p class="ux-hint">강사·TA가 코멘트를 쓰고 저장하면, 관리자가 검토한 뒤 학부모에게 공개(발송)합니다.</p>
+  </aside>
+ </div>
+</form>
+{% endblock %}

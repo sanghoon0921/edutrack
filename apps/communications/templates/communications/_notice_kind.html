@@ -1,0 +1,1 @@
+{% if notice.category == "CLASS" %}<span class="notice-kind is-class">반 공지{% if notice.group %} · {{ notice.group.title }}{% endif %}</span>{% else %}<span class="notice-kind is-academy">학원 공지</span>{% endif %}

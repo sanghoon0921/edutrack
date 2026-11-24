@@ -1,0 +1,271 @@
+{% extends "layouts/base.html" %}
+{% load assessment_tags %}
+
+{% block content %}
+<section
+  class="premium-profile-hero"
+  data-reveal
+>
+  <div>
+    <h1>{{ student.name }}</h1>
+    <p>
+      학생번호 {{ student.student_id }}
+      · {{ student.school|default:"학교 미입력" }}
+    </p>
+  </div>
+
+  <div class="premium-profile-actions">
+    {% if request.user.role != "STUDENT" and request.user.role != "PARENT" or request.user.is_superuser %}
+      <a
+        class="premium-ghost-button"
+        href="{% url 'students:list' %}"
+      >
+        ← 학생 목록
+      </a>
+    {% endif %}
+
+    <span class="premium-status-pill">
+      {{ student.status }}
+    </span>
+  </div>
+</section>
+
+<section
+  class="premium-profile-grid"
+  data-reveal
+  data-reveal-delay="1"
+>
+  <article>
+    <span>학년</span>
+    <strong>{{ student.grade|default:"미입력" }}</strong>
+  </article>
+
+  <article>
+    <span>학교</span>
+    <strong>{{ student.school|default:"미입력" }}</strong>
+  </article>
+
+  <article>
+    <span>지역</span>
+    <strong>
+      {{ student.country|default:"미입력" }}
+      · {{ student.city|default:"미입력" }}
+    </strong>
+  </article>
+
+  <article>
+    <span>DSG</span>
+    <strong>
+      {% if student.dsg_connected %}
+        연결됨
+      {% else %}
+        미연결
+      {% endif %}
+    </strong>
+  </article>
+</section>
+
+{% student_score_overview student.student_id %}
+
+<section
+  class="premium-section-heading"
+  data-reveal
+  data-reveal-delay="2"
+>
+  <div>
+    <h2>현재 수강 중인 수업</h2>
+    <p>
+      종료·예정·폐강·이월 수업은 제외하고
+      지금 확인해야 하는 수업만 표시합니다.
+    </p>
+  </div>
+
+  <div class="premium-heading-metrics">
+    <span>
+      <strong>{{ current_course_count }}</strong>
+      개 수업
+    </span>
+    <span>
+      <strong>{{ total_planned_count }}</strong>
+      회차
+    </span>
+  </div>
+</section>
+
+{% if course_items %}
+  <section class="premium-course-list">
+    {% for item in course_items %}
+      <article
+        class="premium-course-card"
+        data-reveal
+        data-reveal-delay="{{ forloop.counter }}"
+      >
+        <div class="premium-course-top">
+          <div class="premium-course-copy">
+            <div class="premium-tag-row">
+              <span class="premium-tag is-live">
+                수강 중
+              </span>
+
+              {% if item.course.subject_name %}
+                <span class="premium-tag">
+                  {{ item.course.subject_name }}
+                </span>
+              {% endif %}
+            </div>
+
+            <h3>{{ item.course.class_name }}</h3>
+
+            <p>
+              {{ item.course.teacher_names|default:"강사 미지정" }}
+              · {{ item.course.schedule_summary|default:"시간표 미등록" }}
+            </p>
+          </div>
+
+          <div class="dual-rate-panel">
+            <div>
+              <span>현재 출석률</span>
+              <strong>
+                {% if item.metrics.attendance_rate is not None %}
+                  {{ item.metrics.attendance_rate|floatformat:1 }}%
+                {% else %}
+                  —
+                {% endif %}
+              </strong>
+            </div>
+
+            <div>
+              <span>전체 출석 달성률</span>
+              <strong>
+                {% if item.metrics.overall_achievement_rate is not None %}
+                  {{ item.metrics.overall_achievement_rate|floatformat:1 }}%
+                {% else %}
+                  —
+                {% endif %}
+              </strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="premium-course-progress">
+          <div class="premium-progress-copy">
+            <span>수강 진행률</span>
+            <strong>
+              {% if item.metrics.course_progress_rate is not None %}
+                {{ item.metrics.course_progress_rate|floatformat:0 }}%
+              {% else %}
+                0%
+              {% endif %}
+            </strong>
+          </div>
+
+          <div class="premium-progress-track">
+            <span
+              data-progress-value="{% if item.metrics.course_progress_rate is not None %}{{ item.metrics.course_progress_rate|floatformat:0 }}{% else %}0{% endif %}"
+            ></span>
+          </div>
+        </div>
+
+        <div class="premium-course-details">
+          <span>
+            <small>방식</small>
+            {{ item.course.learning_methods|default:"미지정" }}
+          </span>
+
+          <span>
+            <small>처리 회차</small>
+            {{ item.summary.completed_count }}
+            / {{ item.summary.scheduled_count }}
+          </span>
+
+          <span>
+            <small>다음 수업</small>
+            {% if item.course.next_lesson_date %}
+              {{ item.course.next_lesson_date|date:"Y.m.d" }}
+            {% else %}
+              예정 없음
+            {% endif %}
+          </span>
+        </div>
+
+        <div class="premium-course-timeline">
+          {% for group in item.recent_history %}
+            <article class="mini-day-group is-{{ group.status_kind }}">
+              <div class="mini-day-date">
+                <strong>
+                  {% if group.lesson_date %}
+                    {{ group.lesson_date|date:"m.d" }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </strong>
+                <span>{{ group.session_count }}회</span>
+              </div>
+
+              <div>
+                <strong>{{ group.status_summary }}</strong>
+                <small>
+                  {% for record in group.records %}
+                    {{ record.lesson_type|default:"수업" }}
+                    {% if not forloop.last %} · {% endif %}
+                  {% endfor %}
+                </small>
+              </div>
+            </article>
+          {% endfor %}
+
+          {% for group in item.next_upcoming %}
+            <article class="mini-day-group is-upcoming">
+              <div class="mini-day-date">
+                <strong>
+                  {% if group.lesson_date %}
+                    {{ group.lesson_date|date:"m.d" }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </strong>
+                <span>{{ group.session_count }}회</span>
+              </div>
+
+              <div>
+                <strong>예정</strong>
+                <small>
+                  {% for record in group.records %}
+                    {{ record.lesson_type|default:"수업" }}
+                    {% if not forloop.last %} · {% endif %}
+                  {% endfor %}
+                </small>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        <div class="premium-course-footer">
+          <span>
+            같은 날짜의 수업은 하나의 카드로 묶어 표시합니다.
+          </span>
+
+          <a
+            class="premium-primary-button"
+            href="{% url 'students:attendance' student.student_id item.course.assign_id %}"
+          >
+            출결 상세 보기
+            <span>→</span>
+          </a>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <section
+    class="premium-empty-state"
+    data-reveal
+  >
+    <strong>현재 수강 중인 수업이 없습니다.</strong>
+    <p>
+      종료·예정·폐강·취소·이월 상태의 수업은
+      이 화면에 표시하지 않습니다.
+    </p>
+  </section>
+{% endif %}
+{% endblock %}

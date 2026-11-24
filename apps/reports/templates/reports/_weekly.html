@@ -1,0 +1,123 @@
+{% load report_tags %}{# 운영팀 11/17 새 디자인(SAT·TOEFL): 남색 제목 띠 + 번호 붙은 파란 구역(01 STUDENT INFORMATION …). 번호는 CSS counter 로 매기므로 뺀 표는 번호에서 빠집니다. #}
+<header class="rc-m-head">
+ <h2><span class="rc-m-season">{% if editing and edit_scope is None %}{% include "reports/_title.html" %}{% else %}{{ season }}{% endif %}</span> {% if monthly %}MONTHLY{% else %}WEEKLY{% endif %} STUDENT REPORT</h2>
+ <span class="rc-m-subject">{{ spec.subject }}</span>
+ {% include "reports/_brand.html" %}
+</header>
+
+<section class="rc-section rc-m-sec">
+ <h3 class="rc-bar">Student Information</h3>
+ <table class="rc-grid rc-m-info">
+  <tr class="rc-grid-head"><th>학생 이름</th><th>지역</th><th>학교</th><th>리포트 기간</th><th>담당 강사</th></tr>
+  <tr class="rc-m-hl">
+   <td>{% cell "d" "info" "name" cls="rc-center" %}</td>
+   <td>{% cell "d" "info" "country" cls="rc-center" %}</td>
+   <td>{% cell "d" "info" "school" cls="rc-center rc-strong" %}</td>
+   <td>{% cell "s" "period" cls="rc-center" %}</td>
+   <td class="rc-teachers">{% for t in shared.teachers %}<div><span>{% cell "s" "teachers" forloop.counter0 "role" %}</span>{% cell "s" "teachers" forloop.counter0 "name" %}</div>{% endfor %}</td>
+  </tr>
+ </table>
+</section>
+
+<section class="rc-section rc-m-sec"><h3 class="rc-bar">Notice</h3><div class="rc-box">{% cell "s" "notice" area=1 rows=2 %}</div></section>
+
+{% if "task" in shared.hidden %}{% include "reports/_section_off.html" with key="task" %}{% else %}
+<section class="rc-section rc-m-sec">
+ {% include "reports/_section_bar.html" with key="task" %}
+ <table class="rc-grid rc-days"><tr class="rc-grid-head rc-m-dates">{% for d in day_labels %}<th>{{ d }}</th>{% endfor %}</tr>
+  <tr>{% for d in day_labels %}<td>{% cell "d" "task" forloop.counter0 cls="rc-center rc-mark" %}</td>{% endfor %}</tr></table>
+</section>{% endif %}
+
+{% if "skill" in shared.hidden %}{% include "reports/_section_off.html" with key="skill" %}{% else %}
+<section class="rc-section rc-m-sec">
+ {% include "reports/_section_bar.html" with key="skill" %}
+ <table class="rc-grid rc-days"><tr class="rc-grid-head rc-m-dates">{% for d in day_labels %}<th>{{ d }}</th>{% endfor %}</tr>
+  <tr>{% for d in day_labels %}<td>{% cell "d" "skill" forloop.counter0 cls="rc-center rc-mark" placeholder="PASS" %}</td>{% endfor %}</tr></table>
+</section>{% endif %}
+
+{% if "attitude" in shared.hidden %}{% include "reports/_section_off.html" with key="attitude" %}{% else %}
+<section class="rc-section rc-m-sec">
+ {% include "reports/_section_bar.html" with key="attitude" %}
+ <table class="rc-grid rc-days">
+  <tr class="rc-grid-head rc-m-dates">{% for d in day_labels %}<th colspan="2">{{ d }}</th>{% endfor %}</tr>
+  <tr class="rc-grid-sub">{% for d in day_labels %}{% for t in shared.teachers %}<th>{{ t.role }}</th>{% endfor %}{% endfor %}</tr>
+  <tr>{% for d in day_labels %}<td>{% cell "d" "attitude" forloop.counter0 "a" cls="rc-center rc-strong" placeholder="1~5" %}</td><td>{% cell "d" "attitude" forloop.counter0 "b" cls="rc-center rc-strong" placeholder="1~5" %}</td>{% endfor %}</tr>
+ </table>
+</section>{% endif %}
+
+<div class="rc-m-split">
+ <div class="rc-m-col">
+  {% if "mock" in shared.hidden %}{% include "reports/_section_off.html" with key="mock" %}{% else %}
+  <section class="rc-section rc-m-sec">
+   {% include "reports/_section_bar.html" with key="mock" %}
+   {% if spec.mock == "sat" %}
+    <table class="rc-grid rc-mock">
+     <tr class="rc-grid-head"><th></th><th>날짜</th><th>R/W</th><th>반 평균</th><th>Math</th><th>반 평균</th></tr>
+     {% for slot in card_data.mock.this %}<tr>{% if forloop.first %}<th rowspan="3">{% if monthly %}이번 달{% else %}이번 주{% endif %}<br><small>MOCK TEST</small></th>{% endif %}
+      <td class="rc-m-hl">{% cell "d" "mock" "this" forloop.counter0 "date" cls="rc-center" %}</td><td>{% cell "d" "mock" "this" forloop.counter0 "rw" cls="rc-center rc-strong" %}</td><td>{% cell "d" "mock" "this" forloop.counter0 "rw_avg" cls="rc-center" %}</td><td>{% cell "d" "mock" "this" forloop.counter0 "math" cls="rc-center rc-strong" %}</td><td>{% cell "d" "mock" "this" forloop.counter0 "math_avg" cls="rc-center" %}</td></tr>{% endfor %}
+     {% for slot in card_data.mock.last %}<tr>{% if forloop.first %}<th rowspan="3">{% if monthly %}지난달{% else %}지난주{% endif %}<br><small>MOCK TEST</small></th>{% endif %}
+      <td class="rc-m-hl">{% cell "d" "mock" "last" forloop.counter0 "date" cls="rc-center" %}</td><td>{% cell "d" "mock" "last" forloop.counter0 "rw" cls="rc-center rc-strong" %}</td><td>{% cell "d" "mock" "last" forloop.counter0 "rw_avg" cls="rc-center" %}</td><td>{% cell "d" "mock" "last" forloop.counter0 "math" cls="rc-center rc-strong" %}</td><td>{% cell "d" "mock" "last" forloop.counter0 "math_avg" cls="rc-center" %}</td></tr>{% endfor %}
+    </table>
+   {% else %}
+    <table class="rc-grid rc-mock">
+     <tr class="rc-grid-head"><th></th><th>Reading</th><th>Listening</th><th>Speaking</th><th>Writing</th><th>Total</th></tr>
+     <tr><th>{% if monthly %}이번 달{% else %}이번 주{% endif %}</th>{% for k in "rlsw" %}<td>{% cell "d" "mock" "this" k cls="rc-center rc-strong" %}</td>{% endfor %}<td>{% cell "d" "mock" "this" "total" cls="rc-center rc-strong" %}</td></tr>
+     <tr><th>{% if monthly %}지난달{% else %}지난주{% endif %}</th>{% for k in "rlsw" %}<td>{% cell "d" "mock" "last" k cls="rc-center" %}</td>{% endfor %}<td>{% cell "d" "mock" "last" "total" cls="rc-center" %}</td></tr>
+    </table>
+   {% endif %}
+   <div class="rc-charts">
+    {% if spec.mock == "sat" %}
+     <figure class="rc-chart"><figcaption>Current Reading &amp; Writing Scores</figcaption>{{ chart_rw|default:'<p class="rc-empty">모의고사 점수가 들어오면 그래프가 그려집니다.</p>' }}</figure>
+     <figure class="rc-chart"><figcaption>Current Math Scores</figcaption>{{ chart_math|default:'<p class="rc-empty">모의고사 점수가 들어오면 그래프가 그려집니다.</p>' }}</figure>
+    {% else %}
+     <figure class="rc-chart"><figcaption>Mock Test Scores</figcaption>{{ chart_toefl|default:'<p class="rc-empty">점수를 넣으면 그래프가 그려집니다.</p>' }}</figure>
+    {% endif %}
+   </div>
+  </section>{% endif %}
+ </div>
+ <div class="rc-m-col">
+  {% if "vocab" in shared.hidden %}{% include "reports/_section_off.html" with key="vocab" %}{% else %}
+  <section class="rc-section rc-m-sec">
+   {% include "reports/_section_bar.html" with key="vocab" %}
+   <table class="rc-grid rc-m-vocab">
+    <tr class="rc-grid-head"><th>{% cell "s" "vocab_heads" 0 cls="rc-center" %}</th><th>{% cell "s" "vocab_heads" 1 cls="rc-center" %}</th><th>{% cell "s" "vocab_heads" 3 cls="rc-center" %}</th></tr>
+    {% for d in day_labels %}{% with v=card_data.vocab|item:forloop.counter0 %}<tr>
+     <th>{{ d }}</th>
+     <td class="rc-m-ratio">{% if editing or v.score or v.max %}{% cell "d" "vocab" forloop.counter0 "score" cls="rc-center" %}<span>/</span>{% cell "d" "vocab" forloop.counter0 "max" cls="rc-center" %}{% endif %}</td>
+     <td class="rc-m-hl rc-m-status">{{ v|vocab_status }}</td>
+    </tr>{% endwith %}{% endfor %}
+    <tr class="rc-m-legend"><th>[PASS]<br>[PARTIAL]<br>[FAIL]</th><td colspan="2">모든 시험 완료<br>일부 완료<br>미완료 · 미응시</td></tr>
+   </table>
+  </section>{% endif %}
+ </div>
+</div>
+
+{% if spec.mock == "toefl" %}{% if "mock_comment" in shared.hidden %}{% include "reports/_section_off.html" with key="mock_comment" %}{% else %}
+<section class="rc-section rc-m-sec">
+ {% include "reports/_section_bar.html" with key="mock_comment" %}
+ <table class="rc-comment">
+  <tr><th>R&amp;W</th><td>{% cell "d" "mock_comment" "rw" area=1 rows=5 %}</td></tr>
+  <tr><th>L&amp;S</th><td>{% cell "d" "mock_comment" "ls" area=1 rows=4 %}</td></tr>
+ </table>
+</section>
+{% endif %}{% endif %}
+
+<section class="rc-section rc-m-sec">
+ <h3 class="rc-bar">Teacher Comments</h3>
+ <div class="rc-box rc-intro">{% cell "s" "intro" area=1 rows=3 personal=1 %}</div>
+ <table class="rc-comment rc-blocks">
+  {% for b in shared.block_list %}
+  <tr>
+   <th>
+    <strong>{% cell "s" "block_list" forloop.counter0 "title" cls="rc-center rc-block-title" placeholder="과제 이름" %}</strong>
+    <span>{% cell "s" "block_list" forloop.counter0 "desc" area=1 rows=2 cls="rc-desc" placeholder="과제 설명 (반 공통)" %}</span>
+    {% if editing and edit_scope is None %}<button class="rc-block-delete" type="submit" formaction="{% url 'reports:block-delete' batch.pk b.key %}" name="card" value="{{ card.pk }}" data-rc-confirm="'{{ b.title }}' 칸을 지울까요? 이 반 모든 학생의 이 칸 코멘트도 함께 지워집니다." aria-label="{{ b.title }} 칸 지우기"><svg class="et-icon" aria-hidden="true"><use href="#i-trash"></use></svg>칸 지우기</button>{% endif %}
+   </th>
+   <td>{% cell "d" "blocks" b.key area=1 rows=5 placeholder="이 과제에 대한 코멘트" %}</td>
+  </tr>
+  {% endfor %}
+  {% if editing and edit_scope is None %}<tr class="rc-block-add-row"><td colspan="2"><button class="rc-block-add" type="submit" formaction="{% url 'reports:block-add' batch.pk %}" name="card" value="{{ card.pk }}"><svg class="et-icon" aria-hidden="true"><use href="#i-plus"></use></svg>과제 코멘트 칸 추가</button></td></tr>{% endif %}
+  <tr><th><strong>개인별 코멘트</strong><span class="rc-desc">추가 과제, 공부 방법</span></th><td>{% cell "d" "personal" area=1 rows=4 %}</td></tr>
+ </table>
+ <div class="rc-box rc-closing">{% cell "s" "closing" area=1 rows=3 personal=1 %}</div>
+</section>

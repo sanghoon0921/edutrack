@@ -1,0 +1,372 @@
+/* 리포트카드 — 예시 PDF(data/report-examples/)의 짜임을 따릅니다.
+   학기 카드: 왼쪽 파란 띠 + 제목, 파란 섹션 꼬리표 / 주니어미들: 남보라 머리 띠 / 주간: 노란 제목 띠 + 연파랑 섹션 막대.
+   가독성 규칙(초록·청록 금지, 화면 글씨 14px 이상)을 지키려고 예시의 연초록·하늘 칸은 연파랑·크림으로 바꿨습니다. */
+
+.rc-sheet {
+  --rc-ink: #1f2937;
+  --rc-line: #64748b;
+  --rc-blue: #0f4c8a;
+  --rc-navy: #172a46;
+  --rc-indigo: #1e1b4b;
+  --rc-head: #e8eef8;
+  --rc-label: #fdebd3;
+  --rc-shared: #fffbea;
+  position: relative;
+  width: 860px;
+  max-width: none;
+  margin: 0 auto;
+  background: #fff;
+  color: var(--rc-ink);
+  font-family: "Pretendard Variable", Pretendard, "Noto Sans KR", "Noto Sans CJK KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, .1);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.rc-sheet table { border-collapse: collapse; }
+.rc-sheet h2, .rc-sheet h3 { margin: 0; }
+.rc-center { text-align: center; }
+.rc-text { white-space: normal; }
+.rc-text[data-v="미제출"], .rc-text[data-v="FAIL"] { color: #b91c1c; font-weight: 700; }
+.rc-text:is([data-v="일부 제출"], [data-v="일부제출"]) { color: #b45309; font-weight: 700; }
+.rc-text a { color: #1d4ed8; text-decoration: underline; overflow-wrap: anywhere; }
+
+/* 로고(예시 PDF의 실제 로고: 밝은 바탕은 갈색, 주니어 남색 머리는 흰색) — 우상단 */
+.rc-logo { flex: 0 0 auto; display: block; width: 112px; height: auto; margin-left: auto; }
+.rc-weekly .rc-logo { width: 58px; }
+
+/* 꼬리표·제목 글자색: 인트라넷 테마의 body.intranet-app-body h1~h4 (0,1,2) 보다 강하게 .rc-sheet 를 붙입니다. */
+.rc-sheet .rc-tab { color: #fff; }
+.rc-sheet .rc-bar { color: var(--rc-navy); }
+.rc-sheet .rc-term-head h2 { color: var(--rc-blue); }
+.rc-sheet .rc-junior-head h2 { color: #fff; }
+.rc-sheet .rc-weekly-head h2 { color: var(--rc-ink); }
+
+/* 공통 칸 */
+.rc-section { margin-top: 16px; }
+.rc-tab { display: inline-block; padding: 3px 14px; background: var(--rc-blue); color: #fff; font-size: 15px; font-weight: 800; }
+.rc-box { border: 2px solid var(--rc-ink); padding: 10px 12px; min-height: 44px; }
+.rc-info { border: 2px solid var(--rc-ink); }
+.rc-info th { width: 112px; padding: 4px 14px; background: var(--rc-blue); color: #fff; font-weight: 800; border-bottom: 1px dotted rgba(255, 255, 255, .55); }
+.rc-info td { min-width: 240px; padding: 4px 12px; text-align: center; border-bottom: 1px dotted var(--rc-line); }
+.rc-grid { width: 100%; border: 2px solid var(--rc-ink); table-layout: fixed; }
+.rc-grid th, .rc-grid td { height: 30px; padding: 4px 6px; border: 1px dotted var(--rc-line); text-align: center; vertical-align: middle; }
+.rc-grid-head th, .rc-grid tr > th:first-child { background: var(--rc-head); font-weight: 800; }
+.rc-grid-sub th { background: #f1f5fb; font-weight: 600; }
+.rc-comment { width: 100%; border: 2px solid var(--rc-ink); }
+.rc-comment th { width: 128px; padding: 8px; background: var(--rc-label); font-weight: 800; border-bottom: 1px dotted var(--rc-line); }
+.rc-comment td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px dotted var(--rc-line); }
+.rc-empty { margin: 8px 0; color: #475569; text-align: center; }
+
+/* 학기 카드 (AP·GPA ESSAY) */
+.rc-term { display: grid; grid-template-columns: 58px minmax(0, 1fr); border: 1px solid #94a3b8; }
+.rc-term-band { background: var(--rc-blue); }
+.rc-term-body { padding: 30px 34px 34px; }
+.rc-term-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.rc-term-head h2 { color: var(--rc-blue); font-size: 30px; font-weight: 800; line-height: 1.12; letter-spacing: -.01em; }
+.rc-term-head h2 span { display: block; font-size: 22px; }
+.rc-weeks th { font-size: 14px; }
+
+/* 주니어미들 */
+.rc-junior { border: 10px solid var(--rc-indigo); border-top: 0; }
+.rc-junior-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 26px 18px; background: var(--rc-indigo); color: #fff; }
+.rc-junior-head h2 { font-size: 28px; font-weight: 800; line-height: 1.15; }
+.rc-junior-head h2 span { display: block; }
+.rc-junior-body { padding: 20px 24px 26px; }
+.rc-junior .rc-tab { background: var(--rc-indigo); }
+.rc-junior-table { table-layout: fixed; }
+.rc-junior-table :is(th, td) { overflow-wrap: normal; word-break: keep-all; }
+.rc-junior-table .rc-c-week { width: 70px; }
+.rc-junior-table .rc-c-date { width: 76px; }
+.rc-junior-table .rc-c-hw { width: 112px; }
+.rc-junior-table .rc-c-submit { width: 104px; }
+.rc-junior-table .rc-c-att { width: 58px; }
+.rc-junior-table .rc-c-vocab { width: 62px; }
+.rc-junior-table .rc-c-sub { width: 48px; }
+.rc-junior-table thead th { padding: 6px 4px; line-height: 1.3; vertical-align: middle; }
+.rc-junior-table td { vertical-align: middle; }
+.rc-junior-table .rc-week { position: relative; }
+.rc-row-delete { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; margin: 6px auto 0; padding: 0; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #b91c1c; cursor: pointer; }
+.rc-row-delete:hover { border-color: #b91c1c; background: #fef2f2; }
+.rc-row-delete .et-icon { width: 15px; height: 15px; }
+.rc-junior-table td .rc-input, .rc-junior-table td .rc-text { overflow-wrap: anywhere; }
+.rc-junior-table thead th { background: var(--rc-head); font-weight: 800; }
+.rc-junior-table .rc-week { background: #fef3c7; }
+.rc-junior-table .rc-sub { padding: 4px 2px; background: #e0e7ff; font-weight: 700; }
+.rc-junior-table .rc-wide { text-align: left; vertical-align: top; }
+
+/* 주간 (SAT·TOEFL) */
+.rc-weekly { padding: 22px 26px 26px; border: 6px solid #1d4ed8; }
+.rc-weekly-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; padding: 8px 14px; border: 2px solid var(--rc-ink); background: #fde68a; }
+.rc-weekly-head h2 { font-size: 20px; font-weight: 800; }
+.rc-weekly .rc-section { margin-top: 12px; }
+.rc-bar { padding: 3px 10px; border: 2px solid var(--rc-ink); border-bottom: 0; background: #dbeafe; color: var(--rc-navy); font-size: 15px; font-weight: 800; }
+.rc-weekly-info .rc-teachers { text-align: left; }
+.rc-weekly-info .rc-teachers div { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 6px; align-items: center; }
+.rc-weekly-info .rc-teachers span { font-weight: 700; }
+.rc-weekly-scores { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr); gap: 14px; align-items: start; }
+.rc-mock th[rowspan] { width: 64px; }
+.rc-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-top: 14px; }
+.rc-chart { margin: 0; padding: 8px 10px; border: 2px solid var(--rc-ink); background: #f8fafc; }
+.rc-chart figcaption { margin-bottom: 4px; font-weight: 800; text-align: center; }
+.rc-chart-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; font-size: 14px; }
+.rc-chart-legend i { display: inline-block; width: 12px; height: 12px; margin-right: 5px; border-radius: 2px; vertical-align: -1px; }
+.rc-chart-svg { display: block; width: 100%; height: auto; }
+.rc-chart-svg .rc-axis { stroke: #334155; stroke-width: 1; }
+.rc-chart-svg .rc-gridline { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 3 3; }
+.rc-chart-svg .rc-tick { fill: #475569; font-size: 14px; }
+.rc-chart-svg .rc-val { fill: #0f172a; font-size: 14px; font-weight: 700; }
+.rc-intro, .rc-closing { text-align: center; border-bottom: 0; }
+.rc-closing { border-top: 0; border-bottom: 2px solid var(--rc-ink); }
+.rc-blocks { border-top: 0; border-bottom: 0; }
+.rc-blocks th { width: 210px; padding: 10px; background: #dbeafe; text-align: center; vertical-align: middle; }
+.rc-blocks th strong { display: block; margin-bottom: 4px; font-size: 15px; }
+.rc-blocks .rc-desc { display: block; color: #334155; font-weight: 400; }
+.rc-blocks th > strong .rc-text { font-weight: 800; }
+.rc-block-delete, .rc-block-add { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 3px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #b91c1c; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.rc-block-add { margin: 0; color: #1d4ed8; border-style: dashed; }
+.rc-block-delete:hover { border-color: #b91c1c; background: #fef2f2; }
+.rc-block-add:hover { border-color: #1d4ed8; background: #eef4ff; }
+.rc-block-add-row td { padding: 8px; text-align: center; background: #f8fafc; }
+.rc-block-delete .et-icon, .rc-block-add .et-icon { width: 15px; height: 15px; }
+
+/* ── 편집 화면 ───────────────────────────────────────────────────────── */
+.rc-editor { margin: 0; }
+.rc-toolbar { position: sticky; top: var(--et-topbar-height, 56px); z-index: 12; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px 12px; border: 1px solid #dbe2ec; border-radius: 10px; background: #fff; box-shadow: 0 4px 14px rgba(15, 23, 42, .06); }
+.rc-toolbar-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; min-width: 0; }
+.rc-toolbar-title a { color: #1d4ed8; font-weight: 700; }
+.rc-toolbar-title span { color: #52627a; }
+.rc-switch { display: flex; align-items: center; gap: 6px; }
+.rc-switch select { max-width: 220px; }
+.rc-switch .ux-btn { padding-left: 8px !important; padding-right: 8px !important; }
+.rc-switch [aria-disabled="true"] { opacity: .4; pointer-events: none; }
+.rc-position { color: #52627a; white-space: nowrap; }
+.rc-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.rc-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin: 10px 2px 0; color: #475569; }
+.rc-legend code { padding: 0 4px; border-radius: 4px; background: #f1f5f9; font-size: 14px; }
+.rc-swatch { display: inline-block; width: 18px; height: 14px; border: 1px dashed #d4a72c; border-radius: 3px; background: var(--rc-shared, #fffbea); }
+.rc-stage { padding: 14px 0 48px; overflow-x: auto; }
+
+/* 입력칸은 인쇄 모양을 해치지 않게: 테두리 없이, 마우스를 올리거나 누르면 드러남.
+   앱 전체 입력칸 규칙(97-polish)이 !important 라 같은 세기 이상으로 맞춥니다. */
+body .rc-sheet :is(input, textarea).rc-input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) {
+  display: block; width: 100%; min-width: 0; min-height: 0 !important; margin: 0;
+  padding: 2px 5px !important; border: 1px solid transparent !important; border-radius: 4px !important;
+  background: rgba(29, 78, 216, .045) !important; color: inherit; box-shadow: none !important;
+  font: inherit !important; font-size: 14px !important; line-height: 1.55 !important; text-align: inherit;
+}
+body .rc-sheet textarea.rc-input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) { resize: vertical; overflow: hidden; }
+body .rc-sheet :is(input, textarea).rc-input.rc-center:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) { text-align: center; }
+body .rc-sheet :is(input, textarea).rc-input.is-shared:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) { border: 1px dashed #d4a72c !important; background: var(--rc-shared) !important; }
+body .rc-sheet :is(input, textarea).rc-input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):hover { border-color: #94a3b8 !important; }
+body .rc-sheet :is(input, textarea).rc-input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):focus { outline: none; border-color: #1d4ed8 !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(29, 78, 216, .16) !important; }
+.rc-sheet .rc-input[value="FAIL"], .rc-sheet .rc-input[value="미제출"] { color: #b91c1c; font-weight: 700; }
+.rc-sheet .rc-input:is([value="일부 제출"], [value="일부제출"]) { color: #b45309; font-weight: 700; }
+/* 고르는 칸(과제 제출 여부) */
+body .rc-sheet select.rc-input.rc-select:not([multiple]) {
+  /* 인트라넷 테마 select:not([multiple]) (0,2,2, !important) 보다 강하게 */
+  display: block; width: 100%; min-width: 0; height: auto !important; min-height: 0 !important; margin: 0;
+  padding: 2px 4px !important; border: 1px solid transparent !important; border-radius: 4px !important;
+  background-color: rgba(29, 78, 216, .045) !important; color: inherit; box-shadow: none !important;
+  font: inherit; text-align: center; text-align-last: center; cursor: pointer;
+}
+body .rc-sheet select.rc-input.rc-select:not([multiple]):hover { border-color: #94a3b8 !important; }
+body .rc-sheet select.rc-input.rc-select:not([multiple]):focus { outline: none; border-color: #1d4ed8 !important; background-color: #fff !important; box-shadow: 0 0 0 3px rgba(29, 78, 216, .16) !important; }
+/* 제목(시즌) 칸: 카드 머리에서 바로 고침 */
+body .rc-sheet input.rc-input.rc-title-input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) { display: inline-block; width: auto !important; field-sizing: content; min-width: 8ch; max-width: 26ch; padding: 0 6px !important; border: 1px dashed #d4a72c !important; background: var(--rc-shared) !important; color: var(--rc-ink) !important; font: inherit; }
+.rc-info .rc-input, .rc-junior-head .rc-input { text-align: center; }
+.rc-info .rc-input:not(.is-shared) { background: rgba(255, 255, 255, .7) !important; }
+
+/* ── 목록·새로 만들기 ─────────────────────────────────────────────────── */
+.rc-list-table { width: 100%; border-collapse: collapse; }
+.rc-list-table th { color: #52627a; font-weight: 700; text-align: left; border-bottom: 1px solid #dbe2ec; }
+.rc-list-table td { border-bottom: 1px solid #edf0f5; vertical-align: middle; }
+.rc-list-table td small { display: block; color: #52627a; }
+.rc-list-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.rc-list-actions form { margin: 0; }
+.rc-form-chip { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #e8eef8; color: #0f4c8a; font-weight: 700; white-space: nowrap; }
+.rc-form-chip[data-form="TOEFL"], .rc-form-chip[data-form="SAT"] { background: #fef3c7; color: #92400e; }
+.rc-form-chip[data-form="JUNIOR"] { background: #e0e7ff; color: #3730a3; }
+.ux-btn.danger { color: #b91c1c !important; }
+
+.rc-new-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; padding: 14px 16px; }
+.rc-new-main { display: grid; gap: 12px; align-content: start; }
+.rc-forms { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; border: 0; }
+.rc-forms legend { margin-bottom: 6px; padding: 0; font-weight: 700; }
+.rc-form-option { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; cursor: pointer; }
+.rc-form-option:has(input:checked) { border-color: #1d4ed8; background: #eef4ff; color: #1e3a8a; font-weight: 700; box-shadow: 0 0 0 2px rgba(29, 78, 216, .14); }
+.rc-form-option input { margin: 0; }
+.rc-new-help { padding: 12px 14px; border: 1px solid #dbe2ec; border-radius: 10px; background: #f8fafc; }
+.rc-new-help h2 { margin: 0 0 6px; font-size: 15px; }
+.rc-new-help ul { margin: 0 0 12px; padding-left: 18px; }
+.rc-new-help li { margin: 3px 0; }
+.rc-new-help li strong { margin-right: 4px; }
+
+/* ── 인쇄 화면 ───────────────────────────────────────────────────────── */
+.rc-print-body { margin: 0; padding: 16px; background: #e5e7eb; color: #1f2937; font-family: "Pretendard Variable", Pretendard, "Noto Sans KR", "Malgun Gothic", sans-serif; font-size: 14px; }
+.rc-print-bar { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; width: 860px; max-width: 100%; margin: 0 auto 16px; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; }
+.rc-print-bar span { color: #475569; }
+.rc-print-bar button { padding: 6px 14px; border: 0; border-radius: 8px; background: #1d4ed8; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.rc-print-body .rc-sheet { margin: 0 auto 24px; }
+
+@page { size: A4; margin: 8mm; }
+@media print {
+  .rc-print-bar, .rc-toolbar, .rc-legend { display: none !important; }
+  .rc-print-body { padding: 0; background: #fff; }
+  .rc-sheet { zoom: .84; margin: 0 auto !important; box-shadow: none; break-after: page; }
+  .rc-sheet:last-of-type { break-after: auto; }
+  .rc-sheet, .rc-sheet * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rc-section, .rc-grid tr, .rc-comment tr, .rc-chart { break-inside: avoid; }
+}
+
+@media (max-width: 760px) {
+  .rc-new-grid { grid-template-columns: minmax(0, 1fr); padding: 10px; }
+  .rc-actions { margin-left: 0; }
+  body .rc-sheet :is(input, textarea).rc-input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) { font-size: 16px !important; }
+}
+
+/* 앱 전체 제목 크기 규칙(97-polish, !important)보다 카드 제목이 이기도록 */
+body.intranet-app-body .rc-sheet .rc-term-head h2 { font-size: 30px !important; line-height: 1.12 !important; margin: 0 !important; }
+body.intranet-app-body .rc-sheet .rc-term-head h2 span { font-size: 22px !important; }
+body.intranet-app-body .rc-sheet .rc-junior-head h2 { font-size: 28px !important; line-height: 1.15 !important; margin: 0 !important; }
+body.intranet-app-body .rc-sheet .rc-weekly-head h2 { font-size: 20px !important; margin: 0 !important; }
+body.intranet-app-body .rc-sheet :is(.rc-tab, .rc-bar) { font-size: 15px !important; line-height: 1.55 !important; margin: 0 !important; }
+
+/* ── 반별 학생 목록·공개 상태 ─────────────────────────────────────────── */
+.rc-crumb { margin: 0 0 4px; font-size: 14px; }
+.rc-crumb a { color: #1d4ed8; font-weight: 700; }
+.rc-batch-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+.rc-batch-actions form { margin: 0; }
+.rc-state { display: inline-flex; align-items: center; padding: 3px 10px; border: 1px solid #cbd5e1; border-radius: 999px; background: #f8fafc; color: #475569; font-size: 14px; font-weight: 700; white-space: nowrap; }
+.rc-state.is-public { border-color: #93c5fd; background: #eff6ff; color: #1d4ed8; }
+.rc-group-title { margin: 0 0 10px; font-size: 17px; font-weight: 800; color: #172a46; }
+
+/* 주간 카드 표: 이름 고치기·빼기·다시 넣기 */
+.rc-bar-tools { display: flex; align-items: center; gap: 8px; }
+.rc-bar-tools > .rc-text, .rc-bar-tools > .rc-input { flex: 1 1 auto; }
+body .rc-sheet .rc-bar-tools input.rc-input.is-shared:not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]) { font-weight: 800; color: var(--rc-navy); }
+.rc-section-hide { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; color: #475569; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.rc-section-hide:hover { border-color: #b91c1c; color: #b91c1c; background: #fef2f2; }
+.rc-section-hide .et-icon { width: 14px; height: 14px; }
+.rc-section-off { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding: 8px 12px; border: 1px dashed #94a3b8; border-radius: 8px; background: #f8fafc; color: #475569; }
+.rc-weekly-scores > .rc-section-off { grid-column: 1 / -1; }
+.rc-weekly-scores:not(:has(> .rc-section ~ .rc-section)) { grid-template-columns: minmax(0, 1fr); }
+
+/* 방금 더한 주차 행·코멘트 칸을 잠깐 표시(11/10) */
+.rc-row-new > td, .rc-row-new > th { animation: rc-row-new 1.8s ease-out; }
+@keyframes rc-row-new { 0%, 35% { background-color: #fdf2c4; } 100% { background-color: transparent; } }
+@media (prefers-reduced-motion: reduce) { .rc-row-new > td, .rc-row-new > th { animation: none; outline: 2px solid #f59e0b; outline-offset: -2px; } }
+.rc-view-note { margin-bottom: 10px; }
+
+/* ── 리포트카드: PASS는 진한 남색 알약으로, 학생·학부모가 성취감을 느끼게 ── */
+.rc-text[data-v="PASS"] { display: inline-block; padding: 1px 10px; border-radius: 999px; background: #dfe8ff; color: #102a7a; font-weight: 800; letter-spacing: .02em; }
+.rc-select:has(option[value="PASS"]:checked) { color: #102a7a; font-weight: 800; background-color: #eef3ff; }
+@media print { .rc-text[data-v="PASS"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+
+/* 표 칸 글자는 단어 단위로 줄바꿈(11/10: 'Reading & Writing'이 Readin/g 로 끊기던 것) */
+.rc-weekly-info :is(td, th), .rc-info :is(td, th) { word-break: keep-all; overflow-wrap: break-word; }
+.rc-weekly-info .rc-text, .rc-info .rc-text { overflow-wrap: break-word; }
+
+/* ── 11/17 SAT·TOEFL 새 디자인: 남색 제목 띠 + 번호 붙은 파란 구역(01 STUDENT INFORMATION …) ──
+   예시 그림의 색: 제목 #1d3557, 구역 #2f5f8f, 머리 칸 연파랑, 강조 칸 연노랑. 구역 번호는 CSS counter(뺀 표는 번호에서 빠짐). */
+.rc-sheet.rc-weekly { --rc-m-navy: #1d3557; --rc-m-steel: #2f5f8f; --rc-m-head: #eaf1f8; --rc-m-hl: #fdf3d6; --rc-m-line: #c7d4e2;
+  padding: 26px 30px 30px; border: 0; counter-reset: rc-m-sec; }
+.rc-weekly .rc-m-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; padding: 12px 18px; background: var(--rc-m-navy); color: #fff; }
+.rc-sheet .rc-m-head h2 { flex: 1 1 auto; color: #fff; font-size: 21px; font-weight: 800; letter-spacing: .01em; }
+.rc-weekly .rc-m-head .rc-title-input { width: 9em; padding: 2px 6px; border: 1px solid rgba(255, 255, 255, .6); background: rgba(255, 255, 255, .12); color: #fff; font: inherit; }
+.rc-weekly .rc-m-subject { padding: 2px 10px; border: 1px solid rgba(255, 255, 255, .5); border-radius: 999px; font-size: 13px; font-weight: 700; letter-spacing: .06em; }
+.rc-weekly .rc-m-head .rc-logo { width: 54px; margin-left: 0; padding: 4px; border-radius: 6px; background: #fff; }
+.rc-weekly .rc-m-sec { margin-top: 14px; }
+.rc-sheet.rc-weekly .rc-bar { display: flex; align-items: center; gap: 8px; padding: 5px 12px; border: 0; background: var(--rc-m-steel); color: #fff; font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; counter-increment: rc-m-sec; }
+.rc-sheet.rc-weekly .rc-bar::before { content: counter(rc-m-sec, decimal-leading-zero); font-variant-numeric: tabular-nums; }
+.rc-sheet.rc-weekly .rc-bar .rc-input { background: rgba(255, 255, 255, .14); color: #fff; border-color: rgba(255, 255, 255, .5); text-transform: none; }
+.rc-sheet.rc-weekly .rc-bar .rc-text { color: #fff; }
+.rc-sheet.rc-weekly .rc-section-hide { margin-left: auto; color: #fff; border-color: rgba(255, 255, 255, .5); background: transparent; }
+.rc-weekly .rc-grid { width: 100%; border: 1px solid var(--rc-m-line); }
+.rc-weekly .rc-grid :is(th, td) { border: 1px solid var(--rc-m-line); padding: 6px 8px; }
+.rc-weekly .rc-grid-head th, .rc-weekly .rc-grid tr > th:first-child, .rc-weekly .rc-grid-sub th { background: var(--rc-m-head); color: #1f2a37; font-size: 13px; font-weight: 700; }
+.rc-weekly .rc-grid tr.rc-m-dates > th { background: var(--rc-m-hl); }
+.rc-weekly .rc-m-info { table-layout: fixed; }
+.rc-weekly .rc-m-info tr > :last-child { width: 32%; }
+.rc-weekly .rc-m-info .rc-teachers span { white-space: nowrap; }
+.rc-weekly .rc-m-hl, .rc-weekly .rc-m-hl td { background: var(--rc-m-hl); }
+.rc-weekly .rc-strong, .rc-weekly .rc-mark { font-weight: 800; }
+.rc-weekly .rc-box { border: 1px solid var(--rc-m-line); border-top: 0; padding: 8px 12px; background: #fff; }
+.rc-weekly .rc-m-info .rc-teachers { text-align: left; padding: 0; }
+.rc-weekly .rc-m-info .rc-teachers div { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: stretch; }
+.rc-weekly .rc-m-info .rc-teachers div + div { border-top: 1px solid var(--rc-m-line); }
+.rc-weekly .rc-m-info .rc-teachers span { padding: 4px 8px; background: var(--rc-m-head); font-size: 13px; font-weight: 700; text-align: center; }
+.rc-weekly .rc-m-info .rc-teachers div > :last-child { padding: 4px 8px; }
+.rc-weekly .rc-m-split { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.rc-weekly .rc-m-ratio { white-space: nowrap; text-align: center; }
+.rc-weekly .rc-m-ratio > * { display: inline-block; width: 3.2em; }
+.rc-weekly .rc-m-ratio > span { width: auto; margin: 0 2px; color: #64748b; }
+.rc-weekly .rc-m-status { width: 84px; text-align: center; font-weight: 800; }
+.rc-weekly .rc-grid tr.rc-m-legend > :is(th, td) { background: var(--rc-m-steel) !important; color: #fff; font-size: 13px; font-weight: 700; line-height: 1.6; }
+.rc-weekly .rc-charts { grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 10px; }
+.rc-weekly .rc-chart { border: 1px solid var(--rc-m-line); background: #fff; }
+.rc-weekly .rc-blocks th { background: var(--rc-m-head); }
+.rc-weekly .rc-intro, .rc-weekly .rc-closing { border-color: var(--rc-m-line); }
+.rc-weekly .rc-closing { border-bottom: 1px solid var(--rc-m-line); }
+.rc-weekly .rc-comment :is(th, td) { border-color: var(--rc-m-line); }
+.rc-weekly .rc-section-off { margin-top: 14px; }
+
+/* ── 11/17 목록 거르기·작성 현황·새 리포트카드 순서·미리보기 ── */
+.rc-filter { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 14px; margin: 0 0 12px; padding: 12px 16px; border: 1px solid #e3ddd0; border-radius: 12px; background: #fff; }
+.rc-filter label { display: grid; gap: 4px; font-size: 13px; font-weight: 700; color: #4b5563; }
+.rc-filter select { min-width: 150px; height: 34px; padding: 0 28px 0 10px; border: 1px solid #d6cfbf; border-radius: 8px; background-color: #fff; font: inherit; font-size: 14px; font-weight: 400; color: #141a26; }
+.rc-filter-clear { align-self: center; margin-left: auto; color: #1f3a6e; font-size: 14px; font-weight: 700; }
+.rc-progress { font-variant-numeric: tabular-nums; font-weight: 700; color: #7a5b22; }
+.rc-progress.is-done { color: #13213d; }
+.rc-state.is-saved { border-color: #c7d2e5; background: #edf0f6; color: #13213d; }
+.rc-status-line { margin: 0 0 10px; color: #4b5563; font-size: 14px; }
+.rc-step-no { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 6px; border-radius: 999px; background: #13213d; color: #fff; font-size: 12px; font-weight: 800; vertical-align: 1px; }
+.rc-step-row { margin-top: 12px; }
+.rc-preview .rc-mini { margin: 6px 0 14px; padding: 10px; border: 1px solid #dbe2ec; border-radius: 8px; background: #fff; }
+.rc-mini-title { padding: 6px 8px; background: #1d3557; color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .02em; }
+.rc-mini-sub { margin-top: 4px; font-size: 12px; font-weight: 700; color: #2f5f8f; }
+.rc-mini-sections { margin: 8px 0 0; padding: 0; list-style: none; counter-reset: rc-mini; }
+.rc-mini-sections li { counter-increment: rc-mini; margin-top: 4px; padding: 4px 8px; background: #2f5f8f; color: #fff; font-size: 12px; font-weight: 700; }
+.rc-mini-sections li::before { content: counter(rc-mini, decimal-leading-zero) " "; }
+.rc-mini-sections li small { display: block; margin: 4px -8px -4px; padding: 3px 8px; background: #eaf1f8; color: #374151; font-size: 12px; font-weight: 400; }
+@media (max-width: 760px) { .rc-weekly .rc-m-split { grid-template-columns: minmax(0, 1fr); } .rc-filter select { min-width: 0; width: 100%; } .rc-filter label { flex: 1 1 140px; } }
+@media print { .rc-sheet.rc-weekly .rc-m-head, .rc-sheet.rc-weekly .rc-bar, .rc-weekly .rc-m-legend :is(th, td) { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+
+/* SAT 모의고사 고르는 표(11/20): 시험·종류·응시일·응시 학생, 이번 칸·지난 칸 체크. 엑셀처럼 줄과 칸, 밝은 배경·검은 글자 */
+.rc-mocks { display: block; min-width: 0; }  /* fieldset 기본 min-content 때문에 좁은 화면에서 표가 화면 밖으로 밀리던 것 */
+.rc-mock-pick { display: grid; gap: 8px; width: 100%; }
+.rc-mock-filter { width: min(100%, 360px); }
+.rc-mock-scroll { max-height: 340px; overflow: auto; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; }
+.rc-mock-table { width: 100%; border-collapse: collapse; font-size: 13px; color: #111827; }
+.rc-mock-table th, .rc-mock-table td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; text-align: left; white-space: nowrap; }
+.rc-mock-table thead th { position: sticky; top: 0; z-index: 1; background: #f1f5f9; color: #1f2937; font-weight: 700; }
+.rc-mock-table tbody th { font-weight: 600; white-space: normal; background: transparent; }
+.rc-mock-table thead th:nth-child(n+5), .rc-mock-table td:nth-child(n+5) { width: 72px; text-align: center; }
+.rc-mock-table tbody tr:hover { background: #f8fafc; }
+.rc-mock-table tbody tr:has(input:checked) { background: #eef4ff; }
+.rc-mock-check { display: flex; align-items: center; justify-content: center; min-height: 28px; cursor: pointer; }
+.rc-mock-check input { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+.rc-mock-pick .ux-hint { line-height: 1.5; }
+.rc-mock-narrow { display: none; }
+@media (max-width: 720px) {
+  .rc-mock-wide { display: none; }
+  .rc-mock-narrow { display: inline; }
+  .rc-mock-table thead th:nth-child(n+5), .rc-mock-table td:nth-child(n+5) { width: 40px; }
+}
+
+/* ── 11/20 자동으로 채운 칸: 편집 화면에서도 입력칸 대신 상태별 색 글자(보기·인쇄와 같은 모양) ── */
+.rc-text:is([data-v="FAIL"], [data-v="미응시"], [data-v="녹화"], [data-v="이월"], [data-v="환불"], [data-v="PARTIAL"], [data-v="학원휴강"], [data-v="개별취소"]) {
+  display: inline-block; padding: 1px 10px; border-radius: 999px; font-weight: 800; letter-spacing: .02em; }
+.rc-text:is([data-v="FAIL"], [data-v="미응시"]) { background: #fde2e2; color: #9f1d1d; }
+.rc-text[data-v="녹화"] { background: #ece6fb; color: #4a2a86; }
+.rc-text:is([data-v="이월"], [data-v="환불"], [data-v="PARTIAL"]) { background: #fcefd2; color: #87480a; }
+.rc-text:is([data-v="학원휴강"], [data-v="개별취소"]) { background: #eceff3; color: #374151; }
+.rc-text[data-v="수업미지정일"] { color: #4b5563; font-weight: 600; }
+.rc-auto { cursor: default; }
+.rc-auto-legend .rc-text { margin: 0 1px; font-size: 12px; }
+@media print { .rc-text:is([data-v="FAIL"], [data-v="미응시"], [data-v="녹화"], [data-v="이월"], [data-v="환불"], [data-v="PARTIAL"], [data-v="학원휴강"], [data-v="개별취소"]) { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+/* 구역 번호(01 02 …)가 편집 화면에서 제목 입력칸에 밀려 '0 / 4' 두 줄로 깨지던 것 */
+.rc-sheet.rc-weekly .rc-bar::before { flex: none; white-space: nowrap; }
+/* 시즌 제목 칸: 인트라넷 Term 이름(예: 2026 가을 정규)이 잘리지 않게 글자 길이만큼(11/20) */
+.rc-weekly .rc-m-head .rc-title-input { width: auto; field-sizing: content; min-width: 8ch; max-width: 26ch; }

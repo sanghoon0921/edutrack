@@ -1,0 +1,3 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'lms/css/workspace.css' %}?v=20261104-rename">{% block lms_css %}{% endblock %}{% endblock %}
+{% block content %}<div class="lms-workspace">{% block lms_content %}{% endblock %}</div>{% endblock %}

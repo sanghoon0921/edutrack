@@ -1,0 +1,28 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">{% endblock %}
+{% block content %}
+<section class="workflow-hero">
+ <div><h1>리포트카드</h1><p>선생님이 공개한 리포트카드를 반별로 볼 수 있습니다. 카드를 열어 <strong>PDF로 저장</strong>할 수 있습니다.</p></div>
+</section>
+{% for title, items in groups.items %}
+<section class="workflow-panel rc-list">
+ <h2 class="rc-group-title">{{ title }}</h2>
+ <table class="rc-list-table">
+  <thead><tr><th>양식</th><th>제목</th><th>기간</th><th>학생</th><th></th></tr></thead>
+  <tbody>
+  {% for item in items %}{% with c=item.card %}
+   <tr>
+    <td><span class="rc-form-chip" data-form="{{ c.batch.form }}">{{ item.form_label }}</span></td>
+    <td>{{ c.batch.title }}</td>
+    <td>{{ c.batch.period_start|date:"n/j" }} ~ {{ c.batch.period_end|date:"n/j" }}</td>
+    <td>{{ c.student_name }}</td>
+    <td class="rc-list-actions"><a class="ux-btn primary" href="{% url 'reports:my-card' c.pk %}">보기</a></td>
+   </tr>
+  {% endwith %}{% endfor %}
+  </tbody>
+ </table>
+</section>
+{% empty %}
+<section class="workflow-panel"><div class="workflow-empty">아직 공개된 리포트카드가 없습니다. 선생님이 공개하면 알림으로 알려 드립니다.</div></section>
+{% endfor %}
+{% endblock %}

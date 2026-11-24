@@ -1,0 +1,213 @@
+/* EduTrack Readability V2. Final UI layer, not document/annotation content.
+   Intranet navigation/URL/form contracts are preserved.
+   Only system-installed sans fonts: no font download, package or network dependency. */
+:root {
+  --ui-font: "Pretendard Variable", Pretendard, "Noto Sans KR", "Noto Sans CJK KR", "Apple SD Gothic Neo", -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
+  --ui-ink: #172a46; --ui-muted: #52627a; --ui-primary: #1f3156;
+  --ui-border: #d8e0eb; --ui-surface: #ffffff; --ui-soft: #f3f6fb;
+  --et-text: #243650; --et-heading: #172a46; --et-muted: #52627a; --et-muted-2: #5b6c84;
+  --et-green: #1f3156; --et-green-soft: #edf0f6;
+  --premium-green: #1f3156; --premium-green-2: #3764ae;
+  --premium-ink: #172a46; --premium-ink-soft: #52627a;
+  --wf-green: #1f3156; --wf-green-dark: #13213d; --wf-green-pale: #edf0f6;
+  --wf-ink: #172a46; --wf-muted: #52627a;
+  --et-topbar-height: 72px; --et-sidebar-width: 244px;
+}
+html:has(body.intranet-app-body), html:has(body.intranet-login-body) {
+  font-family: var(--ui-font) !important; font-size: 16px !important;
+  text-size-adjust: 100%; -webkit-text-size-adjust: 100%;
+}
+body.intranet-app-body, body.vr-login-body {
+  font-family: var(--ui-font) !important; font-size: 15px !important;
+  font-weight: 400; line-height: 1.65; letter-spacing: 0;
+  color: var(--ui-ink); -webkit-font-smoothing: antialiased;
+}
+body.intranet-app-body :is(button,input,select,textarea,kbd), body.vr-login-body :is(button,input,select,textarea) {
+  font-family: var(--ui-font) !important;
+}
+/* HTML UI labels only. Never use an all-SVG/text rule: annotation sizes are user data. */
+body.intranet-app-body :is(h1,h2,h3,h4,p,label,th,td,small),
+body.vr-login-body :is(h1,h2,h3,p,label,small) { font-family: var(--ui-font) !important; }
+body.intranet-app-body :is(h1,h2,h3,h4), body.vr-login-body :is(h1,h2,h3,h4) {
+  font-weight: 700 !important; line-height: 1.4 !important; letter-spacing: -.015em !important;
+  text-wrap: pretty; word-break: keep-all; overflow-wrap: anywhere;
+}
+body.intranet-app-body .page-shell h1 { font-size: 28px !important; }
+body.intranet-app-body .page-shell h2 { font-size: 20px !important; }
+body.intranet-app-body .page-shell h3 { font-size: 17px !important; }
+body.intranet-app-body .page-shell :is(p,li,dt,dd) { font-size: 15px; line-height: 1.7; }
+body.intranet-app-body :is(label,small), body.vr-login-body :is(label,small) { font-size: 14px !important; line-height: 1.6; }
+body.intranet-app-body .eyebrow { font-size: 14px !important; color: #52627a !important; letter-spacing: .04em !important; font-weight: 600 !important; }
+body.intranet-app-body :is(.lms-muted,.lms-form small,.lms-table small,.lms-table thead th,.lms-breadcrumb,
+  .field-hint,.field-help,.helptext,.page-back-current,.private-file-existing,.intranet-page-context>span,
+  .intranet-topbar-search kbd,.score-card-heading small,.score-chart-axis span,.score-chart-labels small,
+  .premium-profile-grid article>span,.premium-course-details small) {
+  color: #52627a !important; font-size: 14px !important; line-height: 1.6;
+}
+body.intranet-app-body .page-shell :is(.workflow-empty,.operations-empty,.learner-empty-state,.lms-empty) { color: #52627a; line-height: 1.7; }
+body.intranet-app-body ::placeholder, body.vr-login-body ::placeholder { color: #5b6c84 !important; opacity: 1; }
+body.intranet-app-body :is(strong,b) { font-weight: 700; }
+/* Same left menu, clearer labels and a restrained blue selected state. */
+body.intranet-app-body .intranet-sidebar { background: #142237; }
+body.intranet-app-body .intranet-nav-link { font-size: 15px !important; min-height: 44px; padding: 10px 12px; color: #dbe5f3; line-height: 1.5; }
+body.intranet-app-body .intranet-nav-link.is-active { background: #23477a; color: #fff; box-shadow: inset 3px 0 #a9c7ff; }
+body.intranet-app-body .intranet-nav-link:hover { background: #203954; color: #fff; }
+body.intranet-app-body :is(.intranet-sidebar-date,.intranet-side-label,.intranet-sidebar-footer,.intranet-brand-copy small) { font-size: 14px !important; color: #b3c4da; }
+body.intranet-app-body .intranet-sidebar-footer strong { color: #fff; font-size: 14px; }
+body.intranet-app-body .intranet-brand-copy strong { font-size: 14px; letter-spacing: .015em; }
+body.intranet-app-body .intranet-sidebar-quick a { min-height: 38px; height: auto; font-size: 14px; color: #edf3ff; }
+body.intranet-app-body .intranet-page-context strong { font-size: 16px !important; color: #243650; }
+body.intranet-app-body .intranet-user-greeting { font-size: 14px; }
+body.intranet-app-body .intranet-user-greeting>span { color: #52627a; }
+body.intranet-app-body .intranet-notification-count { background: #b91c1c; color: #fff; font-size: 14px !important; min-width: 22px; height: 22px; line-height: 22px; }
+body.intranet-app-body .intranet-topbar-search { min-height: 38px; font-size: 14px; color: #334155; }
+body.intranet-app-body :is(.intranet-logout-button,.intranet-icon-button) { min-height: 38px; font-size: 14px !important; }
+/* Consistent actions: filled primary, neutral secondary, red destructive. */
+body.intranet-app-body :is(.workflow-button,.lms-btn,.stage14-action,.et-v5-action,.btn,
+ .premium-primary-button,.premium-dashboard-primary-action,.score-learning-insight-link,
+ .operations-primary-link,.operations-secondary-link,.import-action,.et-v5-manage-link,
+ .teacher-picker-search button,.student-transfer-arrow,.page-back-link) {
+  min-height: 40px !important; padding: 9px 14px; font-size: 14px !important;
+  font-weight: 600 !important; line-height: 1.5 !important; letter-spacing: 0 !important;
+  border-radius: 8px !important; box-shadow: none !important;
+  text-shadow: none !important; transform: none !important;
+  max-width: 100%; word-break: keep-all; overflow-wrap: anywhere;
+}
+body.intranet-app-body :is(.workflow-button.is-primary,.lms-btn.primary,.btn-primary,.premium-primary-button,
+ .premium-dashboard-primary-action,.score-learning-insight-link,.operations-primary-link,.stage14-action.is-primary,
+ .et-v5-action.is-primary,.teacher-picker-search button) {
+  background: #1f3156 !important; color: #fff !important; border-color: #1f3156 !important;
+}
+body.intranet-app-body :is(.workflow-button.is-secondary,.lms-btn:not(.primary):not(.danger),.btn-secondary,
+ .operations-secondary-link,.et-v5-manage-link) {
+  background: #fff !important; color: #334155 !important; border: 1px solid #bdcadd !important;
+}
+body.intranet-app-body :is(.workflow-button.is-danger,.lms-btn.danger,.stage14-action.is-danger,.et-v5-action.is-danger) {
+  color: #991b1b !important; background: #fff5f5 !important; border: 1px solid #efb8b8 !important;
+}
+body.intranet-app-body :is(.workflow-actions,.lms-actions,.et-v5-form-actions,.workflow-form-actions) { gap: 10px; align-items: center; flex-wrap: wrap; }
+body.intranet-app-body :is(button,a,input,select,textarea):focus-visible,
+body.vr-login-body :is(button,a,input):focus-visible { outline: 2px solid #1f3156 !important; outline-offset: 3px !important; }
+body.intranet-app-body :is(input[type=checkbox],input[type=radio],progress) { accent-color: #1f3156; }
+body.intranet-app-body input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=range]):not([type=color]),
+body.intranet-app-body select:not([multiple]),body.intranet-app-body textarea {
+  font-size: 15px !important; line-height: 1.5 !important; border-radius: 8px !important;
+  min-height: 42px !important; border-color: #a6b6cc !important; padding: 10px 12px;
+  color: #243650 !important; background: #fff !important;
+}
+body.intranet-app-body select[multiple] { font-size: 15px !important; line-height: 1.7; }
+body.intranet-app-body textarea { min-height: 120px; resize: vertical; }
+body.intranet-app-body [hidden],body.vr-login-body [hidden],body.intranet-app-body input[type=hidden] { display: none !important; }
+/* Lists and tables use actual status words; no color-only status encoding. */
+body.intranet-app-body table,body.intranet-app-body table :is(th,td) { font-size: 14px !important; line-height: 1.65 !important; }
+body.intranet-app-body table :is(th,td) { padding-block: 13px; }
+body.intranet-app-body table thead th { background: #f1f5fb; color: #35475e; font-weight: 600; }
+body.intranet-app-body table td { color: #243650; }
+body.intranet-app-body .gradebook .sticky-student { min-width: 170px; }
+body.intranet-app-body .gradebook thead .sticky-student { background: #f1f5fb; }
+body.intranet-app-body .gradebook-cell strong { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; color: #172a46; }
+body.intranet-app-body .gradebook td.graded { background: #edf4ff !important; }
+body.intranet-app-body .gradebook td.overdue { background: #fff1ed !important; }
+body.intranet-app-body .gradebook td.not-assigned { background: #f0f3f7 !important; }
+body.intranet-app-body :is(.lms-panel,.workflow-panel,.score-attempts-card,.score-kpi-grid>article) { border: 1px solid #d8e0eb; border-radius: 10px !important; box-shadow: none !important; background: #fff; }
+body.intranet-app-body .lms-workspace { font-size: 15px; line-height: 1.7; }
+body.intranet-app-body .lms-toolbar { padding: 14px; gap: 10px; }
+body.intranet-app-body .lms-chip { font-size: 14px; padding: 6px 10px; }
+/* Remove remaining olive/cream sub-components in DSG and attendance. */
+body.intranet-app-body :is(.score-insight-section,.learning-insight-section) { margin-top: 24px; }
+body.intranet-app-body :is(.score-attempts-card,.score-kpi-grid>article,.premium-course-card,.premium-course-details>span,.mini-day-group) {
+  background: #fff !important; border-color: #d8e0eb !important; box-shadow: none !important; border-radius: 10px;
+}
+body.intranet-app-body :is(.score-card-heading span,.score-attempts-heading span,.score-kpi-grid>article>span,
+ .score-kpi-grid>article>small,.score-attempt-copy>small,.score-attempt-date small,.score-attempt-date span,
+ .score-source-note,.premium-course-copy p,.premium-course-footer>span,.mini-day-group small) { color: #52627a !important; font-size: 14px !important; }
+body.intranet-app-body :is(.score-kpi-grid>article strong,.score-attempt-copy strong,.score-attempt-date strong,.score-card-heading strong) { color: #172a46 !important; }
+body.intranet-app-body .score-insight-connection { color: #13213d; background: #edf0f6; border-color: #cadbf6; box-shadow: none; }
+body.intranet-app-body .score-insight-connection>span { background: #1f3156; box-shadow: none; }
+body.intranet-app-body .score-line-chart polyline { stroke: #1f3156 !important; }
+body.intranet-app-body .score-line-chart circle { fill: #1f3156 !important; stroke: #fff !important; }
+body.intranet-app-body .score-line-chart line { stroke: #d5deeb !important; }
+body.intranet-app-body .score-chart-labels b { color: #172a46; font-size: 15px; }
+body.intranet-app-body :is(.score-delta-row .is-positive,.score-attempt-result .is-positive) { color: #1f3156 !important; }
+body.intranet-app-body .premium-progress-track span { background: #1f3156 !important; }
+body.intranet-app-body .premium-progress-track { background: #e3eaf4 !important; }
+body.intranet-app-body .premium-course-timeline { background: #f3f6fb !important; }
+body.intranet-app-body .premium-status-pill { color: #13213d; background: #edf0f6; border: 1px solid #cadbf6; border-radius: 6px; font-size: 14px; }
+body.intranet-app-body .message-success { background: #edf0f6 !important; color: #13213d !important; border-color: #cfd6e4 !important; }
+body.intranet-app-body .workflow-status { font-size: 14px; }
+/* Annotation controls/notes are UI. The paper/SVG geometry and mark colors are NOT. */
+body.intranet-app-body .lms-annotation-toolbar { padding: 12px; gap: 10px; border-radius: 10px 10px 0 0; }
+body.intranet-app-body .lms-annotation-toolbar label { font-size: 14px !important; }
+body.intranet-app-body .ann-note { font-size: 14px; padding: 14px; line-height: 1.65; }
+body.intranet-app-body .ann-note .lms-btn { min-height: 36px !important; font-size: 14px !important; margin: 6px 6px 0 0; }
+body.intranet-app-body .lms-message { padding: 16px 18px; }
+body.intranet-app-body .lms-message time { font-size: 14px; color: #52627a; }
+body.intranet-app-body .lms-message p { font-size: 15px; }
+/* Login typography: no classic serifs, no tiny helper text. Keep the existing introduction. */
+body.vr-login-body .vr-login-hero h1 { font-family: var(--ui-font) !important; font-size: clamp(28px,2.6vw,40px); line-height: 1.5 !important; font-weight: 700; }
+body.vr-login-body .vr-login-description { font-size: 17px; line-height: 1.8; }
+body.vr-login-body .vr-feature-list strong { font-size: 16px; }
+body.vr-login-body :is(.vr-feature-list p,.vr-kicker,.vr-hero-footer,.vr-login-brand span) { font-size: 14px; line-height: 1.65; }
+body.vr-login-body .vr-login-card { max-width: 416px; }
+body.vr-login-body .vr-login-card h2 { font-size: 32px; }
+body.vr-login-body :is(.vr-form-description,.vr-login-help) { color: #52627a; font-size: 15px; }
+body.vr-login-body .form-group input { font-size: 16px !important; min-height: 52px !important; border-color: #9cacc3; border-radius: 8px; }
+body.vr-login-body .vr-password-control button { min-height: 40px; font-size: 14px; top: 6px; color: #13213d; }
+body.vr-login-body .vr-login-submit { min-height: 52px !important; font-size: 16px !important; background: #1f3156; border-color: #1f3156; }
+@media(max-width:1250px){body.intranet-app-body .intranet-user-greeting{display:none;}}
+@media(max-width:1024px){body.intranet-app-body .intranet-sidebar{width:min(280px,calc(100vw - 32px));}}
+@media(max-width:760px){
+ body.intranet-app-body .page-shell h1{font-size:24px!important;}
+ body.intranet-app-body .page-shell h2{font-size:19px!important;}
+ body.intranet-app-body .intranet-page-context strong{font-size:15px!important;}
+ body.intranet-app-body .intranet-page-context>span{display:none;}
+ body.intranet-app-body input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=range]):not([type=color]),body.intranet-app-body select,body.intranet-app-body textarea{font-size:16px!important;}
+ body.vr-login-body .vr-login-hero h1{font-size:25px!important;}
+ body.vr-login-body .vr-login-description{font-size:15px;}
+ body.intranet-app-body :is(.lms-heading,.score-insight-heading,.premium-course-top,.score-card-heading){gap:14px;flex-wrap:wrap;}
+ body.intranet-app-body .lms-annotation-toolbar label{white-space:normal;}
+ body.intranet-app-body .lms-annotation-toolbar select{max-width:100%;}
+ body.intranet-app-body .lms-annotation-toolbar #ann-tool{width:100%;}
+}
+@media(prefers-reduced-motion:reduce){body.intranet-app-body *,body.vr-login-body *{scroll-behavior:auto!important;}}
+/* Measured contrast repairs: these old subcomponent rules had higher specificity. */
+body.intranet-app-body .premium-dashboard-kpi .premium-kpi-icon,
+body.intranet-app-body .premium-dashboard-kpi small,
+body.intranet-app-body .operations-summary-grid small,
+body.intranet-app-body .workflow-metric-grid small,
+body.intranet-app-body .premium-link-number,
+body.intranet-app-body .premium-link-arrow,
+body.intranet-app-body .operations-action-grid>a>span,
+body.intranet-app-body .operations-action-grid>a>b { color: #52627a !important; }
+body.intranet-app-body :is(.score-delta-row .is-negative,.score-attempt-result .is-negative) { color: #b91c1c !important; }
+body.intranet-app-body :is(.score-insight-hero,.score-kpi-grid,.score-attempts-card) { margin-bottom: 14px; }
+body.intranet-app-body .score-insight-section>.score-insight-heading { padding-top: 14px; }
+body.intranet-app-body .score-chart-labels { gap: 10px; }
+body.intranet-app-body .catalog-table-scroll { overflow-x: auto; max-width: 100%; }
+body.intranet-app-body .catalog-table { min-width: 1160px !important; }
+body.intranet-app-body .catalog-table thead th { white-space: nowrap; }
+body.intranet-app-body .catalog-table :is(th,td) { min-width: 72px; }
+body.intranet-app-body .catalog-table .et-class-col-name { min-width: 220px; }
+body.intranet-app-body .catalog-table .et-class-col-lesson,
+body.intranet-app-body .catalog-table .et-class-col-teacher { min-width: 120px; }
+/* Additional detail-page checks: resource tiles, unread counts, attendance day pills. */
+body.intranet-app-body .et-v5-board-card .course-board-card-header { background: #f3f6fb !important; border-bottom: 1px solid #d8e0eb; }
+body.intranet-app-body .et-v5-board-card .course-board-card-header>span { color: #52627a !important; }
+body.intranet-app-body .et-v5-board-card .course-board-card-header h2 { color: #172a46 !important; }
+body.intranet-app-body .communications-notification-link>span { background: #13213d !important; color: #fff !important; }
+body.intranet-app-body .premium-day-header>span { background: #edf3fb !important; color: #334155 !important; }
+/* Admin workflow identifiers and import confirmation helpers. */
+body.intranet-app-body .operations-action-grid>a>span:first-child { color:#475569 !important; background:#edf2f8 !important; }
+body.intranet-app-body .import-confirm-box small,
+body.intranet-app-body .import-confirm small,
+body.intranet-app-body .import-form small { color:#475569 !important; }
+body.intranet-app-body .import-confirm-card small { color:#475569 !important; }
+/* Keep label/control groups intact: larger text must not overlap the next tool. */
+body.intranet-app-body .lms-annotation-toolbar label { flex:0 1 auto; max-width:100%; min-width:0; gap:8px; white-space:nowrap; }
+body.intranet-app-body .lms-workspace .lms-annotation-toolbar select { min-width:0; flex:1 1 auto; max-width:100%; }
+@media(max-width:640px){
+ body.intranet-app-body .lms-annotation-toolbar label:has(#ann-tool){flex:1 1 100%;}
+ body.intranet-app-body .lms-annotation-toolbar label:has(#ann-color),
+ body.intranet-app-body .lms-annotation-toolbar label:has(#ann-size){flex:1 1 calc(50% - 12px);}
+ body.intranet-app-body .lms-annotation-toolbar #ann-tool{width:auto;flex:1 1 0;}
+}

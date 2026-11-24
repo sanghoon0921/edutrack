@@ -1,0 +1,5 @@
+{% comment %}공개 시간 예약: 기본은 저장 즉시 공개. 체크할 때만 공개 시작 칸을 보여 주고, 끄면 칸을 비웁니다(static/js/global/form-usability.js).{% endcomment %}
+<div class="ux-field ux-schedule">
+ <label class="ux-check"><input type="checkbox" data-schedule-toggle{% if field.value or field.errors %} checked{% endif %}> 공개 시간 예약</label>
+ <div data-schedule-field{% if not field.value and not field.errors %} hidden{% endif %}>{{ field }}{{ field.errors }}</div>
+</div>

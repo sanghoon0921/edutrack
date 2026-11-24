@@ -1,0 +1,45 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'reports/css/report-card.css' %}?v=rc1120d">{% endblock %}
+{% block extra_js %}<script src="{% static 'reports/js/report-card.js' %}?v=rc1120d" defer></script>{% endblock %}
+{% block content %}
+<section class="workflow-hero">
+ <div><h1>리포트카드</h1><p>{% if is_admin %}반과 양식을 고르면 학생 정보·과제 제출·점수·모의고사를 불러와 학생별 리포트카드를 한 번에 만듭니다.{% else %}맡은 반의 리포트카드를 만들고 내용·코멘트를 써서 저장하면, 관리자가 검토한 뒤 학부모에게 공개(발송)합니다.{% endif %}</p></div>
+ <a class="workflow-button is-primary" href="{% url 'reports:new' %}">새 리포트카드</a>
+</section>
+<form class="rc-filter" method="get" aria-label="리포트카드 거르기">
+ <label><span>Term</span><select name="term" data-auto-submit><option value="">전체</option>{% for t in terms %}<option value="{{ t }}"{% if t == f_term %} selected{% endif %}>{{ t }}</option>{% endfor %}</select></label>
+ <label><span>반</span><select name="group" data-auto-submit><option value="">전체 반</option>{% for g in filter_groups %}<option value="{{ g.pk }}"{% if g.pk == f_group %} selected{% endif %}>{{ g.title }}</option>{% endfor %}</select></label>
+ <label><span>학부모 발송</span><select name="send" data-auto-submit><option value="">전체</option>{% for key, label in send_filters.items %}<option value="{{ key }}"{% if key == f_send %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+ <noscript><button class="ux-btn" type="submit">거르기</button></noscript>
+ {% if filtered %}<a class="rc-filter-clear" href="{% url 'reports:list' %}">전체 보기</a>{% endif %}
+</form>
+<section class="workflow-panel rc-list">
+ {% if rows %}
+ <table class="rc-list-table">
+  <thead><tr><th>반</th><th>양식</th><th>Term</th><th>기간</th><th>작성</th><th>학부모 발송</th><th>수정</th><th></th></tr></thead>
+  <tbody>
+  {% for row in rows %}{% with b=row.batch %}
+   <tr>
+    <td><strong>{{ b.group.title }}</strong>{% if b.course_label %}<small>{{ b.course_label }}</small>{% endif %}</td>
+    <td><span class="rc-form-chip" data-form="{{ b.form }}">{{ row.form_label }}</span></td>
+    <td>{{ row.term }}</td>
+    <td>{{ b.period_start|date:"n/j" }} ~ {{ b.period_end|date:"n/j" }}</td>
+    <td>{% if b.published_at %}<span class="rc-progress is-done">{{ b.card_count }} / {{ b.card_count }}명</span>{% else %}<span class="rc-progress{% if b.card_count and b.saved_count == b.card_count %} is-done{% endif %}">{{ b.saved_count }} / {{ b.card_count }}명</span>{% endif %}</td>
+    <td>{% if b.published_at %}<span class="rc-state is-public">발송 · {{ b.published_at|date:"n/j H:i" }}</span>{% else %}<span class="rc-state">미발송</span>{% endif %}</td>
+    <td>{{ b.updated_at|date:"n/j H:i" }}</td>
+    <td class="rc-list-actions">
+     {% if b.card_count %}<a class="ux-btn" href="{% url 'reports:print' b.pk %}?print=1" target="_blank" rel="noopener">반 전체 인쇄</a>{% endif %}
+     <a class="ux-btn primary" href="{% url 'reports:batch' b.pk %}">열기</a>
+     {% if is_admin %}<form method="post" action="{% url 'reports:delete' b.pk %}" data-confirm="{{ b.group.title }} {{ row.form_label }} 묶음을 지울까요? 학생 카드와 코멘트가 모두 지워집니다.">{% csrf_token %}<button class="ux-btn danger" type="submit">지우기</button></form>{% endif %}
+    </td>
+   </tr>
+  {% endwith %}{% endfor %}
+  </tbody>
+ </table>
+ {% elif filtered %}
+ <div class="workflow-empty">조건에 맞는 리포트카드가 없습니다. <a href="{% url 'reports:list' %}">전체 보기</a></div>
+ {% else %}
+ <div class="workflow-empty">아직 만든 리포트카드가 없습니다. <a href="{% url 'reports:new' %}">새 리포트카드</a>에서 양식과 반을 고르면 시작됩니다.</div>
+ {% endif %}
+</section>
+{% endblock %}

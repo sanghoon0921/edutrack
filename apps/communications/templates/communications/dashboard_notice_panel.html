@@ -1,0 +1,23 @@
+{% if latest_notice_preview %}
+<section class="communications-dashboard-panel" data-reveal>
+  <div class="communications-panel-heading">
+    <div>
+      <h2>최근 공지</h2>
+    </div>
+    <a href="{% url 'communications:notice-list' %}">전체 보기 ↗</a>
+  </div>
+
+  <div class="communications-dashboard-notices">
+    {% for notice in latest_notice_preview %}
+      <a href="{% url 'communications:notice-detail' notice.pk %}">
+        <span>{% if notice.is_pinned %}PIN{% else %}0{{ forloop.counter }}{% endif %}</span>
+        <div>
+          <strong>{{ notice.title }}</strong>
+          <small>{% include "communications/_notice_kind.html" %} {{ notice.audience_display }} · {{ notice.published_at|date:"Y.m.d" }}</small>
+        </div>
+        <b>↗</b>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

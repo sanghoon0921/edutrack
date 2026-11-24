@@ -1,0 +1,548 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+{% if detail.status == "ok" %}
+  <section class="exam-detail-hero">
+    <div>
+      <a
+        class="exam-detail-back"
+        href="{% url 'students:detail' student.student_id %}"
+      >
+        ← 학생 상세
+      </a>
+
+      <h1>{{ detail.attempt.exam_name }}</h1>
+
+      <p>
+        {{ student.name }}
+        · 학생번호 {{ student.student_id }}
+        {% if detail.attempt.exam_date %}
+          · {{ detail.attempt.exam_date|date:"Y.m.d H:i" }}
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="exam-detail-total">
+      <span>총 SAT</span>
+      <strong>
+        {{ detail.attempt.total_sat_score|default:"—" }}
+      </strong>
+      <small>
+        RW {{ detail.attempt.rw_sat_score|default:"—" }}
+        · Math {{ detail.attempt.math_sat_score|default:"—" }}
+      </small>
+    </div>
+  </section>
+
+  <section class="exam-detail-kpis">
+    <article>
+      <span>전체 문항</span>
+      <strong>{{ detail.questions|length }}</strong>
+      <small>실제 Module 문항</small>
+    </article>
+
+    <article class="is-correct">
+      <span>정답</span>
+      <strong>{{ detail.correct_count }}</strong>
+      <small>완전 정답</small>
+    </article>
+
+    <article class="is-partial">
+      <span>부분점수</span>
+      <strong>{{ detail.partial_count }}</strong>
+      <small>일부 점수 획득</small>
+    </article>
+
+    <article class="is-wrong">
+      <span>오답</span>
+      <strong>{{ detail.wrong_count }}</strong>
+      <small>선택지 오답</small>
+    </article>
+
+    <article class="is-unanswered">
+      <span>무응답</span>
+      <strong>{{ detail.unanswered_count }}</strong>
+      <small>답안 미입력</small>
+    </article>
+
+    <article>
+      <span>문항 획득률</span>
+      <strong>
+        {% if detail.item_score_rate is not None %}
+          {{ detail.item_score_rate|floatformat:1 }}%
+        {% else %}
+          —
+        {% endif %}
+      </strong>
+      <small>
+        {{ detail.earned_score }} / {{ detail.max_score }}
+      </small>
+    </article>
+  </section>
+
+
+  {% if exam_insight.status == "ok" %}
+    <section class="exam-insight-section">
+      <div class="premium-section-heading exam-insight-heading">
+        <div>
+          <h2>이번 시험 인사이트</h2>
+          <p>
+            이미 캐시된 문항으로 계산하므로 추가 DB 조회가 없습니다.
+          </p>
+        </div>
+
+        <span class="exam-insight-review-pill">
+          복습 필요 {{ exam_insight.review_count }}문항
+        </span>
+      </div>
+
+      <div class="exam-insight-summary-grid">
+        <article class="exam-insight-summary-card is-strong">
+          <span>강점 영역</span>
+
+          <strong>
+            {% if exam_insight.strongest_area %}
+              {{ exam_insight.strongest_area.name }}
+            {% else %}
+              —
+            {% endif %}
+          </strong>
+
+          <small>
+            {% if exam_insight.strongest_area and exam_insight.strongest_area.accuracy_rate is not None %}
+              획득률 {{ exam_insight.strongest_area.accuracy_rate|floatformat:1 }}%
+            {% else %}
+              계산 가능한 문항 없음
+            {% endif %}
+          </small>
+        </article>
+
+        <article class="exam-insight-summary-card is-priority">
+          <span>우선 복습 영역</span>
+
+          <strong>
+            {% if exam_insight.priority_area %}
+              {{ exam_insight.priority_area.name }}
+            {% else %}
+              —
+            {% endif %}
+          </strong>
+
+          <small>
+            {% if exam_insight.priority_area %}
+              복습 필요 {{ exam_insight.priority_area.review_count }}문항
+            {% else %}
+              복습 대상 없음
+            {% endif %}
+          </small>
+        </article>
+
+        <article class="exam-insight-summary-card is-slow">
+          <span>가장 오래 걸린 영역</span>
+
+          <strong>
+            {% if exam_insight.slowest_area %}
+              {{ exam_insight.slowest_area.name }}
+            {% else %}
+              —
+            {% endif %}
+          </strong>
+
+          <small>
+            {% if exam_insight.slowest_area %}
+              평균 {{ exam_insight.slowest_area.average_duration_label }}
+            {% else %}
+              풀이시간 데이터 없음
+            {% endif %}
+          </small>
+        </article>
+
+        <article class="exam-insight-summary-card">
+          <span>느린 문항</span>
+          <strong>{{ exam_insight.slow_count }}</strong>
+          <small>전체 기준보다 오래 걸린 문항</small>
+        </article>
+      </div>
+
+      <div class="exam-area-insight-card">
+        <div class="exam-area-insight-heading">
+          <div>
+            <h3>영역별 획득률</h3>
+          </div>
+
+          <small>
+            직접입력 답안은 정답을 확정할 수 없어 계산에서 제외됩니다.
+          </small>
+        </div>
+
+        <div class="exam-area-insight-list">
+          {% for area in exam_insight.area_insights %}
+            <article class="exam-area-insight-row is-{{ area.status }}">
+              <div class="exam-area-insight-copy">
+                <div>
+                  <strong>{{ area.name }}</strong>
+                  <span>{{ area.status_label }}</span>
+                </div>
+
+                <small>
+                  {{ area.question_count }}문항
+                  · 정답 {{ area.correct_count }}
+                  · 복습 {{ area.review_count }}
+                  · 평균 {{ area.average_duration_label }}
+                </small>
+              </div>
+
+              <div class="exam-area-insight-progress">
+                <span>
+                  {% if area.accuracy_rate is not None %}
+                    {{ area.accuracy_rate|floatformat:1 }}%
+                  {% else %}
+                    —
+                  {% endif %}
+                </span>
+
+                <div>
+                  <i
+                    style="width: {% if area.accuracy_rate is not None %}{{ area.accuracy_rate|floatformat:0 }}{% else %}0{% endif %}%"
+                  ></i>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
+  <section
+    class="exam-question-section"
+    data-exam-question-viewer
+    data-selected-question="{{ selected_question_id }}"
+  >
+    <div class="premium-section-heading">
+      <div>
+        <h2>문항 결과</h2>
+        <p>
+          문항 선택은 페이지를 다시 열지 않고 즉시 전환됩니다.
+        </p>
+      </div>
+
+      <div class="exam-detail-actions">
+        <span class="exam-duration-pill">
+          응시 시간 {{ detail.attempt.total_duration_label }}
+        </span>
+
+        {% if request.user.is_superuser or request.user.role == "ADMIN" %}
+          <a
+            class="exam-refresh-link"
+            href="?refresh=1"
+          >
+            데이터 새로고침
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if detail.questions %}
+      <div class="exam-question-filter-bar">
+        <div>
+          <button
+            class="exam-question-filter is-active"
+            type="button"
+            data-question-filter="all"
+          >
+            전체
+            <span>{{ exam_insight.total_count }}</span>
+          </button>
+
+          <button
+            class="exam-question-filter"
+            type="button"
+            data-question-filter="review"
+          >
+            복습 필요
+            <span>{{ exam_insight.review_count }}</span>
+          </button>
+
+          <button
+            class="exam-question-filter"
+            type="button"
+            data-question-filter="correct"
+          >
+            정답
+            <span>{{ exam_insight.correct_count }}</span>
+          </button>
+
+          <button
+            class="exam-question-filter"
+            type="button"
+            data-question-filter="wrong"
+          >
+            오답
+            <span>{{ exam_insight.wrong_count }}</span>
+          </button>
+
+          <button
+            class="exam-question-filter"
+            type="button"
+            data-question-filter="unanswered"
+          >
+            무응답
+            <span>{{ exam_insight.unanswered_count }}</span>
+          </button>
+
+          <button
+            class="exam-question-filter"
+            type="button"
+            data-question-filter="slow"
+          >
+            느린 문항
+            <span>{{ exam_insight.slow_count }}</span>
+          </button>
+        </div>
+
+        <small>
+          ← → 방향키로 문항 이동
+        </small>
+      </div>
+
+      <div class="exam-question-strip">
+        {% for item in detail.questions %}
+          <button
+            class="exam-question-chip is-{{ item.result_class }} {% if selected_question.question_id == item.question_id %}is-selected{% endif %}"
+            type="button"
+            data-question-select="{{ item.question_id }}"
+            data-question-entry
+            data-question-status="{{ item.result_class }}"
+            data-question-slow="{% if item.question_id in exam_insight.slow_question_ids %}1{% else %}0{% endif %}"
+            title="{{ item.question_no }}번 · {{ item.result_label }}"
+          >
+            <strong>{{ item.question_no }}</strong>
+            <span>
+              {% if item.result_code == "CORRECT" %}
+                ✓
+              {% elif item.result_code == "PARTIAL" %}
+                ◐
+              {% elif item.result_code == "WRONG" %}
+                ×
+              {% elif item.result_code == "UNANSWERED" %}
+                —
+              {% else %}
+                T
+              {% endif %}
+            </span>
+          </button>
+        {% endfor %}
+      </div>
+
+      <div
+        class="exam-question-filter-empty is-hidden"
+        data-question-filter-empty
+      >
+        선택한 조건에 해당하는 문항이 없습니다.
+      </div>
+
+      <div class="exam-question-workspace">
+        <div class="exam-question-list">
+          {% for item in detail.questions %}
+            <button
+              class="exam-question-row {% if selected_question.question_id == item.question_id %}is-selected{% endif %}"
+              type="button"
+              data-question-select="{{ item.question_id }}"
+              data-question-entry
+              data-question-status="{{ item.result_class }}"
+              data-question-slow="{% if item.question_id in exam_insight.slow_question_ids %}1{% else %}0{% endif %}"
+            >
+              <span class="exam-row-number">
+                {{ item.question_no }}
+              </span>
+
+              <div>
+                <span class="exam-result-badge is-{{ item.result_class }}">
+                  {{ item.result_label }}
+                </span>
+
+                <strong class="exam-row-answer-summary">
+                  학생
+                  {% if item.selected_answer %}
+                    {{ item.selected_answer }}
+                  {% else %}
+                    무응답
+                  {% endif %}
+                  · 정답 {{ item.correct_answer }}
+                </strong>
+
+                <small>
+                  {{ item.section_name }}
+                  · {{ item.module_name }}
+                  · {{ item.duration_label }}
+                </small>
+              </div>
+            </button>
+          {% endfor %}
+        </div>
+
+        <aside
+          class="exam-question-detail"
+          data-question-detail
+        >
+          <div class="exam-question-detail-heading">
+            <div>
+              <span
+                class="exam-result-badge is-{{ selected_question.result_class }}"
+                data-question-result
+              >
+                {{ selected_question.result_label }}
+              </span>
+
+              <h3 data-question-title>
+                {{ selected_question.question_no }}번 문항
+              </h3>
+            </div>
+
+            <strong
+              class="exam-question-status-text is-{{ selected_question.result_class }}"
+              data-question-score
+            >
+              {{ selected_question.result_label }}
+            </strong>
+          </div>
+
+          <div
+            class="exam-question-meta"
+            data-question-meta
+          >
+            <span>{{ selected_question.topic }}</span>
+            <span>{{ selected_question.section_name }}</span>
+            <span>{{ selected_question.module_name }}</span>
+            <span>{{ selected_question.duration_label }}</span>
+
+            {% if selected_question.bookmark %}
+              <span>북마크</span>
+            {% endif %}
+          </div>
+
+          <div class="exam-question-copy">
+            <span>문제</span>
+            <p data-question-text>
+              {{ selected_question.question_text }}
+            </p>
+          </div>
+
+          <a
+            class="exam-media-link {% if not selected_question.media_url %}is-hidden{% endif %}"
+            href="{{ selected_question.media_url|default:'#' }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-question-media
+          >
+            연결된 미디어 자료 열기 ↗
+          </a>
+
+          <div
+            class="exam-choice-list"
+            data-question-choices
+          >
+            {% for choice in selected_question.choices %}
+              <article
+                class="exam-choice {% if choice.is_correct %}is-correct{% endif %} {% if choice.is_selected %}is-selected{% endif %}"
+              >
+                <span>{{ choice.choice_no }}</span>
+                <p>{{ choice.content }}</p>
+
+                <div>
+                  {% if choice.is_selected %}
+                    <small>학생 선택</small>
+                  {% endif %}
+
+                  {% if choice.is_correct %}
+                    <small>정답</small>
+                  {% endif %}
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+
+          <div class="exam-answer-grid">
+            <article>
+              <span>학생 답안</span>
+              <strong data-student-answer>
+                {{ selected_question.selected_answer|default:"무응답" }}
+              </strong>
+            </article>
+
+            <article>
+              <span>정답</span>
+              <strong data-correct-answer>
+                {{ selected_question.correct_answer }}
+              </strong>
+            </article>
+          </div>
+
+          <div
+            class="exam-annotation {% if not selected_question.annotation %}is-hidden{% endif %}"
+            data-question-annotation-wrap
+          >
+            <span>학생 메모</span>
+            <p data-question-annotation>
+              {{ selected_question.annotation }}
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      {{ question_payload|json_script:"exam-question-data" }}
+
+      <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [
+              ["\\(", "\\)"],
+              ["$", "$"]
+            ],
+            displayMath: [
+              ["\\[", "\\]"],
+              ["$$", "$$"]
+            ]
+          },
+          svg: {
+            fontCache: "global"
+          }
+        };
+      </script>
+      <script
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+        defer
+      ></script>
+
+      <script
+        src="{% static 'assessments/js/exam-detail.js' %}"
+        defer
+      ></script>
+    {% else %}
+      <div class="exam-question-empty">
+        이 시험의 문항 응답 데이터를 찾지 못했습니다.
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="exam-detail-note">
+    <span>
+      첫 조회 후 동일 시험 데이터는 캐시되어 빠르게 열립니다.
+    </span>
+    <span>
+      문항 전환은 서버 재조회 없이 브라우저에서 처리됩니다.
+    </span>
+  </section>
+{% else %}
+  <section class="score-insight-state is-{{ detail.status }}">
+    <div class="score-state-symbol">!</div>
+
+    <div>
+      <strong>시험 상세를 표시할 수 없습니다.</strong>
+      <p>{{ detail.message }}</p>
+    </div>
+  </section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,128 @@
+{% comment %}DSG 최근 시험 카드: Exam 시험 / Module 시험(Module만 따로 본 시험) 탭. 변수: score_overview, student_id{% endcomment %}{% load static %}
+<div class="score-attempts-card" data-score-tabs>
+  <div class="score-attempts-heading">
+    <h3>최근 시험</h3>
+    <div class="score-tab-bar" role="tablist" aria-label="시험 종류">
+      <button type="button" role="tab" class="score-tab" data-score-tab="exam" aria-selected="true">Exam 시험 <b>{{ score_overview.recent_attempts|length }}</b></button>
+      <button type="button" role="tab" class="score-tab" data-score-tab="module" aria-selected="false">Module 시험 <b>{{ score_overview.module_attempts|length }}</b></button>
+    </div>
+  </div>
+
+  <div role="tabpanel" data-score-panel="exam">
+    {% if score_overview.recent_attempts %}
+    <small class="score-tab-note">전체·RW·Math 단독 시험을 구분합니다.</small>
+    <div class="score-attempt-list">
+      {% for attempt in score_overview.recent_attempts %}
+        <article class="score-attempt-row">
+          <div class="score-attempt-date">
+            <strong>
+              {% if attempt.exam_date %}
+                {{ attempt.exam_date|date:"m.d" }}
+              {% else %}
+                —
+              {% endif %}
+            </strong>
+            <small>
+              {% if attempt.exam_date %}
+                {{ attempt.exam_date|date:"Y" }}
+              {% endif %}
+            </small>
+          </div>
+
+          <div class="score-attempt-copy">
+            <span class="score-type-badge is-{{ attempt.score_type|lower }}">
+              {{ attempt.score_type_label }}
+            </span>
+
+            <strong>{{ attempt.exam_name }}</strong>
+
+            <small>
+              정답 {{ attempt.correct_answers }}
+              · 오답 {{ attempt.wrong_answers }}
+              ·
+              {% if attempt.accuracy_rate is not None %}
+                {{ attempt.accuracy_rate|floatformat:1 }}%
+              {% else %}
+                정답률 미확인
+              {% endif %}
+            </small>
+          </div>
+
+          <div class="score-attempt-sections">
+            {% if attempt.rw_attempted %}
+              <span>
+                RW
+                <b>{{ attempt.rw_sat_score|default:"—" }}</b>
+              </span>
+            {% endif %}
+
+            {% if attempt.math_attempted %}
+              <span>
+                Math
+                <b>{{ attempt.math_sat_score|default:"—" }}</b>
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="score-attempt-result">
+            <strong>
+              {{ attempt.display_score|default:"—" }}
+            </strong>
+            <small>/ {{ attempt.max_score }}</small>
+
+            {% if attempt.delta_previous is not None %}
+              <span class="{% if attempt.delta_previous > 0 %}is-positive{% elif attempt.delta_previous < 0 %}is-negative{% endif %}">
+                {% if attempt.delta_previous > 0 %}+{% endif %}{{ attempt.delta_previous }}
+              </span>
+            {% endif %}
+
+            <a
+              class="score-attempt-detail-link"
+              href="{% url 'assessments:attempt-detail' student_id attempt.attempt_id %}"
+            >
+              문항 보기 →
+            </a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="score-tab-empty">완료된 Exam 시험이 없습니다.</p>
+    {% endif %}
+  </div>
+
+  <div role="tabpanel" data-score-panel="module" hidden>
+    <small class="score-tab-note">DSG에서 학생이 Module만 따로 풀어 답을 남긴 시험입니다(최근 10개).</small>
+    <div class="score-attempt-list">
+      {% for module in score_overview.module_attempts %}
+        <article class="score-attempt-row is-module">
+          <div class="score-attempt-date">
+            <strong>{% if module.taken_at %}{{ module.taken_at|date:"m.d" }}{% else %}—{% endif %}</strong>
+            <small>{% if module.taken_at %}{{ module.taken_at|date:"Y" }}{% endif %}</small>
+          </div>
+          <div class="score-attempt-copy">
+            {% if module.section_label %}<span class="score-type-badge is-{% if module.section_label == "RW" %}rw{% elif module.section_label == "Math" %}math{% else %}full{% endif %}">{{ module.section_label }} Module</span>{% endif %}
+            <strong>{{ module.module_name }}</strong>
+            {% if module.correct_answers or module.wrong_answers %}
+            <small>정답 {{ module.correct_answers }} · 오답 {{ module.wrong_answers }} · {% if module.accuracy_rate is not None %}{{ module.accuracy_rate|floatformat:1 }}%{% else %}정답률 미확인{% endif %}</small>
+            {% else %}
+            <small>직접 푼 Module 시험 · 정답 수는 DSG에서 확인</small>
+            {% endif %}
+          </div>
+          <div class="score-attempt-result">
+            {% if module.correct_answers or module.wrong_answers %}
+            <strong>{{ module.correct_answers }} / {{ module.total_questions }}</strong>
+            <small>맞은 수</small>
+            {% else %}
+            <strong>{{ module.answered_questions }} / {{ module.total_questions }}</strong>
+            <small>푼 문항</small>
+            {% endif %}
+          </div>
+        </article>
+      {% empty %}
+        <p class="score-tab-empty">Module만 따로 본 시험이 없습니다.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<script src="{% static 'assessments/js/score-tabs.js' %}?v=1" defer></script>

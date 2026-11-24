@@ -1,0 +1,61 @@
+{% load report_tags %}<header class="rc-junior-head">
+ <h2><span>{% include "reports/_title.html" %}</span>{{ spec.heading }}</h2>
+ {% include "reports/_brand.html" %}
+</header>
+<div class="rc-junior-body">
+ <table class="rc-info">
+  <tr><th>이름</th><td>{% cell "d" "info" "name" %}</td></tr>
+  <tr><th>국가 / 학교</th><td>{% cell "d" "info" "region" %}</td></tr>
+  <tr><th>학년</th><td>{% cell "d" "info" "grade" %}</td></tr>
+  <tr><th>선생님</th><td>{% cell "s" "teacher" %}</td></tr>
+  <tr><th>수업명</th><td>{% cell "s" "class_name" %}</td></tr>
+  <tr><th>주차</th><td>{% cell "s" "weeks_label" %}</td></tr>
+  <tr><th>기간</th><td>{% cell "s" "period" %}</td></tr>
+ </table>
+
+ <section class="rc-section">
+  <h3 class="rc-tab">수업 주안점</h3>
+  <div class="rc-box">{% cell "s" "focus" area=1 rows=4 placeholder="이번 기간 수업의 주안점 (반 공통)" %}</div>
+ </section>
+
+ <section class="rc-section">
+  <h3 class="rc-tab">과제 완료 및 수업 태도</h3>
+  <table class="rc-grid rc-junior-table">
+   <colgroup><col class="rc-c-date"><col class="rc-c-hw"><col class="rc-c-submit"><col class="rc-c-att"><col class="rc-c-vocab"><col class="rc-c-sub"><col></colgroup>
+   <thead><tr><th>수업일</th><th>숙제 내용</th><th>숙제<br>제출여부</th><th>수업<br>태도</th><th>단어<br>시험</th><th colspan="2">코멘트</th></tr></thead>
+   <tbody>
+   {% for row in card_data.rows %}
+    <tr>
+     {# 운영팀 11/17: 주차 열은 빼고(주차·기간은 위 학생 정보에), 행은 수업일로 구분합니다. 행 지우기 단추는 수업일 칸에. #}
+     <td rowspan="2" class="rc-week rc-date-cell">{% cell "d" "rows" forloop.counter0 "date" cls="rc-center" placeholder=row.label %}{% if editing and edit_scope is None %}<button class="rc-row-delete" type="submit" formaction="{% url 'reports:row-delete' batch.pk row.label %}" name="card" value="{{ card.pk }}" data-rc-confirm="{{ row.label }} 행을 지울까요? 이 반 모든 학생의 이 주 내용도 함께 지워집니다." aria-label="{{ row.label }} 행 지우기" title="{{ row.label }} 행 지우기"><svg class="et-icon" aria-hidden="true"><use href="#i-trash"></use></svg></button>{% endif %}</td>
+     <td rowspan="2">{% cell "d" "rows" forloop.counter0 "homework" area=1 rows=2 %}</td>
+     <td rowspan="2">{% cell "d" "rows" forloop.counter0 "submitted" cls="rc-center" choices=submit_choices %}</td>
+     <td rowspan="2">{% cell "d" "rows" forloop.counter0 "attitude" cls="rc-center" placeholder="1~5" %}</td>
+     <td rowspan="2">{% cell "d" "rows" forloop.counter0 "vocab" cls="rc-center" %}</td>
+     <th class="rc-sub">수업<br>내용</th>
+     <td class="rc-wide">{% cell "s" "contents" row.label area=1 rows=3 placeholder="이 주 수업 내용 (반 공통)" %}</td>
+    </tr>
+    <tr><th class="rc-sub">코멘트</th><td class="rc-wide">{% cell "d" "rows" forloop.counter0 "comment" area=1 rows=4 placeholder="이 주 학생 코멘트" %}</td></tr>
+   {% endfor %}
+   {% if editing and edit_scope is None %}<tr class="rc-block-add-row"><td colspan="7"><button class="rc-block-add" type="submit" formaction="{% url 'reports:row-add' batch.pk %}" name="card" value="{{ card.pk }}"><svg class="et-icon" aria-hidden="true"><use href="#i-plus"></use></svg>수업일 행 추가</button></td></tr>{% endif %}
+   </tbody>
+  </table>
+ </section>
+
+ <section class="rc-section">
+  <h3 class="rc-tab">학생 자료 (첨삭물, 과제물 등)</h3>
+  <div class="rc-box">{% cell "d" "drive" placeholder="자료 링크" %}</div>
+ </section>
+ <section class="rc-section">
+  <h3 class="rc-tab">성취도 평가</h3>
+  <div class="rc-box">{% cell "d" "achievement" area=1 rows=4 %}</div>
+ </section>
+ <section class="rc-section">
+  <h3 class="rc-tab">종합 코멘트</h3>
+  <div class="rc-box">{% cell "d" "overall" area=1 rows=6 %}</div>
+ </section>
+ <section class="rc-section">
+  <h3 class="rc-tab">다음 수업 내용</h3>
+  <div class="rc-box">{% cell "s" "next_plan" area=1 rows=4 placeholder="다음 기간 수업 계획 (반 공통)" %}</div>
+ </section>
+</div>

@@ -1,0 +1,628 @@
+{% extends "layouts/base.html" %}{% load pager_tags %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/class-catalog.css' %}?v=1110nv3">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'dashboard/js/class-roster.js' %}?v=1" defer></script>
+{% endblock %}
+
+{% block content %}
+<section class="catalog-hero" data-reveal>
+  <div>
+    <h1>수업 관리</h1>
+    <p>인트라넷에 등록된 수업을 기간·상태·방식·검색어로 조회합니다. 이 화면에서는 원본 데이터를 수정하지 않습니다.</p>
+  </div>
+  <div class="catalog-hero-count">
+    <span>검색 결과</span>
+    <strong>{{ result_count }}</strong>
+    <small>개 수업</small>
+  </div>
+</section>
+
+<section class="catalog-filter-card" data-reveal>
+  <form method="get" class="catalog-filter-form">
+    <div class="catalog-filter-field">
+      <label for="{{ form.start_date.id_for_label }}">기간</label>
+      <div class="catalog-date-range">
+        {{ form.start_date }}
+        <span>–</span>
+        {{ form.end_date }}
+      </div>
+      {% for error in form.start_date.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+      {% for error in form.end_date.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+    </div>
+
+    <div class="catalog-filter-field is-compact">
+      <label for="{{ form.status.id_for_label }}">수업 상태</label>
+      {{ form.status }}
+    </div>
+
+    <div class="catalog-filter-field is-compact">
+      <label for="{{ form.learning_method.id_for_label }}">수업 방식</label>
+      {{ form.learning_method }}
+    </div>
+
+    <div class="catalog-filter-field is-search">
+      <label for="{{ form.q.id_for_label }}">통합 검색</label>
+      {{ form.q }}
+    </div>
+
+    <div class="catalog-filter-actions">
+      <a class="catalog-reset-button" href="{% url 'admin_classes' %}" aria-label="검색 초기화">초기화</a>
+      <button class="catalog-search-button" type="submit">
+        <span aria-hidden="true">⌕</span>
+        검색
+      </button>
+    </div>
+  </form>
+</section>
+
+{% if database_error %}
+  <section class="catalog-alert is-error" data-reveal>
+    <strong>수업 정보를 불러오지 못했습니다.</strong>
+    <p>인트라넷 DB 연결과 VPN·보안그룹 상태를 확인한 뒤 다시 시도해 주세요.</p>
+  </section>
+{% endif %}
+
+<section class="catalog-table-card" data-reveal>
+  <header class="catalog-table-header">
+    <div>
+      <h2>Class 리스트</h2>
+    </div>
+    <span>한 페이지에 최대 30개</span>
+  </header>
+
+  {% if classes %}
+    <div class="catalog-table-scroll">
+      <table class="catalog-table" data-class-roster-url="{% url 'students:selector-browse' %}" data-student-detail-url="{% url 'students:detail' '__ID__' %}">
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>지점</th>
+            <th>개강일</th>
+            <th>종강일</th>
+            <th>Term</th>
+            <th>Subject</th>
+            <th>Class</th>
+            <th>Class 번호</th>
+            <th>수업시간</th>
+            <th>Lesson</th>
+            <th>강사</th>
+            <th>상태</th>
+            <th>수업방식</th>
+            <th>요일</th>
+            <th>배정 학생</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in classes %}
+            <tr>
+              <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+              <td>{{ item.branch_name|default:"미지정" }}</td>
+              <td>{% if item.start_date %}{{ item.start_date|date:"Y-m-d" }}{% else %}—{% endif %}</td>
+              <td>{% if item.end_date %}{{ item.end_date|date:"Y-m-d" }}{% else %}—{% endif %}</td>
+              <td><strong>{{ item.term_name|default:"미지정" }}</strong></td>
+              <td>{{ item.subject_name|default:"미지정" }}</td>
+              <td class="catalog-class-name">{{ item.class_name }}</td>
+              <td>{{ item.class_id }}</td>
+              <td>{{ item.schedule_summary|default:"시간 미등록" }}</td>
+              <td>{{ item.lesson_summary|default:"Lesson" }}</td>
+              <td>{{ item.teacher_names|default:"미지정" }}</td>
+              <td>
+                <span class="catalog-status is-{{ item.status_code|lower }}">
+                  {{ item.status_label|default:"미지정" }}
+                </span>
+              </td>
+              <td><span class="catalog-method-dot"></span>{{ item.learning_methods|default:"미지정" }}</td>
+              <td>{{ item.weekdays|default:"미지정" }}</td>
+              <td><button type="button" class="catalog-roster-toggle" data-class-roster="{{ item.class_id }}" aria-expanded="false" title="이 수업의 배정 학생 명단 보기"><strong>{{ item.assigned_student_count }}</strong>명 보기</button></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% pager page_obj label="수업 목록 쪽 이동" %}
+  {% else %}
+    <div class="catalog-empty">
+      <strong>{% if database_error %}연결 확인이 필요합니다.{% else %}검색 조건에 맞는 수업이 없습니다.{% endif %}</strong>
+      <p>{% if database_error %}인트라넷 연결을 확인해 주세요.{% else %}기간이나 검색어를 바꿔 다시 조회해 주세요.{% endif %}</p>
+    </div>
+  {% endif %}
+</section>
+
+{# EDUTRACK_ADMIN_CLASS_FAST_UI_V4_START #}
+<div data-edutrack-admin-class-fast-ui-version="4.0.0" hidden></div>
+<style>body.edutrack-admin-class-fast-list {
+    --et-class-green: #172a46;
+    --et-class-green-soft: #e9eff7;
+    --et-class-gold: #1d4ed8;
+    --et-class-line: rgba(23,42,70,0.14);
+    --et-class-muted: #1d4ed8;
+  }
+
+  body.edutrack-admin-class-fast-list .content-card,
+  body.edutrack-admin-class-fast-list .table-card,
+  body.edutrack-admin-class-fast-list [class*="motion"],
+  body.edutrack-admin-class-fast-list [class*="reveal"] {
+    animation: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .edutrack-class-fast-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .edutrack-class-fast-table {
+    width: 100% !important;
+    min-width: 960px !important;
+    table-layout: auto !important;
+    border-collapse: collapse;
+  }
+
+  .edutrack-class-fast-table th,
+  .edutrack-class-fast-table td {
+    height: auto !important;
+    min-width: 0 !important;
+    padding: 8px 7px !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    font-size:14px!important;
+    line-height: 1.42 !important;
+  }
+
+  .edutrack-class-fast-table th {
+    color: var(--et-class-muted);
+    font-size:14px!important;
+    font-weight:700!important;
+  }
+
+  .edutrack-class-fast-table .et-class-col-id,
+  .edutrack-class-fast-table .et-class-col-date,
+  .edutrack-class-fast-table .et-class-col-count,
+  .edutrack-class-fast-table .et-class-col-status {
+    white-space: nowrap !important;
+    overflow-wrap: normal;
+  }
+
+  .edutrack-class-fast-table .et-class-col-name {
+    min-width: 145px !important;
+  }
+
+  /* 짧은 칸(지점·시간·방식·요일)은 한 줄로, 긴 이름 칸만 줄바꿈 */
+  .edutrack-class-fast-table :is(.et-class-col-name, .et-class-col-term, .et-class-col-subject, .et-class-col-lesson, .et-class-col-teacher) {
+    white-space: normal !important;
+  }
+
+  .edutrack-class-fast-table .et-class-col-term,
+  .edutrack-class-fast-table .et-class-col-subject,
+  .edutrack-class-fast-table .et-class-col-lesson,
+  .edutrack-class-fast-table .et-class-col-teacher {
+    min-width: 64px !important;
+  }
+
+  .edutrack-class-detail-link {
+    display: inline;
+    color: var(--et-class-green);
+    font-weight:700;
+    line-height: 1.45;
+    text-decoration: underline;
+    text-decoration-color: rgba(29,78,216,0.62);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+  }
+
+  .edutrack-class-detail-link:hover,
+  .edutrack-class-detail-link:focus-visible {
+    color: #172a46;
+    text-decoration-color: var(--et-class-gold);
+  }
+
+  .edutrack-class-detail-link:focus-visible,
+  .edutrack-class-pagination a:focus-visible {
+    outline: 3px solid rgba(29,78,216,0.35);
+    outline-offset: 3px;
+  }
+
+  .edutrack-class-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 22px 0 4px;
+  }
+
+  .edutrack-class-pagination a,
+  .edutrack-class-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--et-class-line);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--et-class-green);
+    font-size:14px;
+    font-weight:700;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .edutrack-class-pagination a:hover {
+    border-color: var(--et-class-gold);
+    background: #f8fafc;
+  }
+
+  .edutrack-class-pagination .is-current {
+    border-color: var(--et-class-green);
+    background: var(--et-class-green);
+    color: #fff;
+  }
+
+  .edutrack-class-pagination .is-disabled {
+    background: #f8fafc;
+    color: #52627a;
+  }
+
+  .edutrack-class-pagination-label {
+    min-width: auto !important;
+    padding-inline: 13px !important;
+  }
+
+  form.edutrack-class-query-loading {
+    cursor: progress;
+  }
+
+  form.edutrack-class-query-loading button[type="submit"],
+  form.edutrack-class-query-loading input[type="submit"] {
+    opacity: 0.68;
+    cursor: progress;
+  }
+
+  @media (max-width: 640px) {
+    .edutrack-class-fast-table {
+      min-width: 960px;
+    }
+
+    .edutrack-class-pagination {
+      gap: 4px;
+    }
+
+    .edutrack-class-pagination a,
+    .edutrack-class-pagination span {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 8px;
+    }
+
+    .edutrack-class-pagination-label {
+      font-size: 0 !important;
+      min-width: 34px !important;
+      padding: 0 !important;
+    }
+
+    .edutrack-class-pagination-label[data-direction="previous"]::before {
+      content: "‹";
+      font-size: 19px;
+    }
+
+    .edutrack-class-pagination-label[data-direction="next"]::before {
+      content: "›";
+      font-size: 19px;
+    }
+  }
+</style>
+<script>
+(function () {
+  "use strict";
+
+  const PAGE_GROUP_SIZE = 5;
+
+  function textOf(element) {
+    return element ? String(element.textContent || "").replace(/\s+/g, " ").trim() : "";
+  }
+
+  function normalized(value) {
+    return String(value || "").replace(/\s+/g, " ").trim().toLowerCase();
+  }
+
+  function findCatalogTable() {
+    let selected = null;
+    let highestScore = -1;
+
+    document.querySelectorAll("table").forEach(function (table) {
+      const headers = Array.from(table.querySelectorAll("thead th")).map(function (cell) {
+        return normalized(textOf(cell));
+      });
+      if (!headers.length) return;
+
+      let score = table.querySelectorAll("tbody tr").length ? 2 : 0;
+      headers.forEach(function (header) {
+        if (/^(class|클래스|수업명)$/.test(header)) score += 10;
+        if (/class\s*번호|클래스\s*번호|수업\s*번호/.test(header)) score += 8;
+        if (/term|subject|강사|지점|개강|종강|lesson/.test(header)) score += 2;
+      });
+
+      if (score > highestScore) {
+        highestScore = score;
+        selected = table;
+      }
+    });
+
+    return highestScore >= 10 ? selected : null;
+  }
+
+  function findIndex(headers, patterns, excludedPatterns) {
+    let fallback = -1;
+    for (let index = 0; index < headers.length; index += 1) {
+      const header = headers[index];
+      if ((excludedPatterns || []).some(function (pattern) { return pattern.test(header); })) continue;
+      if (patterns.some(function (pattern) { return pattern.test(header); })) {
+        if (/^(class|클래스|수업명)$/.test(header)) return index;
+        if (fallback < 0) fallback = index;
+      }
+    }
+    return fallback;
+  }
+
+  function ensureTableWrapper(table) {
+    let wrapper = table.closest(
+      ".table-responsive, .table-wrapper, .table-scroll, .data-table-wrap, .edutrack-class-fast-table-wrap"
+    );
+
+    if (!wrapper) {
+      wrapper = document.createElement("div");
+      wrapper.className = "edutrack-class-fast-table-wrap";
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    } else {
+      wrapper.classList.add("edutrack-class-fast-table-wrap");
+    }
+  }
+
+  function applyColumnClass(table, index, className) {
+    if (index < 0) return;
+    table.querySelectorAll("tr").forEach(function (row) {
+      if (row.cells[index]) row.cells[index].classList.add(className);
+    });
+  }
+
+  function detailHref(classNumber) {
+    const currentPath = window.location.pathname.endsWith("/")
+      ? window.location.pathname
+      : window.location.pathname + "/";
+    const url = new URL(currentPath + encodeURIComponent(classNumber) + "/", window.location.origin);
+    url.searchParams.set("next", window.location.pathname + window.location.search);
+    return url.pathname + url.search;
+  }
+
+  function enhanceClassLinks(table, headers) {
+    const classNameIndex = findIndex(
+      headers,
+      [/^class$/, /^클래스$/, /^수업명$/, /class\s*명/, /클래스\s*명/],
+      [/번호/, /no\.?$/]
+    );
+    const classNumberIndex = findIndex(
+      headers,
+      [/class\s*번호/, /클래스\s*번호/, /수업\s*번호/, /^class\s*no\.?$/],
+      []
+    );
+
+    if (classNameIndex < 0 || classNumberIndex < 0) return;
+
+    table.querySelectorAll("tbody tr").forEach(function (row) {
+      const classCell = row.cells[classNameIndex];
+      const numberCell = row.cells[classNumberIndex];
+      if (!classCell || !numberCell) return;
+
+      const className = textOf(classCell);
+      const numberMatch = textOf(numberCell).match(/\d+/);
+      if (!className || !numberMatch) return;
+      if (/검색 결과|데이터가 없습니다|등록된 수업/.test(className)) return;
+
+      let link = classCell.querySelector("a.edutrack-class-detail-link");
+      if (!link) {
+        link = document.createElement("a");
+        link.className = "edutrack-class-detail-link";
+        link.textContent = className;
+        classCell.replaceChildren(link);
+      }
+      link.href = detailHref(numberMatch[0]);
+      link.setAttribute("aria-label", className + " 클래스 상세 보기");
+    });
+  }
+
+  function makePageUrl(page) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("page", String(page));
+    return url.pathname + url.search + url.hash;
+  }
+
+  function findPaginationSummary(table) {
+    const scopes = [];
+    if (table.parentElement) scopes.push(table.parentElement);
+    if (table.parentElement && table.parentElement.parentElement) scopes.push(table.parentElement.parentElement);
+    scopes.push(document.body);
+
+    for (let scopeIndex = 0; scopeIndex < scopes.length; scopeIndex += 1) {
+      const elements = Array.from(scopes[scopeIndex].querySelectorAll("span, strong, small, p, div"));
+      for (let index = 0; index < elements.length; index += 1) {
+        const element = elements[index];
+        if (element.children.length > 2) continue;
+        const match = textOf(element).match(/^(?:페이지\s*)?(\d+)\s*(?:\/|of)\s*(\d+)(?:\s*페이지)?$/i);
+        if (!match) continue;
+
+        const current = Number(match[1]);
+        const total = Number(match[2]);
+        if (Number.isInteger(current) && Number.isInteger(total) && current >= 1 && total >= current) {
+          return { element: element, current: current, total: total };
+        }
+      }
+    }
+    return null;
+  }
+
+  function paginationContainer(summaryElement) {
+    const direct = summaryElement.closest(
+      "nav, .pagination, .pager, [class*='pagination'], [class*='pager'], [data-pagination]"
+    );
+    if (direct) return direct;
+
+    let candidate = summaryElement;
+    for (let depth = 0; depth < 3 && candidate.parentElement; depth += 1) {
+      const parent = candidate.parentElement;
+      if (textOf(parent).length <= 150 && parent.querySelectorAll("a, button").length <= 8) {
+        candidate = parent;
+      } else {
+        break;
+      }
+    }
+    return candidate;
+  }
+
+  function addPageControl(nav, label, page, current, options) {
+    const settings = options || {};
+    if (settings.disabled) {
+      const disabled = document.createElement("span");
+      disabled.className = "is-disabled" + (settings.label ? " edutrack-class-pagination-label" : "");
+      disabled.textContent = label;
+      disabled.setAttribute("aria-disabled", "true");
+      if (settings.direction) disabled.dataset.direction = settings.direction;
+      nav.appendChild(disabled);
+      return;
+    }
+
+    if (!settings.label && page === current) {
+      const active = document.createElement("span");
+      active.className = "is-current";
+      active.textContent = label;
+      active.setAttribute("aria-current", "page");
+      nav.appendChild(active);
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.href = makePageUrl(page);
+    link.textContent = label;
+    link.setAttribute("aria-label", settings.ariaLabel || (page + "페이지"));
+    if (settings.label) link.className = "edutrack-class-pagination-label";
+    if (settings.direction) link.dataset.direction = settings.direction;
+    nav.appendChild(link);
+  }
+
+  function enhancePagination(table) {
+    const summary = findPaginationSummary(table);
+    if (!summary || summary.total <= 1) return;
+
+    const start = Math.floor((summary.current - 1) / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE + 1;
+    const end = Math.min(start + PAGE_GROUP_SIZE - 1, summary.total);
+    const nav = document.createElement("nav");
+    nav.className = "edutrack-class-pagination";
+    nav.setAttribute("aria-label", "수업 목록 페이지");
+
+    addPageControl(nav, "이전", Math.max(1, start - 1), summary.current, {
+      disabled: start === 1,
+      label: true,
+      direction: "previous",
+      ariaLabel: "이전 5개 페이지"
+    });
+
+    for (let page = start; page <= end; page += 1) {
+      addPageControl(nav, String(page), page, summary.current);
+    }
+
+    addPageControl(nav, "다음", Math.min(summary.total, end + 1), summary.current, {
+      disabled: end === summary.total,
+      label: true,
+      direction: "next",
+      ariaLabel: "다음 5개 페이지"
+    });
+
+    paginationContainer(summary.element).replaceWith(nav);
+  }
+
+  function addQueryLoadingState(table) {
+    const card = table.closest("section, article, .content-card, .table-card") || document;
+    const form = card.querySelector("form") || document.querySelector("form");
+    if (!form || form.dataset.edutrackFastSubmitReady === "true") return;
+
+    form.dataset.edutrackFastSubmitReady = "true";
+    form.addEventListener("submit", function () {
+      form.classList.add("edutrack-class-query-loading");
+      form.querySelectorAll("button[type='submit'], input[type='submit']").forEach(function (button) {
+        button.disabled = true;
+        if (button.tagName === "BUTTON") button.textContent = "조회 중…";
+      });
+    }, { once: true });
+  }
+
+  function initialize() {
+    document.body.classList.add("edutrack-admin-class-fast-list");
+    const table = findCatalogTable();
+    if (!table || table.dataset.edutrackClassFastReady === "true") return;
+
+    table.dataset.edutrackClassFastReady = "true";
+    table.classList.add("edutrack-class-fast-table");
+    ensureTableWrapper(table);
+
+    const headers = Array.from(table.querySelectorAll("thead tr:last-child th")).map(function (cell) {
+      return normalized(textOf(cell));
+    });
+
+    const indices = {
+      name: findIndex(headers, [/^class$/, /^클래스$/, /^수업명$/, /class\s*명/, /클래스\s*명/], [/번호/]),
+      id: findIndex(headers, [/class\s*번호/, /클래스\s*번호/, /수업\s*번호/, /^class\s*no/], []),
+      term: findIndex(headers, [/term/, /학기/], []),
+      subject: findIndex(headers, [/subject/, /과목/], []),
+      lesson: findIndex(headers, [/lesson/, /레슨/], []),
+      teacher: findIndex(headers, [/강사/, /teacher/, /staff/], []),
+      status: findIndex(headers, [/^상태$/, /status/], []),
+      count: findIndex(headers, [/배정\s*학생/, /학생\s*수/, /인원/], []),
+    };
+
+    applyColumnClass(table, indices.name, "et-class-col-name");
+    applyColumnClass(table, indices.id, "et-class-col-id");
+    applyColumnClass(table, indices.term, "et-class-col-term");
+    applyColumnClass(table, indices.subject, "et-class-col-subject");
+    applyColumnClass(table, indices.lesson, "et-class-col-lesson");
+    applyColumnClass(table, indices.teacher, "et-class-col-teacher");
+    applyColumnClass(table, indices.status, "et-class-col-status");
+    applyColumnClass(table, indices.count, "et-class-col-count");
+
+    headers.forEach(function (header, index) {
+      if (/개강|종강|시작일|종료일|date/.test(header)) {
+        applyColumnClass(table, index, "et-class-col-date");
+      }
+    });
+
+    enhanceClassLinks(table, headers);
+    enhancePagination(table);
+    addQueryLoadingState(table);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initialize, { once: true });
+  } else {
+    initialize();
+  }
+})();
+</script>
+{# EDUTRACK_ADMIN_CLASS_FAST_UI_V4_END #}
+
+{% endblock %}

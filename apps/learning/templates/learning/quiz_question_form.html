@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/quiz.css' %}?v=1110nv3">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/components/quiz-editor.js' %}?v=quiz3" defer></script>{% endblock %}
+{% block content %}
+<section class="workflow-hero is-compact"><div><h1>{% if question %}문항 수정{% else %}문항 추가{% endif %}</h1><p>{{ quiz.title }}</p></div></section>
+<form method="post" class="workflow-panel quiz-question-editor" data-quiz-editor-form>{% csrf_token %}
+ {{ editor|json_script:"quiz-editor-data" }}
+ {{ form.config_json }}{{ form.choices_text }}
+ <fieldset class="quiz-type-cards">
+  <legend>문항 유형</legend>
+  {% for card in form.type_cards %}
+  <label class="quiz-type-card"><input type="radio" name="{{ form.question_type.html_name }}" value="{{ card.value }}"{% if card.checked %} checked{% endif %}><svg class="et-icon" aria-hidden="true"><use href="#i-{{ card.icon }}"/></svg><strong>{{ card.label }}</strong><small>{{ card.hint }}</small></label>
+  {% endfor %}
+  {% for error in form.question_type.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+ </fieldset>
+
+ <div class="workflow-field">
+  <label for="{{ form.prompt.id_for_label }}">{{ form.prompt.label }}</label>{{ form.prompt }}
+  <small data-quiz-hint="FILL">빈칸 채우기: 빈칸이 될 정답을 <code>`정답`</code>처럼 백틱(`)으로 감싸세요. 정답이 여러 개면 <code>`Paris|파리`</code>처럼 | 로 나눕니다.</small>
+  {% for error in form.prompt.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+ </div>
+ <div class="quiz-editor-meta">
+  <div class="workflow-field"><label for="{{ form.points.id_for_label }}">{{ form.points.label }}</label>{{ form.points }}{% for error in form.points.errors %}<p class="field-error">{{ error }}</p>{% endfor %}</div>
+  <div class="workflow-field"><label for="{{ form.order.id_for_label }}">{{ form.order.label }}</label>{{ form.order }}{% for error in form.order.errors %}<p class="field-error">{{ error }}</p>{% endfor %}</div>
+ </div>
+ <div class="workflow-field" data-quiz-hint="SHORT"><label for="{{ form.correct_text.id_for_label }}">{{ form.correct_text.label }}</label>{{ form.correct_text }}<small>대소문자와 앞뒤 공백은 구분하지 않습니다.</small>{% for error in form.correct_text.errors %}<p class="field-error">{{ error }}</p>{% endfor %}</div>
+
+ {% if form.non_field_errors %}<div class="quiz-editor-errors" role="alert">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+ <section class="quiz-answer-editor" data-quiz-answer-editor aria-label="정답 설정"></section>
+
+ <div class="workflow-actions"><a class="workflow-button is-ghost" href="{% url 'learning:quiz-detail' quiz.pk %}">취소</a><button class="workflow-button is-primary" type="submit">저장</button></div>
+</form>
+{% endblock %}

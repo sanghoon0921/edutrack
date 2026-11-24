@@ -1,0 +1,5 @@
+<section class="portal-card portal-home-messages" id="home-messages" aria-labelledby="portal-messages-title">
+ <div class="portal-card-head"><h2 id="portal-messages-title"><svg class="et-icon portal-symbol" aria-hidden="true"><use href="#i-message"/></svg>메시지 <span class="portal-unread-chip" data-chat-count>{{ data.messages.unread_count }}</span></h2><a href="{% url 'lms:inbox' %}">메시지 화면</a></div>
+ <div class="portal-card-list" data-home-chat-list>{% for item in data.messages.items %}<a class="portal-message-preview {% if item.unread %}unread{% endif %}" href="{{ item.url }}" data-conversation-id="{{ item.id }}"><div><strong>{{ item.title }}</strong><p>{{ item.preview }}</p></div><span>{% if item.unread %}안 읽음{% else %}{{ item.time }}{% endif %}</span></a>{% empty %}<p class="portal-empty">참여 중인 대화가 없습니다.<br><a href="{% url 'lms:new-conversation' %}">새 대화 시작</a></p>{% endfor %}</div>
+ <small class="portal-hint">대화를 누르면 메시지 화면으로 이동합니다. 오른쪽 아래 메시지 버튼으로 작게 볼 수도 있습니다.</small>
+</section>

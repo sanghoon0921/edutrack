@@ -1,0 +1,564 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/class-catalog.css' %}?v=1110nv3">
+{% endblock %}
+
+{% block content %}
+<style>.et-class-detail-page {
+    --et-detail-green: #172a46;
+    --et-detail-green-soft: #e9eff7;
+    --et-detail-gold: #1d4ed8;
+    --et-detail-ink: #172a46;
+    --et-detail-muted: #1d4ed8;
+    --et-detail-line: rgba(23,42,70,0.14);
+    --et-detail-surface: #ffffff;
+    --et-detail-canvas: #f8fafc;
+    display: grid;
+    gap: 16px;
+    color: var(--et-detail-ink);
+  }
+
+  .et-class-detail-page *,
+  .et-class-detail-page *::before,
+  .et-class-detail-page *::after {
+    box-sizing: border-box;
+  }
+
+  .et-class-detail-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 2px 2px 4px;
+  }
+
+  .et-class-detail-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 7px;
+    color: var(--et-detail-muted);
+    font-size:14px;
+    font-weight: 700;
+  }
+
+  .et-class-detail-breadcrumb a {
+    color: var(--et-detail-green);
+    text-decoration: none;
+  }
+
+  .et-class-detail-heading h1 {
+    margin: 0;
+    color: var(--et-detail-ink);
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight:700;
+    letter-spacing:-.015em;
+    line-height: 1.18;
+  }
+
+  .et-class-detail-heading p {
+    margin: 8px 0 0;
+    color: var(--et-detail-muted);
+    font-size: 14px;
+  }
+
+  .et-class-detail-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 9px 15px;
+    border: 1px solid var(--et-detail-line);
+    border-radius: 11px;
+    background: #fff;
+    color: var(--et-detail-green);
+    font-size:14px;
+    font-weight:700;
+    text-decoration: none;
+  }
+
+  .et-class-detail-card {
+    overflow: hidden;
+    border: 1px solid var(--et-detail-line);
+    border-radius: 18px;
+    background: var(--et-detail-surface);
+    box-shadow: 0 8px 24px rgba(23,42,70,0.055);
+  }
+
+  .et-class-detail-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 17px 20px;
+    border-bottom: 1px solid var(--et-detail-line);
+    background: linear-gradient(180deg, #fff, #fbfcfb);
+  }
+
+  .et-class-detail-card-head h2 {
+    margin: 0;
+    color: var(--et-detail-green);
+    font-size: 16px;
+    font-weight:700;
+    letter-spacing: -0.02em;
+  }
+
+  .et-class-detail-card-head span {
+    color: var(--et-detail-muted);
+    font-size:14px;
+    font-weight: 700;
+  }
+
+  .et-class-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+  }
+
+  .et-class-detail-field {
+    min-width: 0;
+    padding: 15px 18px;
+    border-right: 1px solid var(--et-detail-line);
+    border-bottom: 1px solid var(--et-detail-line);
+  }
+
+  .et-class-detail-field:nth-child(4n) {
+    border-right: 0;
+  }
+
+  .et-class-detail-field dt {
+    margin: 0 0 7px;
+    color: var(--et-detail-muted);
+    font-size:14px;
+    font-weight:700;
+  }
+
+  .et-class-detail-field dd {
+    margin: 0;
+    color: var(--et-detail-ink);
+    font-size:14px;
+    font-weight:700;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  .et-class-detail-field--wide {
+    grid-column: span 2;
+  }
+
+  .et-class-detail-lessons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 16px;
+    background: var(--et-detail-canvas);
+  }
+
+  .et-class-detail-lesson {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--et-detail-line);
+    border-radius: 14px;
+    background: #fff;
+  }
+
+  .et-class-detail-lesson-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 15px;
+    border-bottom: 1px solid var(--et-detail-line);
+    background: #fcfdfc;
+  }
+
+  .et-class-detail-lesson-title strong {
+    color: var(--et-detail-green);
+    font-size: 14px;
+    font-weight:700;
+  }
+
+  .et-class-detail-lesson-title span {
+    color: var(--et-detail-muted);
+    font-size:14px;
+    font-weight: 700;
+  }
+
+  .et-class-detail-lesson-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+  }
+
+  .et-class-detail-lesson-grid > div {
+    min-width: 0;
+    padding: 12px 14px;
+    border-right: 1px solid var(--et-detail-line);
+    border-bottom: 1px solid var(--et-detail-line);
+  }
+
+  .et-class-detail-lesson-grid > div:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .et-class-detail-lesson-grid dt {
+    margin: 0 0 6px;
+    color: var(--et-detail-muted);
+    font-size:14px;
+    font-weight:700;
+  }
+
+  .et-class-detail-lesson-grid dd {
+    margin: 0;
+    color: var(--et-detail-ink);
+    font-size:14px;
+    font-weight:700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .et-class-detail-lesson-grid a {
+    color: var(--et-detail-green);
+    text-decoration-color: rgba(29,78,216,0.62);
+    text-underline-offset: 3px;
+  }
+
+  .et-class-detail-empty {
+    padding: 25px 20px;
+    color: var(--et-detail-muted);
+    font-size:14px;
+    text-align: center;
+  }
+
+  .et-class-detail-cancellations {
+    display: grid;
+    gap: 8px;
+    padding: 14px 16px 16px;
+  }
+
+  .et-class-detail-cancellation {
+    display: grid;
+    grid-template-columns: 120px 100px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 11px 13px;
+    border: 1px solid var(--et-detail-line);
+    border-radius: 11px;
+    background: #fff;
+    font-size:14px;
+  }
+
+  .et-class-detail-cancellation strong {
+    color: var(--et-detail-green);
+  }
+
+  .et-class-detail-cancellation span {
+    color: var(--et-detail-muted);
+    overflow-wrap: anywhere;
+  }
+
+  .et-class-detail-status {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 16px 20px 20px;
+  }
+
+  .et-class-detail-status-step {
+    position: relative;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--et-detail-line);
+    border-right: 0;
+    background: #fff;
+    color: var(--et-detail-muted);
+    font-size:14px;
+    font-weight:700;
+  }
+
+  .et-class-detail-status-step:first-child {
+    border-radius: 10px 0 0 10px;
+  }
+
+  .et-class-detail-status-step:last-child {
+    border-right: 1px solid var(--et-detail-line);
+    border-radius: 0 10px 10px 0;
+  }
+
+  .et-class-detail-status-step.is-complete {
+    background: var(--et-detail-green-soft);
+    color: var(--et-detail-green);
+  }
+
+  .et-class-detail-status-step.is-current {
+    z-index: 1;
+    border-color: var(--et-detail-green);
+    background: var(--et-detail-green);
+    color: #fff;
+  }
+
+  .et-class-detail-status-step.is-current + .et-class-detail-status-step {
+    border-left-color: var(--et-detail-green);
+  }
+
+  @media (max-width: 1080px) {
+    .et-class-detail-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .et-class-detail-field:nth-child(4n) {
+      border-right: 1px solid var(--et-detail-line);
+    }
+
+    .et-class-detail-field:nth-child(3n) {
+      border-right: 0;
+    }
+  }
+
+  @media (max-width: 780px) {
+    .et-class-detail-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .et-class-detail-grid,
+    .et-class-detail-lessons {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .et-class-detail-field:nth-child(3n) {
+      border-right: 1px solid var(--et-detail-line);
+    }
+
+    .et-class-detail-field:nth-child(2n) {
+      border-right: 0;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .et-class-detail-grid,
+    .et-class-detail-lessons,
+    .et-class-detail-lesson-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .et-class-detail-field,
+    .et-class-detail-field:nth-child(n),
+    .et-class-detail-lesson-grid > div,
+    .et-class-detail-lesson-grid > div:nth-child(n) {
+      border-right: 0;
+    }
+
+    .et-class-detail-field--wide {
+      grid-column: auto;
+    }
+
+    .et-class-detail-cancellation {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+
+    .et-class-detail-status {
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .et-class-detail-status-step,
+    .et-class-detail-status-step:first-child,
+    .et-class-detail-status-step:last-child {
+      border: 1px solid var(--et-detail-line);
+      border-radius: 9px;
+    }
+  }
+</style>
+
+<div class="et-class-detail-page">
+  <header class="et-class-detail-heading">
+    <div>
+      <nav class="et-class-detail-breadcrumb" aria-label="현재 위치">
+        <a href="{{ class_list_url }}">Class 관리</a>
+        <span aria-hidden="true">/</span>
+        <span>Class 상세</span>
+      </nav>
+      <h1>Class 상세</h1>
+      <p>{{ detail.term_name }} · {{ detail.subject_name }} · {{ detail.class_name }} · Class {{ detail.class_no }}</p>
+    </div>
+    <a class="et-class-detail-back" href="{{ class_list_url }}">← 클래스 목록</a>
+  </header>
+
+  <section class="et-class-detail-card" aria-labelledby="et-basic-info-title">
+    <div class="et-class-detail-card-head">
+      <h2 id="et-basic-info-title">기본정보</h2>
+      <span>{{ detail.status_label }}</span>
+    </div>
+    <dl class="et-class-detail-grid">
+      <div class="et-class-detail-field et-class-detail-field--wide">
+        <dt>Term / Subject</dt>
+        <dd>{{ detail.term_name }} / {{ detail.subject_name }}</dd>
+      </div>
+      <div class="et-class-detail-field et-class-detail-field--wide">
+        <dt>Class</dt>
+        <dd>{{ detail.class_name }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>Class 번호</dt>
+        <dd>{{ detail.class_no }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>수강방식</dt>
+        <dd>{{ detail.class_type_label }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>정원</dt>
+        <dd>{{ detail.capacity_label }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>배정 학생</dt>
+        <dd>{{ detail.assigned_student_count }}명</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>개강일</dt>
+        <dd>{{ detail.start_date }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>종강일</dt>
+        <dd>{{ detail.end_date }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>요일</dt>
+        <dd>{{ detail.weekday_label }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>지점</dt>
+        <dd>{{ detail.branch_name }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>Staff</dt>
+        <dd>{{ detail.staff_name }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>TA</dt>
+        <dd>{{ detail.ta_name }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>교재 비용</dt>
+        <dd>{{ detail.material_price }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>Lesson 구성</dt>
+        <dd>{{ detail.lesson_count }}개</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>운영 기준</dt>
+        <dd>{{ detail.gubun }}</dd>
+      </div>
+      <div class="et-class-detail-field">
+        <dt>사용 여부</dt>
+        <dd>{{ detail.use_yn }}</dd>
+      </div>
+      <div class="et-class-detail-field et-class-detail-field--wide">
+        <dt>클래스 설명</dt>
+        <dd>{{ detail.description }}</dd>
+      </div>
+      <div class="et-class-detail-field et-class-detail-field--wide">
+        <dt>폐강 / 취소 사유</dt>
+        <dd>{{ detail.cancel_reason }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="et-class-detail-card" aria-labelledby="et-lesson-title">
+    <div class="et-class-detail-card-head">
+      <h2 id="et-lesson-title">Lesson</h2>
+      <span>{{ detail.lesson_count }}개 구성</span>
+    </div>
+    {% if detail.lessons %}
+      <div class="et-class-detail-lessons">
+        {% for lesson in detail.lessons %}
+          <article class="et-class-detail-lesson">
+            <header class="et-class-detail-lesson-title">
+              <strong>{{ lesson.lesson_type }}</strong>
+              <span>Lesson {{ lesson.lesson_no }}</span>
+            </header>
+            <dl class="et-class-detail-lesson-grid">
+              <div>
+                <dt>선생님</dt>
+                <dd>{{ lesson.teacher_name }}</dd>
+              </div>
+              <div>
+                <dt>시간</dt>
+                <dd>{{ lesson.time_range }}</dd>
+              </div>
+              <div>
+                <dt>{{ lesson.price_caption }}</dt>
+                <dd>{{ lesson.price_label }}</dd>
+              </div>
+              <div>
+                <dt>강의실</dt>
+                <dd>{{ lesson.class_room }}</dd>
+              </div>
+              <div>
+                <dt>ZOOM URL</dt>
+                <dd>
+                  {% if lesson.zoom_url %}
+                    <a href="{{ lesson.zoom_url }}" target="_blank" rel="noopener noreferrer">수업 링크 열기</a>
+                  {% else %}
+                    -
+                  {% endif %}
+                </dd>
+              </div>
+              <div>
+                <dt>ZOOM ID</dt>
+                <dd>{{ lesson.zoom_id }}</dd>
+              </div>
+            </dl>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="et-class-detail-empty">등록된 Lesson 정보가 없습니다.</div>
+    {% endif %}
+  </section>
+
+  <section class="et-class-detail-card" aria-labelledby="et-cancellation-title">
+    <div class="et-class-detail-card-head">
+      <h2 id="et-cancellation-title">휴강일</h2>
+      <span>{{ detail.cancellations|length }}건</span>
+    </div>
+    {% if detail.cancellations %}
+      <div class="et-class-detail-cancellations">
+        {% for item in detail.cancellations %}
+          <div class="et-class-detail-cancellation">
+            <strong>{{ item.date }}</strong>
+            <span>{{ item.type }}</span>
+            <span>{{ item.reason }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="et-class-detail-empty">등록된 휴강일이 없습니다.</div>
+    {% endif %}
+  </section>
+
+  <section class="et-class-detail-card" aria-labelledby="et-status-title">
+    <div class="et-class-detail-card-head">
+      <h2 id="et-status-title">상태</h2>
+      <span>현재 {{ detail.status_label }}</span>
+    </div>
+    <div class="et-class-detail-status" role="list" aria-label="클래스 상태">
+      {% for step in detail.status_steps %}
+        <div
+          class="et-class-detail-status-step{% if step.state == 'complete' %} is-complete{% elif step.state == 'current' %} is-current{% endif %}"
+          role="listitem"
+          {% if step.state == 'current' %}aria-current="step"{% endif %}
+        >
+          {{ step.label }}{% if step.state == 'current' %} ✓{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

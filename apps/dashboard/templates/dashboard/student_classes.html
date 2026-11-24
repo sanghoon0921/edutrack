@@ -1,0 +1,75 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/components/learning-overview.css' %}?v=20261008-r2">
+{% endblock %}
+
+{% block content %}
+<section class="learner-page-hero">
+  <div>
+    <h1>{% if is_parent %}자녀 수업{% else %}내 수업{% endif %}</h1>
+    <p>
+      {% if student %}
+        {{ student.name }} · 학생번호 {{ student.student_id }}의 진행·예정·완료 수업을 구분해 표시합니다.
+      {% else %}
+        계정에 연결된 학생의 수업을 확인합니다.
+      {% endif %}
+    </p>
+  </div>
+  {% if student %}<span class="learner-identity-chip">{{ student.school|default:"학교 미입력" }}</span>{% endif %}
+</section>
+
+{% if unlinked_account %}
+  <section class="learner-empty-state">
+    <strong>연결된 학생 정보가 없습니다.</strong>
+    <p>{% if request.user.role == "ADMIN" %}학생 상세 화면에서 테스트할 학생을 먼저 선택해 주세요.{% else %}관리자에게 학생 계정 연결을 요청해 주세요.{% endif %}</p>
+  </section>
+{% elif linked_student_missing %}
+  <section class="learner-empty-state">
+    <strong>연결된 학생 정보를 찾을 수 없습니다.</strong>
+    <p>학생번호 {{ student_id }}의 인트라넷 등록 상태를 확인해 주세요.</p>
+  </section>
+{% else %}
+  <section class="learner-summary-strip">
+    <div><span>전체</span><strong>{{ course_count }}</strong></div>
+    <div><span>진행 중</span><strong>{{ current_courses|length }}</strong></div>
+    <div><span>예정</span><strong>{{ upcoming_courses|length }}</strong></div>
+    <div><span>완료</span><strong>{{ completed_courses|length }}</strong></div>
+  </section>
+
+  {% if current_courses %}
+    <section class="learner-course-section">
+      <div class="learner-section-heading"><div><h2>진행 중인 수업</h2></div><span>{{ current_courses|length }}개</span></div>
+      <div class="learner-course-list">
+        {% for course in current_courses %}{% include "components/learner_course_card.html" with course=course student=student status_label="진행 중" %}{% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if upcoming_courses %}
+    <section class="learner-course-section">
+      <div class="learner-section-heading"><div><h2>예정된 수업</h2></div><span>{{ upcoming_courses|length }}개</span></div>
+      <div class="learner-course-list">
+        {% for course in upcoming_courses %}{% include "components/learner_course_card.html" with course=course student=student status_label="예정" %}{% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if completed_courses %}
+    <section class="learner-course-section">
+      <div class="learner-section-heading"><div><h2>완료된 수업</h2></div><span>{{ completed_courses|length }}개</span></div>
+      <div class="learner-course-list">
+        {% for course in completed_courses %}{% include "components/learner_course_card.html" with course=course student=student status_label="완료" %}{% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if not current_courses and not upcoming_courses and not completed_courses %}
+    <section class="learner-empty-state">
+      <strong>등록된 수업이 없습니다.</strong>
+      <p>수업이 배정되면 이 화면에서 상태별로 확인할 수 있습니다.</p>
+    </section>
+  {% endif %}
+{% endif %}
+{% endblock %}

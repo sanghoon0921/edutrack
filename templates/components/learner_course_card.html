@@ -1,0 +1,44 @@
+<article class="learner-course-row{% if course.display_status == '종료' %} is-history{% endif %}">
+  <div class="learner-course-row-main">
+    <div class="learner-course-tags">
+      <span class="learner-status-tag{% if course.display_status == '진행중' %} is-current{% elif course.display_status == '종료' %} is-completed{% else %} is-upcoming{% endif %}">
+        {{ status_label|default:course.display_status|default:"상태 미지정" }}
+      </span>
+      {% if course.term_name %}<span>{{ course.term_name }}</span>{% endif %}
+      {% if course.subject_name %}<span>{{ course.subject_name }}</span>{% endif %}
+    </div>
+    <h3>{{ course.class_name|default:"수업명 미등록" }}</h3>
+    <p>
+      {{ course.teacher_names|default:"강사 미지정" }}
+      {% if course.schedule_summary %} · {{ course.schedule_summary }}{% endif %}
+    </p>
+  </div>
+
+  <dl class="learner-course-meta">
+    <div>
+      <dt>수업 기간</dt>
+      <dd>
+        {% if course.start_date %}{{ course.start_date|date:"Y.m.d" }}{% else %}미정{% endif %}
+        –
+        {% if course.end_date %}{{ course.end_date|date:"Y.m.d" }}{% else %}미정{% endif %}
+      </dd>
+    </div>
+    <div>
+      <dt>수업 방식</dt>
+      <dd>{{ course.learning_methods|default:"미지정" }}</dd>
+    </div>
+    <div>
+      <dt>계획 회차</dt>
+      <dd>{{ course.planned_count|default:0 }}회</dd>
+    </div>
+  </dl>
+
+  {% if show_attendance %}
+    <a
+      class="learner-course-action"
+      href="{% url 'students:attendance' student.student_id course.assign_id %}"
+    >
+      출결 기록 보기 <span>→</span>
+    </a>
+  {% endif %}
+</article>

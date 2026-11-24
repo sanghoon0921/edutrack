@@ -1,0 +1,27 @@
+{% comment %}학생 응시 화면의 문항 하나. question + view(quiz_types.prepare 결과). 끌어 놓기 동작: static/js/components/quiz-attempt.js{% endcomment %}
+{% with kind=question.question_type %}
+{% if kind == 'MCQ' %}
+ <div class="quiz-choices">{% for choice in view.choices %}<label class="quiz-choice"><input type="radio" name="question_{{ question.pk }}" value="{{ choice.pk }}"><span>{{ choice.text }}</span></label>{% endfor %}</div>
+{% elif kind == 'MULTI' %}
+ <p class="quiz-help">정답을 모두 고르세요. 틀린 보기를 고르면 감점됩니다.</p>
+ <div class="quiz-choices">{% for choice in view.choices %}<label class="quiz-choice is-multi"><input type="checkbox" name="question_{{ question.pk }}" value="{{ choice.pk }}"><span>{{ choice.text }}</span></label>{% endfor %}</div>
+{% elif kind == 'TF' %}
+ <div class="quiz-tf">{% for choice in view.choices %}<label class="quiz-choice quiz-tf-option"><input type="radio" name="question_{{ question.pk }}" value="{{ choice.pk }}"><span>{{ choice.text }}{% if choice.text == '참' %} (True){% elif choice.text == '거짓' %} (False){% endif %}</span></label>{% endfor %}</div>
+{% elif kind == 'FILL' %}
+ {% if view.bank %}<div class="quiz-bank" aria-label="단어 은행"><span class="quiz-bank-title">단어 은행</span>{% for word in view.bank %}<span class="quiz-bank-word">{{ word }}</span>{% endfor %}</div>{% endif %}
+ <p class="quiz-fill">{% for segment in view.segments %}{% if segment.kind == 'text' %}{{ segment.text }}{% elif segment.mode == 'text' %}<input class="quiz-blank" type="text" name="{{ segment.name }}" autocomplete="off" aria-label="빈칸 {{ segment.blank|add:1 }}">{% else %}<select name="{{ segment.name }}" class="quiz-blank" aria-label="빈칸 {{ segment.blank|add:1 }}"><option value="">{% if segment.mode == 'bank' %}단어 고르기{% else %}선택{% endif %}</option>{% for option in segment.options %}<option>{{ option }}</option>{% endfor %}</select>{% endif %}{% endfor %}</p>
+{% elif kind == 'ORDER' %}
+ <p class="quiz-help">항목을 끌어서(또는 ▲▼ 버튼으로) 올바른 순서로 놓으세요.</p>
+ <ol class="quiz-order" data-quiz-order>{% for item in view.items %}<li class="quiz-order-item" draggable="true"><input type="hidden" name="{{ view.name }}" value="{{ item.id }}"><svg class="et-icon quiz-grip" aria-hidden="true"><use href="#i-grip"/></svg><span class="quiz-order-text">{{ item.text }}</span><button type="button" class="quiz-move" data-move="-1" aria-label="{{ item.text }} 위로"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-up"/></svg></button><button type="button" class="quiz-move" data-move="1" aria-label="{{ item.text }} 아래로"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button></li>{% endfor %}</ol>
+{% elif kind == 'MATCH' %}
+ <div class="quiz-match">{% for left in view.lefts %}<label class="quiz-match-row"><span>{{ left.left }}</span><select name="{{ left.name }}"><option value="">짝 고르기</option>{% for option in view.options %}<option>{{ option }}</option>{% endfor %}</select></label>{% endfor %}</div>
+{% elif kind == 'CATEGORY' %}
+ <p class="quiz-help">항목을 알맞은 범주 상자로 끌어 넣으세요. 휴대폰에서는 항목을 누른 뒤 상자를 누르면 됩니다. 어느 범주에도 맞지 않는 항목은 그대로 두세요.</p>
+ <div class="quiz-category" data-quiz-category>
+  <div class="quiz-pool" data-zone=""><span class="quiz-zone-title">분류할 항목</span><div class="quiz-zone-items">{% for item in view.items %}<button type="button" class="quiz-chip" draggable="true" data-item><input type="hidden" name="{{ item.name }}" value="">{{ item.text }}</button>{% endfor %}</div></div>
+  <div class="quiz-bins">{% for category in view.categories %}<div class="quiz-bin" data-zone="{{ category.id }}" tabindex="0" role="group" aria-label="{{ category.name }} 범주"><span class="quiz-zone-title">{{ category.name }}</span><div class="quiz-zone-items"></div></div>{% endfor %}</div>
+ </div>
+{% else %}
+ <input class="form-control" type="text" name="question_{{ question.pk }}" autocomplete="off">
+{% endif %}
+{% endwith %}

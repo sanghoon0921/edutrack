@@ -1,0 +1,10 @@
+{% extends "layouts/base.html" %}
+{% load communication_tags %}
+{% block content %}
+<article class="notice-detail workflow-panel" data-reveal>
+  <header class="notice-detail-header"><div class="compact-badges">{% include "communications/_notice_kind.html" %}<span>{{ notice.audience_display }}</span>{% if notice.is_pinned %}<span>상단 고정</span>{% endif %}</div><h1>{{ notice.title }}</h1><p>{{ notice.created_by.effective_name }} · {{ notice.published_at|date:"Y.m.d H:i" }}</p></header>
+  <div class="notice-rich-content">{{ notice|notice_content }}</div>
+  {% if notice.attachments.all %}<section class="notice-attachment-list"><h2>첨부파일</h2>{% for item in notice.attachments.all %}<a href="{% url 'communications:notice-attachment' notice.pk item.pk %}"><span>파일</span><div><strong>{{ item.original_name }}</strong><small>{{ item.size|filesizeformat }}</small></div><b>다운로드</b></a>{% endfor %}</section>{% endif %}
+  <footer class="workflow-actions"><a class="workflow-button is-ghost" href="{% url 'communications:notice-list' %}">← 공지 목록으로</a>{% if can_manage_notice %}<a class="workflow-button is-primary" href="{% url 'communications:notice-update' notice.pk %}">공지 수정</a>{% endif %}</footer>
+</article>
+{% endblock %}

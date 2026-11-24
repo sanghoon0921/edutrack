@@ -1,0 +1,84 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/components/compact-pages.css' %}?v=1110nv3">{% endblock %}
+{% block content %}
+<div class="et-v5-shell et-v5-classroom">
+  <section class="course-page-hero et-v5-hero">
+    <div>
+      <p class="page-context">{{ board.term|default:"" }}{% if board.subject %} · {{ board.subject }}{% endif %}</p>
+      <h1>{{ board.title }}</h1>
+      <p>{{ board.description|default:"카테고리별 교재와 수업 자료를 확인합니다." }}</p>
+    </div>
+    <div class="course-header-actions et-v5-header-actions">
+      {% if manage_mode %}
+        <a class="stage14-action is-secondary et-v5-action" href="{% url 'classroom:board-update' board.pk %}">과목 설정 수정</a>
+        <a class="stage14-action is-primary et-v5-action" href="{% url 'classroom:category-create' board.pk %}">＋ 카테고리 추가</a>
+        <form method="post" action="{% url 'classroom:board-delete' board.pk %}">
+          {% csrf_token %}
+          <button class="stage14-action is-danger et-v5-action" type="submit" data-confirm-message="‘{{ board.title|escapejs }}’ 과목과 안의 모든 자료를 영구 삭제할까요?">과목 영구 삭제</button>
+        </form>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="course-module-stack et-v5-module-stack">
+    {% for item in categories %}
+      <article class="course-module et-v5-module">
+        <header class="course-module-header et-v5-module-header">
+          <div>
+            <h2>{{ item.category.title }}</h2>
+            <p>{{ item.category.description|default:"등록된 카테고리 설명이 없습니다." }}</p>
+          </div>
+          {% if manage_mode %}
+            <div class="course-module-actions et-v5-module-actions">
+              <a class="stage14-action is-primary et-v5-action is-resource" href="{% url 'classroom:resource-create' board.pk item.category.pk %}?type=PDF">＋ PDF 등록</a>
+              <a class="stage14-action is-download et-v5-action is-resource" href="{% url 'classroom:resource-create' board.pk item.category.pk %}?type=FILE">＋ 파일 등록</a>
+              <a class="stage14-action is-secondary et-v5-action is-resource" href="{% url 'classroom:resource-create' board.pk item.category.pk %}?type=LINK">＋ 링크 등록</a>
+              <a class="stage14-action is-secondary et-v5-action" href="{% url 'classroom:category-update' board.pk item.category.pk %}">카테고리 수정</a>
+              <form method="post" action="{% url 'classroom:category-delete' board.pk item.category.pk %}">
+                {% csrf_token %}
+                <button class="stage14-action is-danger et-v5-action" type="submit" data-confirm-message="‘{{ item.category.title|escapejs }}’ 카테고리와 안의 자료를 모두 삭제할까요?">카테고리 삭제</button>
+              </form>
+            </div>
+          {% endif %}
+        </header>
+        <div class="et-v5-resource-list">
+          {% for resource in item.resources %}
+            <div class="course-resource-row et-v5-resource-row">
+              <span class="course-resource-icon">{{ resource.resource_type }}</span>
+              <div class="course-resource-main">
+                {% if resource.resource_type == 'LINK' %}
+                  <a href="{{ resource.external_url }}" target="_blank" rel="noopener">{{ resource.title }}</a>
+                {% else %}
+                  <a href="{% url 'classroom:resource-detail' resource.pk %}">{{ resource.title }}</a>
+                {% endif %}
+                <small>{{ resource.get_resource_type_display }}{% if resource.size %} · {{ resource.size|filesizeformat }}{% endif %}</small>
+              </div>
+              <div class="course-resource-actions et-v5-resource-actions">
+                {% if resource.is_pdf %}<a class="stage14-action is-secondary et-v5-action" href="{% url 'classroom:resource-detail' resource.pk %}">미리보기</a>{% endif %}
+                {% if resource.resource_type != 'LINK' %}<a class="stage14-action is-download et-v5-action" href="{% url 'classroom:resource-download' resource.pk %}">다운로드</a>{% endif %}
+                {% if manage_mode %}
+                  <a class="stage14-action is-secondary et-v5-action" href="{% url 'classroom:resource-update' resource.pk %}">자료 수정</a>
+                  <form method="post" action="{% url 'classroom:resource-delete' resource.pk %}">
+                    {% csrf_token %}
+                    <button class="stage14-action is-danger et-v5-action" type="submit" data-confirm-message="‘{{ resource.title|escapejs }}’ 자료를 영구 삭제할까요?">자료 삭제</button>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          {% empty %}
+            <div class="course-empty et-v5-course-empty">
+              <strong>이 카테고리에 등록된 자료가 없습니다.</strong>
+              {% if manage_mode %}
+                <span>위의 ‘PDF 등록’ 버튼을 눌러 교재 PDF를 바로 올릴 수 있습니다.</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </article>
+    {% empty %}
+      <section class="workflow-panel workflow-empty et-v5-empty-panel">등록된 카테고리가 없습니다.</section>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

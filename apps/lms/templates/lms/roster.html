@@ -1,0 +1,10 @@
+{% extends "lms/base.html" %}{% load static %}
+{% block lms_css %}<link rel="stylesheet" href="{% static 'css/components/student-transfer-selector.css' %}?v=1110nv3">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/components/student-transfer-selector.js' %}?v=ux6" defer></script>{% endblock %}
+{% block lms_content %}
+<form method="post" class="ux-editor lms-form" data-compact-form>{% csrf_token %}
+<header class="ux-editor-toolbar"><h1>{{ group.title }} · 명단·TA 지정</h1><div class="ux-actions"><a class="ux-btn" href="{% url 'lms:room' group.pk %}">반으로</a><button type="submit" class="ux-btn primary">명단·담당자 저장</button></div></header>
+{{ form.non_field_errors }}<div class="ux-editor-columns ux-roster-columns"><section class="ux-editor-main">{% include 'components/student_transfer_selector.html' with selector=student_selector %}</section><aside class="ux-editor-students">
+{% include 'components/compact_field.html' with field=form.staff %}
+<details class="ux-options"><summary>명단·담당자 변경 안내</summary><p>반 명단 변경은 새 학습 활동의 대상 선택에 반영됩니다. 기존 과제 배정·제출·첨삭 기록은 자동으로 삭제하거나 재배정하지 않습니다. TA를 제외하면 이 반의 공동 작업 접근이 차단됩니다.</p></details>
+</aside></div></form>{% endblock %}

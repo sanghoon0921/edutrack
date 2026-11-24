@@ -1,0 +1,63 @@
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EduTrack 로그인</title>
+  <link rel="stylesheet" href="{% static 'css/layers/00-base.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/50-intranet-theme.css' %}?v=1110nv3">
+  <link rel="stylesheet" href="{% static 'css/layers/60-visual-refresh.css' %}?v=20261008-r2">
+  <link rel="stylesheet" href="{% static 'css/layers/80-readability.css' %}?v=1110nv3">
+  <script src="{% static 'accounts/js/login.js' %}?v=20261008-r2" defer></script>
+</head>
+<body class="intranet-login-body vr-login-body" data-ui-version="intranet-v2" data-readability-version="2">
+  <main class="vr-login-layout">
+    <section class="vr-login-hero" aria-labelledby="login-introduction">
+      <a class="vr-login-brand" href="{% url 'login' %}">VETERANS EDU <span>EduTrack LMS</span></a>
+      <div class="vr-login-story">
+        <p class="vr-kicker">LEARNING, CONNECTED.</p>
+        <h1 id="login-introduction">배움의 과정을 연결하고,<br>성장의 다음을 준비합니다.</h1>
+        <p class="vr-login-description">수업과 과제, 피드백과 성적까지.<br>매일의 학습을 한곳에서 확인하세요.</p>
+        <div class="vr-feature-list" aria-label="주요 기능">
+          <article><span>01</span><div><strong>수업의 흐름을 한눈에</strong><p>반별 공지와 자료, 수업 안내</p></div></article>
+          <article><span>02</span><div><strong>피드백으로 이어지는 학습</strong><p>과제 제출, 점수 확인과 파일 첨삭</p></div></article>
+          <article><span>03</span><div><strong>더 가까운 소통</strong><p>강사와 학생의 개인·그룹 메시지</p></div></article>
+        </div>
+      </div>
+      <p class="vr-hero-footer">VETERANS EDU <span>Learning Management System</span></p>
+    </section>
+    <section class="vr-login-panel" aria-labelledby="login-heading">
+      <div class="vr-login-card">
+        <p class="vr-kicker">WELCOME BACK</p>
+        <h2 id="login-heading">로그인</h2>
+        <p class="vr-form-description">발급받은 계정으로 학습 공간을 시작하세요.</p>
+        {% if form.lock_message %}
+          <div class="form-alert" role="alert">{{ form.lock_message }}</div>
+        {% elif form.errors %}
+          <div class="form-alert" role="alert">아이디 또는 비밀번호를 다시 확인해 주세요.</div>
+        {% endif %}
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+          <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            {{ form.username }}
+            {% for error in form.username.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+            <div class="vr-password-control">
+              {{ form.password }}
+              <button type="button" data-vr-password-toggle aria-controls="{{ form.password.id_for_label }}" aria-pressed="false" hidden>보기</button>
+            </div>
+            {% for error in form.password.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+          </div>
+          <button class="btn btn-primary btn-full vr-login-submit" type="submit">로그인</button>
+        </form>
+        <p class="vr-login-help">계정 및 접근 권한 문의는 관리자에게 요청해 주세요.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

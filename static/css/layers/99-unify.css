@@ -1,0 +1,434 @@
+/* 99-unify (11/19): 마지막 층 — 페이지마다 달랐던 제목 머리·글자 크기·여백·폼·단추·표·쪽 번호를 한 규칙으로 맞춥니다.
+   사용자 요청(11/19): "페이지마다 통일, 붙어 있는 곳 없이, 색은 이것저것 넣지 말고 가독성 좋게, 너무 흐리게 하지 말 것".
+   색: 흰 면 + 베이지 선 + 남색 단추. 골드는 제목 막대·선택 상태에만. 상태 색(빨강·초록 등)은 글자와 작은 표시에만 씁니다.
+   리포트카드 양식(.rc-sheet)·첨삭 도구(.ann-*)·대화 입력창은 각자 모양을 유지합니다. */
+
+:root {
+  --fs-xs: 12px; --fs-sm: 13px; --fs-base: 14px; --fs-md: 15px; --fs-lg: 16px; --fs-xl: 18px; --fs-2xl: 22px;
+  --nv-muted: #5d636d;           /* 보조 글자도 또렷하게(흰 바탕 6:1) */
+  --et-muted: #5d636d; --et-muted-2: #6b7079;
+  --u-ctl-h: 38px; --u-btn-h: 34px; --u-btn-h-sm: 30px; --u-r-ctl: 8px; --u-r-box: 14px;
+  --u-pad-box: 20px 22px; --u-gap-section: 16px;
+}
+
+/* ── 글자: 본문 14px, 보조 13px 이하로 내려가지 않게 ── */
+body.intranet-app-body { font-size: 14px !important; }
+body.intranet-app-body #main-content#main-content :is(button, input, select, textarea) { font-family: inherit; }
+body.intranet-app-body #main-content#main-content :is(small, .ux-hint, .portal-hint, .lms-muted, .workflow-help):not(.rc-sheet *) { font-size: 13px !important; }
+body.intranet-app-body #main-content#main-content :is(.ux-hint, .portal-hint, .lms-muted, .workflow-help, .workflow-field small):not(.rc-sheet *) { color: var(--nv-muted) !important; }
+body.intranet-app-body #main-content#main-content ::placeholder { color: #737881 !important; opacity: 1; }
+
+/* ── 페이지 머리: 모든 화면이 같은 흰 상자(제목 22px + 설명 13px + 오른쪽 단추) ── */
+body.intranet-app-body #main-content#main-content :is(.workflow-hero, .workflow-page-hero, .learner-page-hero, .premium-search-hero, .lms-heading,
+  .communications-hero, .operations-page-hero, .acct-head, .import-page-hero, .import-hero, .et-v5-page-heading, .catalog-hero,
+  .page-heading, .course-page-hero, .portal-home-head, .u-page-head) {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; flex-wrap: wrap !important;
+  gap: 12px 16px !important; margin: 0 0 var(--u-gap-section) !important; padding: var(--u-pad-box) !important; min-height: 0 !important;
+  background: var(--nv-surface) !important; background-image: none !important; border: 1px solid var(--nv-line) !important;
+  border-radius: var(--u-r-box) !important; box-shadow: var(--nv-shadow) !important; color: var(--nv-ink) !important; position: relative;
+}
+body.intranet-app-body #main-content#main-content :is(.workflow-hero, .workflow-page-hero, .learner-page-hero, .premium-search-hero, .lms-heading,
+  .communications-hero, .operations-page-hero, .acct-head, .import-page-hero, .import-hero, .et-v5-page-heading, .catalog-hero,
+  .page-heading, .course-page-hero, .portal-home-head, .u-page-head) :is(h1) {
+  margin: 0 !important; font-size: 22px !important; line-height: 1.35 !important; font-weight: 800 !important; color: var(--nv-ink) !important;
+}
+body.intranet-app-body #main-content#main-content :is(.workflow-hero, .workflow-page-hero, .learner-page-hero, .premium-search-hero, .lms-heading,
+  .communications-hero, .operations-page-hero, .acct-head, .import-page-hero, .import-hero, .et-v5-page-heading, .catalog-hero,
+  .page-heading, .course-page-hero, .portal-home-head, .u-page-head) h1 + p {
+  margin: 4px 0 0 !important; font-size: 13px !important; line-height: 1.55 !important; color: var(--nv-muted) !important; max-width: 72ch;
+}
+/* 머리 안 제목 묶음은 남는 폭을 차지하고, 단추 묶음은 한 줄로 오른쪽에 */
+body.intranet-app-body #main-content#main-content :is(.workflow-hero, .workflow-page-hero, .lms-heading, .operations-page-hero, .acct-head, .communications-hero, .u-page-head) > div:first-child { flex: 1 1 auto; min-width: 0; }
+body.intranet-app-body #main-content#main-content :is(.workflow-actions, .workflow-hero-actions, .lms-actions, .acct-head-actions, .ux-actions, .u-head-actions) {
+  display: flex !important; flex-wrap: wrap !important; align-items: center !important; justify-content: flex-end; gap: 8px !important; margin: 0 !important;
+}
+/* 머리 위 작은 이름표(아이브로)는 쓰지 않습니다. 상위 화면 이동은 위쪽 '뒤로가기' 막대와 경로 글자로 */
+body.intranet-app-body #main-content#main-content .acct-eyebrow { display: none !important; }
+body.intranet-app-body #main-content#main-content .acct-head::before { display: none !important; content: none !important; }
+body.intranet-app-body #main-content#main-content :is(.lms-breadcrumb, .rc-crumb) { margin: 0 0 4px !important; font-size: 13px !important; color: var(--nv-muted) !important; font-weight: 500 !important; letter-spacing: 0 !important; text-transform: none !important; }
+body.intranet-app-body #main-content#main-content :is(.lms-breadcrumb, .rc-crumb) a { color: var(--nv-link) !important; }
+/* 머리 상자 안 역할 표시(관리자·학생 등)는 회색 작은 표 */
+body.intranet-app-body #main-content#main-content .workflow-role-badge { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; background: var(--nv-surface-2) !important; border: 1px solid var(--nv-line) !important; color: var(--nv-ink-2) !important; font-size: 13px !important; font-weight: 600 !important; }
+
+/* ── 구역 사이 간격: 머리·상자·표 사이 16px ── */
+body.intranet-app-body #main-content#main-content > :is(section, article, form, div):not(:last-child) { margin-bottom: var(--u-gap-section); }
+body.intranet-app-body #main-content#main-content :is(.workflow-panel, .lms-panel, .portal-card, .workflow-form-card, .ux-editor) > :is(header, .workflow-panel-head) {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px;
+}
+body.intranet-app-body #main-content#main-content :is(.workflow-panel, .lms-panel) { padding: 18px 20px !important; }
+body.intranet-app-body #main-content#main-content :is(.workflow-panel, .lms-panel, .portal-card) :is(h2) { margin: 0 !important; }
+body.intranet-app-body #main-content#main-content :is(.workflow-panel, .lms-panel, .portal-card) header p { margin: 3px 0 0 !important; font-size: 13px !important; color: var(--nv-muted) !important; }
+
+/* ── 폼: 상자 안에, 칸 사이 16px, 이름표와 입력칸 사이 6px, 저장 단추는 아래 선 위에 ── */
+body.intranet-app-body #main-content#main-content .workflow-form-shell { max-width: 760px; }
+body.intranet-app-body #main-content#main-content .workflow-form-card {
+  display: grid !important; gap: 16px !important; padding: 22px 24px !important; background: var(--nv-surface) !important;
+  border: 1px solid var(--nv-line) !important; border-radius: var(--u-r-box) !important; box-shadow: var(--nv-shadow) !important;
+}
+body.intranet-app-body #main-content#main-content .workflow-field { display: grid !important; gap: 6px !important; margin: 0 !important; min-width: 0; }
+body.intranet-app-body #main-content#main-content .workflow-field > label,
+body.intranet-app-body #main-content#main-content :is(.workflow-panel, .workflow-form-card, .lms-form, .ux-editor) label:not(:has(input[type=checkbox], input[type=radio])):not([class]) {
+  font-size: 13px !important; font-weight: 700 !important; color: var(--nv-ink-2) !important; line-height: 1.4 !important; margin: 0 !important;
+}
+body.intranet-app-body #main-content#main-content .workflow-field :is(small, .field-help) { margin: 0 !important; line-height: 1.5 !important; }
+body.intranet-app-body #main-content#main-content :is(.field-error, .errorlist) { margin: 2px 0 0 !important; padding: 0 !important; list-style: none; color: var(--nv-danger) !important; font-size: 13px !important; font-weight: 600; }
+body.intranet-app-body #main-content#main-content :is(.workflow-form-actions, .workflow-confirm-actions) {
+  display: flex !important; justify-content: flex-end !important; align-items: center; gap: 8px !important;
+  margin: 4px 0 0 !important; padding-top: 16px !important; border-top: 1px solid var(--nv-line) !important;
+}
+/* 칸 바로 밑에 붙어 있던 단추(그룹 등록·학생 연결·댓글 등록 등) */
+body.intranet-app-body #main-content#main-content :is(.workflow-field, .workflow-filter-grid > *) + :is(button, .workflow-button) { margin-top: 10px !important; }
+body.intranet-app-body #main-content#main-content form.workflow-panel { display: grid; gap: 14px; }
+body.intranet-app-body #main-content#main-content form.workflow-panel > :is(button, .workflow-button) { justify-self: start; }
+/* 입력칸: 높이 38px, 글자 14px, 둥글기 8px (리포트카드 양식·첨삭·대화 입력은 제외) */
+body.intranet-app-body #main-content#main-content :is(input:is([type=text], [type=email], [type=password], [type=number], [type=search], [type=url], [type=tel], [type=date], [type=datetime-local], [type=time], :not([type])), select):not(:is(.rc-sheet, .grader, .ann-toolbar, .ux-chat-composer, .quiz-builder-nav) *):not([hidden]) {
+  min-height: var(--u-ctl-h) !important; padding-block: 0 !important; padding-inline: 12px !important; font-size: 14px !important;
+  border: 1px solid var(--nv-line-2) !important; border-radius: var(--u-r-ctl) !important; background-color: #fff !important; color: var(--nv-ink) !important; box-shadow: none !important;
+}
+body.intranet-app-body #main-content#main-content select:not(:is(.rc-sheet, .grader, .ann-toolbar) *) { padding-inline-end: 30px !important; }
+body.intranet-app-body #main-content#main-content textarea:not(:is(.rc-sheet, .grader, .ux-chat-composer, .ux-chat-room) *) {
+  padding: 10px 12px !important; font-size: 14px !important; line-height: 1.6 !important; border: 1px solid var(--nv-line-2) !important; border-radius: var(--u-r-ctl) !important; background: #fff !important; color: var(--nv-ink) !important;
+}
+body.intranet-app-body #main-content#main-content :is(input, select, textarea):not([type=checkbox], [type=radio]):focus-visible { outline: 2px solid var(--nv-navy-3) !important; outline-offset: 1px !important; border-color: var(--nv-navy-3) !important; }
+body.intranet-app-body #main-content#main-content input[type=file]:not(.rc-sheet *) { font-size: 13px !important; min-height: 0 !important; padding: 7px 10px !important; }
+/* 거르기 막대(사용자 관리 등): 칸을 한 줄로 늘어놓고 단추는 끝에 */
+body.intranet-app-body #main-content#main-content .workflow-filter-grid { display: flex !important; flex-wrap: wrap !important; align-items: flex-end !important; gap: 12px !important; }
+body.intranet-app-body #main-content#main-content .workflow-filter-grid > .workflow-field { flex: 1 1 200px; }
+body.intranet-app-body #main-content#main-content .workflow-filter-grid > :is(button, .workflow-button) { flex: none; width: auto !important; }
+body.intranet-app-body #main-content#main-content .workflow-filter-grid > :is(button, .workflow-button) { margin: 0 !important; }
+
+/* ── 단추: 기본 34px·14px·둥글기 8px, 표 안·목록 줄에서는 30px·13px ── */
+body.intranet-app-body #main-content#main-content :is(.workflow-button, .lms-btn, .ux-btn, .acct-btn, .portal-link-button, .operations-secondary-link, .operations-primary-link, .operations-back-link, .rc-btn, .u-btn):not(:is(.rc-sheet) *) {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important; gap: 6px !important;
+  min-height: var(--u-btn-h) !important; height: auto !important; padding: 0 14px !important; border-radius: var(--u-r-ctl) !important;
+  font-size: 14px !important; font-weight: 600 !important; line-height: 1.2 !important; white-space: nowrap !important; text-decoration: none !important;
+  border: 1px solid var(--nv-line-2) !important; background: #fff !important; background-image: none !important; color: var(--nv-ink) !important; box-shadow: none !important;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+body.intranet-app-body #main-content#main-content :is(.workflow-button.is-primary, .lms-btn.primary, .ux-btn.primary, .acct-btn.is-primary, .operations-primary-link, .rc-btn.primary, .u-btn.is-primary, button.workflow-button[type=submit]:not(.is-secondary, .is-ghost, .is-danger)) {
+  background: var(--nv-navy) !important; border-color: var(--nv-navy) !important; color: #fff !important;
+}
+body.intranet-app-body #main-content#main-content :is(.workflow-button.is-primary, .lms-btn.primary, .ux-btn.primary, .acct-btn.is-primary, .operations-primary-link, .rc-btn.primary, .u-btn.is-primary):hover { background: var(--nv-navy-2) !important; border-color: var(--nv-navy-2) !important; }
+body.intranet-app-body #main-content#main-content :is(.workflow-button, .lms-btn, .ux-btn, .acct-btn, .portal-link-button, .operations-secondary-link, .operations-back-link, .u-btn):not(.is-primary, .primary, .is-danger, .danger):hover { background: var(--nv-surface-2) !important; border-color: var(--nv-navy-3) !important; }
+body.intranet-app-body #main-content#main-content :is(.workflow-button.is-danger, .lms-btn.danger, .ux-btn.danger, .u-btn.is-danger, button.is-danger) { background: #fff !important; border-color: #efc2bd !important; color: var(--nv-danger) !important; }
+body.intranet-app-body #main-content#main-content :is(.workflow-button.is-danger, .lms-btn.danger, .ux-btn.danger, .u-btn.is-danger, button.is-danger):hover { background: var(--nv-danger-soft) !important; }
+body.intranet-app-body #main-content#main-content :is(.workflow-button, .lms-btn, .ux-btn, .acct-btn, .u-btn):is(:disabled, [aria-disabled=true], .is-disabled) { opacity: .45 !important; cursor: not-allowed !important; }
+body.intranet-app-body #main-content#main-content :is(.workflow-button, .lms-btn, .ux-btn, .acct-btn, .u-btn):focus-visible { outline: 2px solid var(--nv-navy-3) !important; outline-offset: 2px !important; }
+body.intranet-app-body #main-content#main-content :is(td, .workflow-row-actions, .compact-row, .lms-table, .workflow-link-list, .rc-list) :is(.workflow-button, .lms-btn, .ux-btn, .u-btn) {
+  min-height: var(--u-btn-h-sm) !important; padding: 0 10px !important; font-size: 13px !important;
+}
+body.intranet-app-body #main-content#main-content .workflow-row-actions { display: inline-flex !important; flex-wrap: wrap; gap: 6px !important; }
+/* 글자 단추(다시 확인·전체 대화 등) */
+body.intranet-app-body #main-content#main-content :is(.ux-text-btn, .home-text-button) { min-height: 30px !important; padding: 0 8px !important; font-size: 13px !important; font-weight: 600 !important; color: var(--nv-link) !important; border-radius: 6px !important; }
+/* 둥근 거르기 단추(전체·정답·오답 등): 23px → 30px */
+body.intranet-app-body #main-content#main-content :is(.learning-review-filters, .score-tab-bar) > button { min-height: 30px !important; padding: 0 12px !important; font-size: 13px !important; }
+/* 나란한 작은 단추 사이 간격 */
+body.intranet-app-body #main-content#main-content :is(.ux-date-tools, .chat-class-btns, .rc-actions, .workflow-inline-actions) { display: flex !important; flex-wrap: wrap; gap: 6px !important; }
+body.intranet-app-body #main-content#main-content .ux-date-tools > button { min-height: 30px !important; padding: 0 10px !important; font-size: 13px !important; }
+body.intranet-app-body #main-content#main-content .ann-group { gap: 6px !important; }
+body.intranet-app-body #main-content#main-content .exam-question-list { display: grid; gap: 8px !important; }
+body.intranet-app-body #main-content#main-content .exam-question-strip { gap: 6px !important; }
+
+/* ── 숫자 상자 묶음: 칸 수와 관계없이 한 줄에 고르게(5개가 4+1로 갈라지지 않게) ── */
+body.intranet-app-body #main-content#main-content :is(.workflow-metric-grid, .workflow-summary-grid, .acct-stats) {
+  display: grid !important; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important; gap: 12px !important;
+}
+body.intranet-app-body #main-content#main-content :is(.workflow-metric-grid, .workflow-summary-grid) > * {
+  display: grid !important; gap: 4px !important; align-content: start; padding: 14px 16px !important; margin: 0 !important;
+  background: var(--nv-surface) !important; border: 1px solid var(--nv-line) !important; border-radius: 12px !important; box-shadow: none !important;
+}
+body.intranet-app-body #main-content#main-content :is(.workflow-metric-grid, .workflow-summary-grid) > * > :is(span, small):first-child { font-size: 13px !important; color: var(--nv-muted) !important; font-weight: 600 !important; }
+body.intranet-app-body #main-content#main-content :is(.workflow-metric-grid, .workflow-summary-grid) > * > strong { font-size: 18px !important; color: var(--nv-ink) !important; font-weight: 800 !important; line-height: 1.3 !important; word-break: break-all; }
+body.intranet-app-body #main-content#main-content .workflow-summary-grid > * > strong { font-size: 15px !important; font-weight: 700 !important; }
+
+/* ── 표: 머리 13px 굵게·연한 바탕, 칸 안쪽 10px 12px ── */
+body.intranet-app-body #main-content#main-content table:not(:is(.rc-sheet, .rc-grid, .grader) table, .rc-grid) > thead th {
+  font-size: 13px !important; font-weight: 700 !important; color: var(--nv-ink-2) !important; background: var(--nv-surface-2) !important;
+  padding: 10px 12px !important; white-space: nowrap; text-align: left; border-bottom: 1px solid var(--nv-line) !important;
+}
+body.intranet-app-body #main-content#main-content table:not(:is(.rc-sheet, .rc-grid, .grader) table, .rc-grid) > tbody td {
+  padding: 10px 12px !important; font-size: 14px !important; vertical-align: middle !important; border-bottom: 1px solid var(--nv-line) !important;
+}
+body.intranet-app-body #main-content#main-content td > strong + small { display: block !important; margin-top: 2px; font-size: 13px !important; color: var(--nv-muted) !important; font-weight: 400 !important; }
+
+/* ── 색 줄이기: 연한 분홍·하늘·살구 바탕 카드는 흰 면으로, 상태는 글자 색으로만 ── */
+body.intranet-app-body #main-content#main-content :is(.communications-notification-item, .learning-summary-card, .score-kpi-grid > article, .workflow-metric-grid > *) { background: var(--nv-surface) !important; }
+body.intranet-app-body #main-content#main-content .communications-notification-item.is-unread { box-shadow: inset 3px 0 0 var(--nv-navy) !important; }
+
+/* ── 긴 링크 미리보기는 한 줄로 줄이기(반 기본 안내 설정 등) ── */
+body.intranet-app-body #main-content#main-content .et-linkpeek { display: flex !important; gap: 6px; min-width: 0; max-width: 100%; overflow: hidden; white-space: nowrap; font-size: 13px !important; }
+body.intranet-app-body #main-content#main-content .et-linkpeek a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+
+/* ── 잘리던 글자: 학습 요약 카드 제목·결과 안내 ── */
+body.intranet-app-body #main-content#main-content :is(.learning-summary-card strong, .ux-results-meta .ux-hint) { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+
+/* ── 쪽 번호: 모든 목록이 같은 모양 — ‹ 이전 · 1~10 · 다음 › (10쪽을 넘으면 11~20) ── */
+body.intranet-app-body #main-content#main-content :is(.et-pager, .st-dir-pager, .ux-pager) {
+  display: flex !important; align-items: center !important; justify-content: center !important; flex-wrap: wrap !important; gap: 6px !important;
+  margin: 16px 0 4px !important; padding: 0 !important; background: none !important; border: 0 !important; font-size: 14px !important;
+}
+body.intranet-app-body #main-content#main-content :is(.et-pager-nums, .ux-pages) { display: inline-flex !important; flex-wrap: wrap; align-items: center; gap: 6px !important; }
+body.intranet-app-body #main-content#main-content :is(.et-pager-num, .ux-page) {
+  display: inline-flex !important; align-items: center; justify-content: center; min-width: 34px !important; height: 34px !important; padding: 0 8px !important;
+  border: 1px solid var(--nv-line-2) !important; border-radius: var(--u-r-ctl) !important; background: #fff !important; color: var(--nv-ink) !important;
+  font-size: 14px !important; font-weight: 600 !important; text-decoration: none !important; box-shadow: none !important;
+}
+body.intranet-app-body #main-content#main-content :is(.et-pager-num, .ux-page):hover { border-color: var(--nv-navy-3) !important; background: var(--nv-surface-2) !important; }
+body.intranet-app-body #main-content#main-content :is(.et-pager-num.is-current, .ux-page.is-current) { background: var(--nv-navy) !important; border-color: var(--nv-navy) !important; color: #fff !important; }
+body.intranet-app-body #main-content#main-content :is(.et-pager-step, .st-dir-step, .ux-pager > .ux-btn) {
+  display: inline-flex !important; align-items: center; justify-content: center; height: 34px !important; min-height: 34px !important; padding: 0 12px !important;
+  border: 1px solid var(--nv-line-2) !important; border-radius: var(--u-r-ctl) !important; background: #fff !important; color: var(--nv-ink) !important;
+  font-size: 14px !important; font-weight: 600 !important; text-decoration: none !important;
+}
+body.intranet-app-body #main-content#main-content :is(.et-pager-step.is-disabled, .st-dir-step:disabled, .ux-pager > .ux-btn:disabled) { opacity: .4 !important; cursor: default !important; }
+body.intranet-app-body #main-content#main-content .u-pager-pair { display: grid; gap: 2px; }
+body.intranet-app-body #main-content#main-content .u-pager-pair .et-pager { margin: 8px 0 0 !important; }
+body.intranet-app-body #main-content#main-content .et-pager-caption { font-size: 13px; font-weight: 700; color: var(--nv-ink-2); margin-right: 4px; }
+body.intranet-app-body #main-content#main-content :is(.ux-page-text, .st-dir-pagetext) { font-size: 13px !important; color: var(--nv-muted) !important; }
+body.intranet-app-body #main-content#main-content .ux-results-meta :is(.ux-page, .et-pager-num) { min-width: 30px !important; height: 30px !important; }
+body.intranet-app-body #main-content#main-content .ux-results-meta .ux-pager > .ux-btn { height: 30px !important; min-height: 30px !important; }
+
+/* ── 반별 대화 표(메시지): 단추가 오른쪽 끝에서 잘리지 않게 ── */
+body.intranet-app-body #main-content#main-content .chat-class-btns { justify-content: flex-end; white-space: nowrap; }
+body.intranet-app-body #main-content#main-content td.chat-class-btns { display: table-cell !important; text-align: right; }
+body.intranet-app-body #main-content#main-content td.chat-class-btns > * + * { margin-left: 6px !important; }
+
+/* ── 빈 상태: 상자 안 가운데, 14px ── */
+body.intranet-app-body #main-content#main-content .u-empty { padding: 18px 4px; color: var(--nv-muted); font-size: 14px; }
+
+/* ── 대화 참여자 표시 글자 대비 ── */
+body.intranet-app-body #main-content#main-content .ux-member small { color: var(--nv-ink-2) !important; }
+
+/* ── 좁은 화면(휴대폰) ── */
+@media (max-width: 720px) {
+  body.intranet-app-body #main-content#main-content :is(.workflow-hero, .workflow-page-hero, .learner-page-hero, .premium-search-hero, .lms-heading,
+    .communications-hero, .operations-page-hero, .acct-head, .import-page-hero, .import-hero, .et-v5-page-heading, .catalog-hero,
+    .page-heading, .course-page-hero, .portal-home-head, .u-page-head) { padding: 16px !important; }
+  body.intranet-app-body #main-content#main-content :is(.workflow-actions, .workflow-hero-actions, .lms-actions, .acct-head-actions, .u-head-actions) { justify-content: flex-start; }
+  body.intranet-app-body #main-content#main-content .workflow-form-card { padding: 18px 16px !important; }
+  body.intranet-app-body #main-content#main-content .workflow-filter-grid > .workflow-field { flex-basis: 100%; }
+}
+
+/* ── 2차(11/19 점검 결과): 작은 표시 글자·연한 색 바탕·남은 제목 모양 ── */
+/* 표시(배지·상태·칩) 글자는 13px 이상 */
+body.intranet-app-body #main-content#main-content :is(.compact-badges > *, .compact-icon, .notice-kind, .rc-form-chip, .rc-state, .workflow-status, .st-badge,
+  .exam-result-badge, .premium-status-pill, .score-type-badge, .st-dir-status, .premium-count-pill, .exam-duration-pill, .exam-insight-review-pill,
+  .workflow-lock-label, .status-open, .status-draft, .score-insight-connection, .score-label, .score-delta-row > span, .home-pill, .portal-count-pill):not(.rc-sheet *) {
+  font-size: 13px !important; line-height: 1.4 !important;
+}
+body.intranet-app-body #main-content#main-content :is(.portal-card-head a, .hi-tile-head a, .ad-tile > span, .score-insight-heading-actions a, .et-v5-assigned-summary-row > span, header > time, .st-head, .st-head > *) { font-size: 13px !important; }
+body.intranet-app-body #main-content#main-content :is(dt) { font-size: 13px !important; }
+/* 양식 칩(SAT·AP·주니어 등)은 같은 회색 칩 하나로 — 양식마다 다른 색을 쓰지 않습니다 */
+body.intranet-app-body #main-content#main-content .rc-form-chip { background: var(--nv-surface-2) !important; border: 1px solid var(--nv-line-2) !important; color: var(--nv-ink-2) !important; }
+/* 연한 하늘·분홍·살구 바탕 → 흰 면 또는 옅은 베이지 면 */
+body.intranet-app-body #main-content#main-content :is(.learning-group-header, .score-attempt-date, .score-attempt-sections > span, .score-insight-footnote > span,
+  .exam-question-meta > span, .exam-question-copy, .exam-detail-note > span, .learning-exam-meta > span, .learning-review-answer > span, .mini-day-date, .import-safety-panel ol > li, ol > li.import-step) {
+  background: var(--nv-surface-2) !important; border-color: var(--nv-line) !important;
+}
+body.intranet-app-body #main-content#main-content :is(.exam-detail-kpis > article, .exam-insight-summary-card, .learning-insight-kpis > article, .learning-recommendation-card, .exam-area-insight-row, .learning-area-row) {
+  background: var(--nv-surface) !important; border: 1px solid var(--nv-line) !important;
+}
+/* 선택된 줄·내 표시는 남색 옅은 면 하나로 */
+body.intranet-app-body #main-content#main-content :is(.home-message-row.is-current, .quiz-nav-item.is-current, .exam-question-row.is-selected, .portal-grade-students a.active, .quiz-card-head, .ux-member.is-staff) {
+  background: var(--nv-navy-soft) !important;
+}
+/* 제목 모양: 편집 화면·대화·첨삭·학생 상세·시험 상세 머리도 22px 800 */
+body.intranet-app-body #main-content#main-content :is(.ux-editor-toolbar, .grader-head, .ux-section-head, .ux-chat-header, .notice-detail-header, .exam-detail-hero,
+  .learning-insight-hero, .premium-profile-hero, .premium-attendance-hero, .premium-billing-hero) h1 {
+  font-size: 22px !important; font-weight: 800 !important; line-height: 1.35 !important; margin: 0 !important; color: var(--nv-ink) !important;
+}
+body.intranet-app-body #main-content#main-content :is(.exam-detail-hero, .learning-insight-hero) {
+  display: flex !important; align-items: center !important; justify-content: space-between !important; flex-wrap: wrap !important; gap: 12px 16px !important;
+  margin: 0 0 16px !important; padding: 20px 22px !important; background: var(--nv-surface) !important; border: 1px solid var(--nv-line) !important;
+  border-radius: 14px !important; box-shadow: var(--nv-shadow) !important;
+}
+/* 남은 작은 단추들 */
+body.intranet-app-body #main-content#main-content :is(.exam-question-filter, .exam-question-chip) { min-height: 28px !important; padding: 0 10px !important; font-size: 13px !important; }
+body.intranet-app-body #main-content#main-content :is(.portal-transfer-tools > button, .quiz-icon-btn) { min-height: 30px !important; font-size: 13px !important; font-weight: 600 !important; }
+body.intranet-app-body #main-content#main-content .portal-class-results + .portal-link-button { margin-top: 10px !important; }
+/* 리포트카드 목록: 단추를 한 줄로, 짧은 칸(Term·기간·작성·발송·수정)은 줄바꿈 없이 */
+body.intranet-app-body #main-content#main-content td.rc-list-actions { display: table-cell !important; white-space: nowrap !important; text-align: right !important; }
+body.intranet-app-body #main-content#main-content td.rc-list-actions > * { display: inline-flex !important; vertical-align: middle; margin: 0 0 0 6px !important; }
+body.intranet-app-body #main-content#main-content td.rc-list-actions form { display: inline-flex !important; }
+body.intranet-app-body #main-content#main-content .rc-list table td:not(:first-child) { white-space: nowrap; }
+body.intranet-app-body #main-content#main-content .rc-list table td:first-child small { display: block; margin-top: 2px; color: var(--nv-muted) !important; font-size: 13px !important; }
+/* 목록 줄의 오른쪽 화살표는 줄 끝에 맞춤(글자 길이에 따라 들쭉날쭉하던 것) */
+body.intranet-app-body #main-content#main-content .compact-row.is-link { display: flex !important; align-items: center !important; gap: 12px !important; }
+body.intranet-app-body #main-content#main-content .compact-row.is-link > .compact-main { flex: 1 1 auto; min-width: 0; }
+body.intranet-app-body #main-content#main-content .compact-row.is-link > .compact-arrow { flex: none; margin-left: auto !important; color: var(--nv-muted); }
+
+/* ── 3차(11/19): 남은 연한 색·작은 글자·안내 여백 ── */
+/* 퀴즈 채점 줄·성적표 칸·출결 상자: 바탕은 흰색/옅은 베이지, 틀림·결석·마감지남은 빨간 글자로만 */
+body.intranet-app-body #main-content#main-content :is(.quiz-part.is-right, .quiz-part.is-wrong, .quiz-part) { background: var(--nv-surface-2) !important; border-color: var(--nv-line) !important; }
+body.intranet-app-body #main-content#main-content .quiz-part.is-wrong :is(span, b, strong, em):not(:first-child) { color: var(--nv-danger) !important; }
+body.intranet-app-body #main-content#main-content :is(td.graded, td.overdue) { background: #fff !important; }
+body.intranet-app-body #main-content#main-content td.overdue { color: var(--nv-danger) !important; }
+body.intranet-app-body #main-content#main-content td.not-assigned { background: var(--nv-surface-2) !important; }
+body.intranet-app-body #main-content#main-content .premium-status-grid > article { background: var(--nv-surface) !important; border: 1px solid var(--nv-line) !important; }
+body.intranet-app-body #main-content#main-content .premium-status-grid > article.is-absent strong { color: var(--nv-danger) !important; }
+body.intranet-app-body #main-content#main-content :is(.premium-day-header, .premium-footnote > span, .learner-course-tags > span, .kt-day > span, .exam-insight-review-pill) { background: var(--nv-surface-2) !important; border-color: var(--nv-line) !important; }
+body.intranet-app-body #main-content#main-content .exam-insight-review-pill { color: var(--nv-danger) !important; }
+body.intranet-app-body #main-content#main-content .exam-choice.is-correct { background: var(--nv-navy-soft) !important; }
+/* 학생 화면·성적표 작은 글자 13px 이상 */
+body.intranet-app-body #main-content#main-content :is(.lms-chip, th.sticky-student, .learner-course-tags > span, .learner-identity-chip, .learner-course-row-main p,
+  .learner-section-heading > span, .learner-score-note p, .compact-main > span, .hi-delta, .score-insight-connection strong, .score-delta-row b, dd) { font-size: 13px !important; }
+body.intranet-app-body #main-content#main-content th a { font-size: inherit !important; }
+/* 편집 상자 아래 '저장하면 공개됩니다' 안내가 상자 가장자리에 붙지 않게 */
+body.intranet-app-body #main-content#main-content .ux-editor > :is(.ux-hint, .ux-private-note) { margin: 0 20px 18px !important; }
+/* 데이터 이전 바로가기: 순서와 상관없는 01~04 번호를 뺐으므로 두 칸(내용·화살표)으로 */
+body.intranet-app-body #main-content#main-content .import-action-grid > a { grid-template-columns: minmax(0, 1fr) auto !important; min-height: 0 !important; }
+/* 표 안 줄 머리(th)도 칸 글자와 같은 크기 */
+body.intranet-app-body #main-content#main-content table:not(:is(.rc-sheet, .rc-grid, .grader) table, .rc-grid) > tbody th { font-size: 14px !important; padding: 10px 12px !important; vertical-align: middle !important; border-bottom: 1px solid var(--nv-line) !important; text-align: left; }
+body.intranet-app-body #main-content#main-content tbody th[scope="row"] > a + small { display: block; margin-top: 2px; font-size: 13px !important; color: var(--nv-muted) !important; font-weight: 400 !important; }
+/* 남은 작은 글자: 학생 수업 요약 띠·강사 홈 목록 개수·CSV 작성 기준 */
+body.intranet-app-body #main-content#main-content :is(.learner-summary-strip span, .th-list b, .workflow-guide-grid article > span) { font-size: 13px !important; }
+/* 칸 + 단추 한 줄 폼(학생 연결 등): 칸과 단추 사이 10px */
+body.intranet-app-body #main-content#main-content .workflow-inline-form { display: flex !important; flex-wrap: wrap !important; align-items: flex-end !important; gap: 10px !important; }
+body.intranet-app-body #main-content#main-content .workflow-inline-form > .workflow-field { flex: 1 1 220px; }
+body.intranet-app-body #main-content#main-content .workflow-inline-form > :is(button, .workflow-button) { margin: 0 !important; }
+/* 휴대폰: 넓은 표는 상자 안에서 옆으로 밀어 보기(화면 전체가 옆으로 넘치지 않게) */
+@media (max-width: 720px) {
+  body.intranet-app-body #main-content#main-content table:not(:is(.rc-sheet, .rc-grid, .grader) table, .rc-grid, .rc-mock-table) { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+/* 휴대폰(11/19 4차): 머리 상자가 세로로 쌓일 때 빈칸 없이, 글자는 왼쪽 정렬. 넓은 표는 줄바꿈 대신 옆으로 밀기 */
+@media (max-width: 720px) {
+  body.intranet-app-body #main-content#main-content :is(.workflow-hero, .workflow-page-hero, .learner-page-hero, .premium-search-hero, .lms-heading,
+    .communications-hero, .operations-page-hero, .acct-head, .import-page-hero, .import-hero, .et-v5-page-heading, .catalog-hero,
+    .page-heading, .course-page-hero, .portal-home-head, .u-page-head, .exam-detail-hero, .learning-insight-hero) {
+    flex-direction: column !important; align-items: stretch !important; text-align: left !important;
+  }
+  body.intranet-app-body #main-content#main-content :is(.workflow-hero, .workflow-page-hero, .learner-page-hero, .premium-search-hero, .lms-heading,
+    .communications-hero, .operations-page-hero, .acct-head, .import-page-hero, .import-hero, .et-v5-page-heading, .catalog-hero,
+    .page-heading, .course-page-hero, .portal-home-head, .u-page-head, .exam-detail-hero, .learning-insight-hero) > * {
+    flex: 0 0 auto !important; min-height: 0 !important; height: auto !important; margin: 0 !important; text-align: left !important; align-self: stretch;
+  }
+  body.intranet-app-body #main-content#main-content :is(.workflow-actions, .workflow-hero-actions, .lms-actions, .acct-head-actions, .u-head-actions) { justify-content: flex-start !important; }
+  body.intranet-app-body #main-content#main-content table:not(:is(.rc-sheet, .rc-grid, .grader) table, .rc-grid, .rc-mock-table) :is(td, th) { white-space: nowrap; }
+}
+
+/* ── 11/19 오후: 성적 분석 목록·거르기 줄(학생관리와 같은 모양) ── */
+body.intranet-app-body #main-content#main-content .u-filter-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin: 0 0 12px; }
+body.intranet-app-body #main-content#main-content .u-filter-field { display: grid; gap: 6px; min-width: 180px; margin: 0; }
+body.intranet-app-body #main-content#main-content .u-filter-field.is-grow { flex: 1 1 240px; }
+body.intranet-app-body #main-content#main-content .u-filter-field > span { font-size: 13px; font-weight: 700; color: var(--nv-ink-2); }
+body.intranet-app-body #main-content#main-content .u-list-count { margin: 0 0 10px; font-size: 13px; color: var(--nv-muted); }
+body.intranet-app-body #main-content#main-content .u-list-count strong { color: var(--nv-ink); }
+body.intranet-app-body #main-content#main-content :is(th, td).num { text-align: right; width: 64px; }
+body.intranet-app-body #main-content#main-content .u-grades-table td a { font-weight: 700; color: var(--nv-link); }
+body.intranet-app-body #main-content#main-content .u-grades-table tr.is-selected > td { background: var(--nv-navy-soft) !important; }
+body.intranet-app-body #main-content#main-content #grade-detail { scroll-margin-top: 80px; }
+/* 반 바로 가기(11/19): 반별 학습 첫 화면·반 화면 위 한 줄 */
+body.intranet-app-body #main-content#main-content .u-room-jump { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; }
+body.intranet-app-body #main-content#main-content .u-room-jump label { display: flex; align-items: center; gap: 10px; margin: 0; }
+body.intranet-app-body #main-content#main-content .u-room-jump label > span { font-size: 13px; font-weight: 700; color: var(--nv-ink-2); white-space: nowrap; }
+body.intranet-app-body #main-content#main-content .u-room-jump select { min-width: 260px; max-width: 100%; }
+@media (max-width: 720px) { body.intranet-app-body #main-content#main-content .u-room-jump select { min-width: 0; flex: 1 1 auto; } body.intranet-app-body #main-content#main-content .u-room-jump label { flex: 1 1 auto; } }
+
+/* ── 날짜 달력(11/19): 칸을 누르면 바로 아래에 열림. 기본 달력 아이콘은 숨김 ── */
+body.intranet-app-body #main-content :is(input[type=date], input[type=datetime-local])::-webkit-calendar-picker-indicator { display: none; }
+body.intranet-app-body #main-content :is(input[type=date], input[type=datetime-local]) { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235d636d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: right 10px center !important; padding-right: 34px !important; }
+body.intranet-app-body .u-datepicker { position: absolute; z-index: 1200; width: 296px; padding: 12px; background: #fff; border: 1px solid var(--nv-line-2); border-radius: 12px; box-shadow: var(--nv-shadow-up); font-size: 14px; color: var(--nv-ink); }
+body.intranet-app-body .u-datepicker[hidden] { display: none; }
+body.intranet-app-body .u-dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+body.intranet-app-body .u-dp-title { font-size: 15px; font-weight: 800; }
+body.intranet-app-body :is(.u-dp-nav, .u-dp-day, .u-dp-link, .u-dp-done) { font: inherit; cursor: pointer; border-radius: 8px; }
+body.intranet-app-body .u-dp-nav { width: 32px; height: 32px; border: 1px solid var(--nv-line-2); background: #fff; color: var(--nv-ink); font-size: 18px; line-height: 1; }
+body.intranet-app-body .u-dp-nav:hover { background: var(--nv-surface-2); }
+body.intranet-app-body .u-dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+body.intranet-app-body .u-dp-week { text-align: center; font-size: 12px; font-weight: 700; color: var(--nv-muted); padding: 4px 0; }
+body.intranet-app-body .u-dp-day { height: 36px; border: 1px solid transparent; background: #fff; color: var(--nv-ink); font-size: 14px; }
+body.intranet-app-body .u-dp-day:hover:not(:disabled) { background: var(--nv-surface-2); border-color: var(--nv-line-2); }
+body.intranet-app-body :is(.u-dp-week, .u-dp-day).is-sun { color: var(--nv-danger); }
+body.intranet-app-body .u-dp-day.is-other { color: #a3a7ae; }
+body.intranet-app-body .u-dp-day.is-today { border-color: var(--nv-gold); font-weight: 800; }
+body.intranet-app-body .u-dp-day.is-selected { background: var(--nv-navy); border-color: var(--nv-navy); color: #fff; font-weight: 800; }
+body.intranet-app-body .u-dp-day:disabled { opacity: .3; cursor: not-allowed; }
+body.intranet-app-body .u-dp-time { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--nv-line); }
+body.intranet-app-body .u-dp-time-label { font-size: 13px; font-weight: 700; color: var(--nv-ink-2); margin-right: 2px; }
+body.intranet-app-body .u-dp-time select { flex: 1 1 0; min-height: 34px; padding: 0 8px; border: 1px solid var(--nv-line-2); border-radius: 8px; background: #fff; font: inherit; font-size: 14px; color: var(--nv-ink); }
+body.intranet-app-body .u-dp-foot { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+body.intranet-app-body .u-dp-link { min-height: 30px; padding: 0 8px; border: 0; background: none; color: var(--nv-link); font-size: 13px; font-weight: 600; }
+body.intranet-app-body .u-dp-link:hover { background: var(--nv-surface-2); }
+body.intranet-app-body .u-dp-done { margin-left: auto; min-height: 32px; padding: 0 14px; border: 1px solid var(--nv-navy); background: var(--nv-navy); color: #fff; font-size: 13px; font-weight: 700; }
+body.intranet-app-body :is(.u-dp-nav, .u-dp-day, .u-dp-link, .u-dp-done):focus-visible { outline: 2px solid var(--nv-navy-3); outline-offset: 1px; }
+
+/* ── 11/20: 상자 가장자리에 붙은 글자·칸 정리(역할별 화면 전체 점검) ── */
+/* 강사·TA '담당 학생' 목록 상자: 안쪽 여백 */
+body.intranet-app-body #main-content#main-content .st-list-panel:not(.st-directory) { padding: 18px 20px !important; }
+body.intranet-app-body #main-content#main-content .st-list-panel:not(.st-directory) .ux-student-filters { margin: 0 0 8px !important; padding: 0 !important; border: 0 !important; background: none !important; }
+body.intranet-app-body #main-content#main-content .st-list-panel .ux-filter-row { gap: 12px !important; }
+body.intranet-app-body #main-content#main-content .st-list-panel > .ux-hint { margin: 4px 0 10px !important; }
+/* 학생 고르기(과제·토론·퀴즈 등록, 명단·TA 지정): 목록 상자 머리와 목록에 안쪽 여백 */
+body.intranet-app-body #main-content#main-content .ux-selector-lists { gap: 12px !important; }
+body.intranet-app-body #main-content#main-content .ux-selector-lists > section { padding: 0 !important; overflow: hidden; }
+body.intranet-app-body #main-content#main-content .ux-selector-lists > section > .ux-section-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 !important; padding: 10px 12px !important; border-bottom: 1px solid var(--nv-line) !important; background: var(--nv-surface-2) !important; }
+body.intranet-app-body #main-content#main-content .ux-selector-lists > section > .ux-section-head h3 { margin: 0 !important; font-size: 14px !important; }
+body.intranet-app-body #main-content#main-content .ux-selector-lists > section > .ux-section-head > :last-child { margin-left: auto; }
+body.intranet-app-body #main-content#main-content .ux-selector-lists .student-transfer-list { padding: 6px 8px !important; }
+body.intranet-app-body #main-content#main-content .ux-selector-lists > section > :is(button, .ux-btn) { margin: 8px 10px 10px !important; }
+/* 강사 '담당 학생 지정'의 학생 목록 상자 */
+body.intranet-app-body #main-content#main-content .portal-student-list { padding: 6px 8px !important; }
+body.intranet-app-body #main-content#main-content .portal-student-list > .portal-empty { margin: 6px 4px !important; }
+/* 학습 인사이트 구역: 제목·내용이 상자 가장자리에 붙지 않게 */
+body.intranet-app-body #main-content#main-content :is(.learning-insight-section, .exam-insight-section, .exam-question-section) { padding: 18px 20px !important; }
+/* 과제 목록 반 묶음: 줄 양옆 여백(오른쪽 단추가 가장자리에 붙던 것) */
+body.intranet-app-body #main-content#main-content .learning-group-panel .compact-row { padding-left: 16px !important; padding-right: 16px !important; }
+body.intranet-app-body #main-content#main-content .learning-group-panel .learning-group-header { padding: 12px 16px !important; }
+/* 글 입력 칸(사진 붙여넣기): 바깥 테두리 하나만, 안쪽 칸은 테두리 없이 */
+body.intranet-app-body #main-content#main-content .rich-paste-editor { overflow: hidden; border: 1px solid var(--nv-line-2) !important; border-radius: 8px !important; background: #fff !important; }
+body.intranet-app-body #main-content#main-content .rich-paste-editor > textarea { border: 0 !important; border-top: 1px solid var(--nv-line) !important; border-radius: 0 !important; padding: 10px 12px !important; box-shadow: none !important; }
+body.intranet-app-body #main-content#main-content .rich-paste-editor > textarea:focus-visible { outline: 2px solid var(--nv-navy-3) !important; outline-offset: -2px !important; }
+body.intranet-app-body #main-content#main-content .rich-paste-toolbar { padding: 6px 8px 6px 12px !important; }
+body.intranet-app-body #main-content#main-content .rich-paste-editor > .rich-paste-status { margin: 0 !important; padding: 0 12px !important; }
+body.intranet-app-body #main-content#main-content .rich-paste-editor > .rich-paste-status:not(:empty) { padding: 6px 12px !important; border-top: 1px solid var(--nv-line) !important; }
+body.intranet-app-body #main-content#main-content .rich-paste-editor > .rich-paste-preview-list:not(:empty) { padding: 8px 12px !important; border-top: 1px solid var(--nv-line) !important; }
+/* 반 화면 안의 구역 제목(반 공지·자료, 과제·퀴즈·토론)은 상자 안의 상자가 아니라 제목 줄 */
+body.intranet-app-body #main-content#main-content .lms-panel .lms-heading { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important; margin: 0 0 12px !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0 !important; }
+body.intranet-app-body #main-content#main-content .lms-panel .lms-heading h2 { margin: 0 !important; font-size: 16px !important; }
+/* 바깥 상자 안에 머리 상자가 또 들어가던 화면(강사 담당 수업, 학생 수업 자료): 바깥은 투명하게 */
+body.intranet-app-body #main-content#main-content .et-v5-shell { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+/* 학부모 수납내역 머리도 같은 흰 상자 */
+body.intranet-app-body #main-content#main-content .premium-billing-hero { display: flex !important; align-items: center !important; justify-content: space-between !important; flex-wrap: wrap; gap: 12px 16px !important; margin: 0 0 16px !important; padding: 20px 22px !important; background: var(--nv-surface) !important; border: 1px solid var(--nv-line) !important; border-radius: 14px !important; box-shadow: var(--nv-shadow) !important; }
+body.intranet-app-body #main-content#main-content .premium-billing-hero h1 { font-size: 22px !important; font-weight: 800 !important; margin: 0 !important; }
+/* 메시지 '반별 대화' 표: 반 이름 아래 Term 표시는 작은 표시로(칸 전체로 늘어나지 않게) */
+body.intranet-app-body #main-content#main-content tbody th[scope="row"] > a + small { display: block !important; width: fit-content !important; max-width: 100%; margin: 4px 0 0 !important; }
+/* 학습 그룹 목록: 이름·설명은 왼쪽, '수정' 단추는 오른쪽에 같은 폭 */
+body.intranet-app-body #main-content#main-content .u-group-rows > .compact-row { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; padding: 10px 4px !important; }
+body.intranet-app-body #main-content#main-content .u-group-rows > .compact-row > div:first-child { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
+body.intranet-app-body #main-content#main-content .u-group-rows > .compact-row > :is(a, button):last-child { flex: none; width: auto !important; }
+/* 사용자 관리: 거르기와 표도 흰 상자 안에 */
+body.intranet-app-body #main-content#main-content :is(.workflow-filter-panel, .workflow-table-panel) { margin: 0 0 16px !important; padding: 16px 18px !important; background: var(--nv-surface) !important; border: 1px solid var(--nv-line) !important; border-radius: 14px !important; box-shadow: var(--nv-shadow) !important; }
+body.intranet-app-body #main-content#main-content .workflow-table-panel > :is(h2, header, p):first-child { margin-top: 0 !important; }
+/* 메시지: 검색칸 돋보기와 글자가 겹치지 않게, 반 이름 칸은 색 없이 */
+body.intranet-app-body #main-content#main-content .chat-filter-search input#chat-filter-q { padding-inline-start: 34px !important; }
+body.intranet-app-body #main-content#main-content .chat-class-table tbody th[scope="row"] { background: transparent !important; font-weight: 700 !important; }
+/* 여러 개 고르는 목록(명단·TA 지정의 담당 TA·공동 강사): 항목 안쪽 여백, 고른 항목은 진한 회색 대신 연한 남색 바탕+굵게 */
+body.intranet-app-body #main-content#main-content select[multiple] { padding: 6px !important; height: auto; min-height: 120px; }
+body.intranet-app-body #main-content#main-content select[multiple] option { padding: 6px 10px; border-radius: 6px; color: var(--nv-ink); }
+body.intranet-app-body #main-content#main-content select[multiple] option:checked { background: #e6ebf5 linear-gradient(0deg, #e6ebf5 0%, #e6ebf5 100%); color: var(--nv-navy); font-weight: 700; }
+/* 과제·퀴즈·토론 목록의 대상·제출·피드백 숫자: 화면이 좁아도 세로로 쌓지 않고 한 줄 */
+body.intranet-app-body #main-content#main-content .compact-metrics { display: flex !important; flex-wrap: nowrap !important; gap: 6px !important; grid-template-columns: none !important; }
+body.intranet-app-body #main-content#main-content .compact-metrics > * { flex: 0 0 auto !important; min-width: 56px !important; width: auto !important; min-height: 0 !important; height: auto !important; padding: 6px 10px !important; }
+@media (max-width: 720px) {
+  /* 대화방 참여자 이름표: 두 줄에서 잘리던 것을 한 줄 옆으로 넘기기로 */
+  body.intranet-app-body #main-content#main-content .ux-chat-members { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; max-height: none !important; height: auto !important; padding: 8px 12px 10px !important; scrollbar-width: thin; }
+  body.intranet-app-body #main-content#main-content .ux-chat-members > * { flex: none !important; white-space: nowrap; }
+}
+
+/* ── 11/20 리포트카드 SAT 모의고사 고르는 표: 휴대폰에서도 체크 칸까지 한 화면에(표는 자체 스크롤 상자 안) ── */
+@media (max-width: 720px) {
+  body.intranet-app-body #main-content#main-content .rc-mock-table :is(thead th, tbody th, tbody td) { padding: 6px !important; white-space: nowrap !important; }
+  body.intranet-app-body #main-content#main-content .rc-mock-table :is(thead th, tbody th):first-child { white-space: normal !important; overflow-wrap: break-word; }
+}
+
+/* ── 11/20 반 만들기: 반 정보 한 줄 + 학생 고르기·담당자 + 등록된 반 목록 ── */
+body.intranet-app-body #main-content#main-content .u-group-create .u-group-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.5fr) minmax(0, 2fr) 120px; gap: 12px; align-items: start; padding: 16px 18px 4px; }
+body.intranet-app-body #main-content#main-content .u-group-create .u-group-fields .ux-field { margin: 0; min-width: 0; }
+body.intranet-app-body #main-content#main-content .u-group-create .u-group-sub { display: grid; gap: 4px; margin: 0 0 10px; font-size: 15px; font-weight: 700; }
+body.intranet-app-body #main-content#main-content .u-group-create .u-group-sub small { color: var(--nv-muted); font-size: 13px; font-weight: 400; line-height: 1.5; }
+body.intranet-app-body #main-content#main-content .u-group-list { margin-top: 16px; }
+body.intranet-app-body #main-content#main-content .u-group-rows > .compact-row > .u-group-actions { display: flex; flex: none; gap: 8px; }
+@media (max-width: 720px) {
+  body.intranet-app-body #main-content#main-content .u-group-create .u-group-fields { grid-template-columns: minmax(0, 1fr); padding: 14px 16px 4px; }
+  body.intranet-app-body #main-content#main-content .u-group-rows > .compact-row { flex-wrap: wrap !important; }
+}

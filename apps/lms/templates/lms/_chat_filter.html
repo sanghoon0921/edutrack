@@ -1,0 +1,14 @@
+<form class="chat-filter" method="get" role="search" aria-label="대화 찾기">
+ <div class="chat-filter-row">
+  <label class="sr-only" for="chat-filter-q">이름·학생번호·방 이름으로 찾기</label>
+  <span class="chat-filter-search"><svg class="et-icon" aria-hidden="true"><use href="#i-search"/></svg><input id="chat-filter-q" type="search" name="q" value="{{ q }}" placeholder="이름·학생번호·방 이름" autocomplete="off" maxlength="60"></span>
+  <label class="sr-only" for="chat-filter-group">반으로 거르기</label>
+  <select id="chat-filter-group" name="group" data-auto-submit>
+   <option value="">전체 반</option>
+   {% for g in filter_groups %}<option value="{{ g.pk }}"{% if selected_group and g.pk == selected_group.pk %} selected{% endif %}>{{ g.title }}</option>{% endfor %}
+  </select>
+  <button type="submit" class="ux-btn chat-filter-go">찾기</button>
+ </div>
+ {% if q or selected_group %}<p class="chat-filter-state"><span>{% if selected_group %}<b>{{ selected_group.title }}</b>{% endif %}{% if q and selected_group %} · {% endif %}{% if q %}“{{ q }}”{% endif %} 대화만 보는 중</span><a href="?">전체 보기</a></p>{% endif %}
+</form>
+{% if can_start_class %}<div class="chat-class-actions" data-class-actions><span>{{ selected_group.title }}</span><a class="ux-btn" href="{% url 'lms:class-chat' selected_group.pk %}">단체방 열기</a><a class="ux-btn primary" href="{% url 'lms:new-conversation' %}?group={{ selected_group.pk }}">학생 골라 대화</a></div>{% endif %}

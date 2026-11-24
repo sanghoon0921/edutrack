@@ -1,0 +1,27 @@
+{% comment %}첨삭 문서 영역(도구 막대 + 쪽 이동 + 문서). 첨삭 카드 목록(#ann-list)은 각 화면의 오른쪽 칸에 둡니다. 동작: lms/js/annotation.js{% endcomment %}
+{{ document_data|json_script:'lms-document-data' }}
+<div id="annotation-editor" class="ann-editor">
+ <form class="lms-hidden-csrf">{% csrf_token %}</form>
+ {% if document_data.editable %}
+ <div class="ann-toolbar" role="toolbar" aria-label="첨삭 도구">
+  <div class="ann-group" role="group" aria-label="도구">
+   {% for tool in document_data.tools %}<button type="button" class="ann-tool" data-tool="{{ tool.id }}" aria-label="{{ tool.label }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" title="{{ tool.label }} · {{ tool.hint }}"><svg class="et-icon" aria-hidden="true"><use href="#i-{{ tool.icon }}"/></svg><span>{{ tool.label }}</span></button>{% endfor %}
+  </div>
+  <div class="ann-group" role="group" aria-label="색">
+   {% for color in document_data.colors %}<button type="button" class="ann-swatch" data-color="{{ color.hex }}" style="--swatch:{{ color.hex }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{{ color.label }}" title="{{ color.label }}"></button>{% endfor %}
+  </div>
+  <div class="ann-group" role="group" aria-label="굵기">
+   {% for width in document_data.widths %}<button type="button" class="ann-width" data-width="{{ width.width }}" data-size="{{ width.size }}" aria-pressed="{% if width.width == 4 %}true{% else %}false{% endif %}" aria-label="굵기 {{ width.label }}" title="굵기 {{ width.label }}"><i style="--line:{{ width.width }}px"></i></button>{% endfor %}
+  </div>
+  <button type="button" class="ann-icon-btn" id="ann-undo" title="실행 취소"><svg class="et-icon" aria-hidden="true"><use href="#i-undo"/></svg><span>실행 취소</span></button>
+ </div>
+ {% endif %}
+ <div class="ann-pagebar">
+  <button type="button" class="ann-icon-btn" id="ann-prev" aria-label="이전 쪽"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
+  <span id="ann-page-label" aria-live="polite"></span>
+  <button type="button" class="ann-icon-btn" id="ann-next" aria-label="다음 쪽"><svg class="et-icon" aria-hidden="true"><use href="#i-chevron-right"/></svg></button>
+  <label class="ann-zoom">확대 <select id="ann-zoom"><option value="0.75">75%</option><option value="1" selected>100%</option><option value="1.25">125%</option><option value="1.5">150%</option></select></label>
+  <p id="ann-status" class="ann-status" role="status">페이지를 불러오는 중입니다.</p>
+ </div>
+ <div class="lms-paper-scroll"><div class="lms-paper" id="ann-paper"><img id="ann-image" alt="첨삭할 문서 페이지"><svg id="ann-overlay" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="첨삭 표시"></svg></div></div>
+</div>

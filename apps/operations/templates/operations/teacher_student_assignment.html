@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_js %}<script src="{% static 'operations/js/teacher-assignment.js' %}?v=portal4" defer></script>{% endblock %}
+{% block content %}
+<div class="portal-picker" data-teacher-student-assignment data-teacher-self-assignment data-class-url="{% url 'operations:teacher-class-search' %}" data-update-url="{% url 'operations:teacher-student-assignment-update' %}">
+ <header class="portal-home-head"><div><h1>담당 학생 지정</h1><p>① 수업을 고르거나 ② 이름을 치고, 학생을 체크해 오른쪽으로 옮깁니다. 더블클릭·끌기로도 바로 등록·제외됩니다.</p></div><a class="portal-link-button" href="{% url 'students:list' %}">담당 학생 보기</a></header>
+ <p class="portal-selection-status" data-assignment-status role="status">{{ search_message }}</p>
+ <div class="portal-picker-grid">
+  <section class="portal-card portal-class-panel" aria-labelledby="class-panel-title">
+   <div class="portal-card-head"><h2 id="class-panel-title">① 수업 찾기</h2><span data-class-total></span></div>
+   <form class="portal-class-filters" data-class-form>
+    <label class="portal-class-q">수업명<input name="q" type="search" placeholder="수업명 일부 — 치는 즉시 검색" maxlength="100" autocomplete="off"></label>
+    <label>상태<select name="status"><option value="">전체</option>{% for code, label in class_statuses %}<option value="{{ code }}">{{ label }}</option>{% endfor %}</select></label>
+    <label>Term<select name="term"><option value="">전체</option>{% for value in terms %}<option value="{{ value }}">{{ value }}</option>{% endfor %}</select></label>
+    <label>Subject<select name="subject"><option value="">전체</option>{% for value in subjects %}<option value="{{ value }}">{{ value }}</option>{% endfor %}</select></label>
+   </form>
+   <div class="portal-class-results" data-class-results><p class="portal-empty">수업을 불러오는 중…</p></div>
+   <button type="button" class="portal-link-button" data-class-more hidden>더 보기</button>
+  </section>
+  <section class="portal-card" data-drop-target="remove" aria-label="인트라넷 학생 찾기">
+   <div class="portal-card-head"><h2 data-result-title>② 인트라넷 전체 학생</h2><button type="button" class="portal-chip" data-class-clear hidden>× 해제</button><span data-result-count>0명</span></div>
+   <div class="ux-student-filters" data-student-browser data-browse-url="{% url 'students:selector-browse' %}">
+    <div class="ux-filter-row"><label class="ux-grow"><span>이름·학생번호</span><input type="search" data-browse-q data-assignment-search-input placeholder="수업을 골랐으면 그 명단 안에서, 아니면 인트라넷 전체에서 찾습니다" autocomplete="off" aria-label="학생 검색어"></label></div>
+    <div class="ux-results-meta"><p class="ux-hint" data-browse-status role="status" aria-live="polite"></p><button type="button" class="ux-text-btn" data-browse-retry hidden>다시 시도</button><div class="ux-pager"><button type="button" class="ux-btn" data-browse-prev disabled>‹ 이전</button><span data-browse-page></span><button type="button" class="ux-btn" data-browse-next disabled>다음 ›</button></div></div>
+   </div>
+   <div class="portal-transfer-tools"><button type="button" data-select-all="search">전체선택</button><button type="button" data-clear-all="search">선택해제</button><span data-search-selection>0명 선택</span><button type="button" class="primary" data-transfer="add">선택 추가 →</button></div>
+   <div class="portal-student-list st-table" data-search-list aria-label="조회된 학생"></div>
+  </section>
+  <section class="portal-card" data-drop-target="add" aria-labelledby="assigned-title">
+   <div class="portal-card-head"><h2 id="assigned-title">③ 현재 담당 학생</h2><span data-assigned-count>{{ assigned_count }}명</span></div>
+   <label class="portal-assigned-filter"><span>이름·번호로 거르기</span><input type="search" data-assigned-q placeholder="치는 즉시 걸러집니다" autocomplete="off"></label>
+   <div class="portal-transfer-tools"><button type="button" data-select-all="assigned">전체선택</button><button type="button" data-clear-all="assigned">선택해제</button><span data-assigned-selection>0명 선택</span><button type="button" data-transfer="remove">← 선택 제외</button></div>
+   <div class="portal-student-list st-table" data-assigned-list aria-label="등록된 담당 학생"></div>
+  </section>
+ </div>
+ <small class="portal-hint">전체선택은 체크만 바꿉니다. 저장은 선택 추가·제외, 더블클릭, 끌어서 옮기기로 합니다. 한 번에 최대 100명입니다.</small>
+ <noscript><form method="get"><label>학생 검색<input name="q" value="{{ keyword }}"></label><button type="submit">학생 검색</button></form><p class="home-warning">수업별 검색·드래그에는 JavaScript가 필요합니다. 학생 검색 후 아래 일반 폼을 사용할 수 있습니다.</p>
+  <form method="post" action="{% url 'operations:teacher-student-assignment-update' %}">{% csrf_token %}{% for item in search_results %}<label><input type="checkbox" name="student_nos" value="{{ item.student_no }}">{{ item.student_name }}</label>{% endfor %}<button data-single-add name="action" value="add">선택 추가</button></form>
+  <form method="post" action="{% url 'operations:teacher-student-assignment-update' %}">{% csrf_token %}{% for item in assigned_students %}<label><input type="checkbox" name="student_nos" value="{{ item.student_no }}">{{ item.student_name }}</label>{% endfor %}<button name="action" value="remove">선택 제외</button></form>
+ </noscript>
+ <form hidden data-assignment-csrf>{% csrf_token %}</form>
+ {{ assigned_rows|json_script:'teacher-assignment-initial-data' }}
+</div>{% endblock %}

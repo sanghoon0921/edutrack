@@ -1,0 +1,22 @@
+{% extends "layouts/base.html" %}{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/components/student-transfer-selector.css' %}?v=1110nv3">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/components/student-transfer-selector.js' %}?v=ux6" defer></script><script src="{% static 'content_editor/js/rich-paste-editor.js' %}" defer></script>{% endblock %}
+{% block content %}
+{% include "learning/_tabs.html" with active_learning_tab="assignments" %}
+<form method="post" enctype="multipart/form-data" class="ux-editor workflow-form" data-compact-form>
+ {% csrf_token %}
+ <header class="ux-editor-toolbar"><div><h1>과제 {% if form_mode == 'update' %}수정{% else %}등록{% endif %}</h1></div><div class="ux-actions"><a class="ux-btn" href="{% url 'assignments:list' %}">취소</a><button type="submit" class="ux-btn primary">{% if form_mode == 'update' %}수정 저장{% else %}과제 등록{% endif %}</button></div></header>
+ {{ form.non_field_errors }}
+ <div class="ux-editor-columns">
+  <section class="ux-editor-main">
+   <div class="ux-two-fields">{% include 'components/compact_field.html' with field=form.title %}{% include 'components/compact_field.html' with field=form.group %}</div>
+   {% include 'components/compact_field.html' with field=form.description %}
+   <div class="ux-three-fields">{% include 'components/compact_field.html' with field=form.due_at %}{% include 'components/compact_field.html' with field=form.points %}{% include 'components/compact_field.html' with field=form.submission_type %}</div>
+   {% include 'components/schedule_toggle.html' with field=form.available_from %}
+   <details class="ux-options" {% if form.errors %}open{% endif %}><summary>첨부파일</summary><div class="ux-two-fields">{% include 'components/compact_field.html' with field=form.attachment %}</div></details>
+   {% include 'components/publication_note.html' %}
+  </section>
+  <aside class="ux-editor-students">{% include 'components/student_transfer_selector.html' with selector=student_selector %}</aside>
+ </div>
+</form>
+{% endblock %}
